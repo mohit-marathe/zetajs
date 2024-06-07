@@ -512,6 +512,62 @@ Module.addOnPostRun(function() {
     }
     test.StringAttribute = 'hä';
     console.assert(test.StringAttribute === 'hä');
+
+    const obj = {
+        implRefcount: 0,
+        implTypes: new Module.uno_Sequence_type([
+            Module.uno_Type.Interface('com.sun.star.lang.XTypeProvider'),
+            Module.uno_Type.Interface('com.sun.star.task.XJob'),
+            Module.uno_Type.Interface('com.sun.star.task.XJobExecutor')]),
+        implImplementationId: new Module.uno_Sequence_byte([]),
+        queryInterface(type) {
+            if (type == 'com.sun.star.uno.XInterface') {
+                return new Module.uno_Any(
+                    type, css.uno.XInterface.reference(this.implXTypeProvider));
+            } else if (type == 'com.sun.star.lang.XTypeProvider') {
+                return new Module.uno_Any(
+                    type, css.lang.XTypeProvider.reference(this.implXTypeProvider));
+            } else if (type == 'com.sun.star.task.XJob') {
+                return new Module.uno_Any(type, css.task.XJob.reference(this.implXJob));
+            } else if (type == 'com.sun.star.task.XJobExecutor') {
+                return new Module.uno_Any(
+                    type, css.task.XJobExecutor.reference(this.implXJobExecutor));
+            } else {
+                return new Module.uno_Any(Module.uno_Type.Void(), undefined);
+            }
+        },
+        acquire() { ++this.implRefcount; },
+        release() {
+            if (--this.implRefcount === 0) {
+                this.implXTypeProvider.delete();
+                this.implXJob.delete();
+                this.implXJobExecutor.delete();
+                this.implTypes.delete();
+                this.implImplementationId.delete();
+            }
+        },
+        getTypes() { return this.implTypes; },
+        getImplementationId() { return this.implImplementationId; },
+        execute(args) {
+            if (args.size() !== 1 || args.get(0).Name !== 'name') {
+                Module.throwUnoException(
+                    Module.uno_Type.Exception('com.sun.star.lang.IllegalArgumentException'),
+                    {Message: 'bad args', Context: null, ArgumentPosition: 0});
+            }
+            console.log('Hello ' + args.get(0).Value.get());
+            return new Module.uno_Any(Module.uno_Type.Void(), undefined);
+        },
+        trigger(event) { console.log('Ola ' + event); }
+    };
+    obj.implXTypeProvider = css.lang.XTypeProvider.implement(obj);
+    obj.implXJob = css.task.XJob.implement(obj);
+    obj.implXJobExecutor = css.task.XJobExecutor.implement(obj);
+    obj.acquire();
+    proxy = Module.jsuno.proxy(css.uno.XInterface.reference(obj.implXTypeProvider));
+    test.passJob(proxy);
+    test.passJobExecutor(proxy);
+    test.passInterface(proxy);
+    obj.release();
 });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
