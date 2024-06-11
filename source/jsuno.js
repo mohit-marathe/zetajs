@@ -38,7 +38,7 @@ Module.jsuno = {
 
     translateToEmbind: function(obj, type, toDelete) {
         switch (type.getTypeClass()) {
-        case Module.uno.com.sun.star.uno.TypeClass.ANY:
+        case init_unoembind_uno(Module).com.sun.star.uno.TypeClass.ANY:
             if ('type' in obj && obj.type instanceof Module.uno_Type && 'val' in obj) {
                 const any = new Module.uno_Any(
                     obj.type, Module.jsuno.translateToEmbind(obj.val, obj.type, toDelete));
@@ -46,7 +46,7 @@ Module.jsuno = {
                 return any;
             }
             break;
-        case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
+        case init_unoembind_uno(Module).com.sun.star.uno.TypeClass.SEQUENCE:
             if (Array.isArray(obj)) {
                 const ctype = type.getSequenceComponentType();
                 const seq = new (Module.jsuno.getEmbindSequenceCtor(ctype))(
@@ -58,7 +58,7 @@ Module.jsuno = {
                 return seq;
             }
             break;
-        case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
+        case init_unoembind_uno(Module).com.sun.star.uno.TypeClass.INTERFACE:
             if (obj !== null && type.toString() !== 'com.sun.star.uno.XInterface') {
                 const target = obj[Module.jsuno.getProxyTarget];
                 const handle = target === undefined ? obj : target;
@@ -86,7 +86,7 @@ Module.jsuno = {
             let fromType;
             let val;
             const toDelete = [];
-            if (type.getTypeClass() === Module.uno.com.sun.star.uno.TypeClass.ANY) {
+            if (type.getTypeClass() === init_unoembind_uno(Module).com.sun.star.uno.TypeClass.ANY) {
                 switch (typeof obj) {
                 case 'undefined':
                     fromType = Module.uno_Type.Void();
@@ -145,12 +145,12 @@ Module.jsuno = {
 
     translateFromEmbind: function(val, type) {
         switch (type.getTypeClass()) {
-        case Module.uno.com.sun.star.uno.TypeClass.BOOLEAN:
+        case init_unoembind_uno(Module).com.sun.star.uno.TypeClass.BOOLEAN:
             return Boolean(val);
-        case Module.uno.com.sun.star.uno.TypeClass.ANY:
+        case init_unoembind_uno(Module).com.sun.star.uno.TypeClass.ANY:
             return {type: val.getType(),
                     val: Module.jsuno.translateFromEmbind(val.get(), val.getType())};
-        case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
+        case init_unoembind_uno(Module).com.sun.star.uno.TypeClass.SEQUENCE:
             {
                 const arr = [];
                 for (let i = 0; i !== val.size(); ++i) {
@@ -163,7 +163,7 @@ Module.jsuno = {
                 }
                 return arr;
             }
-        case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
+        case init_unoembind_uno(Module).com.sun.star.uno.TypeClass.INTERFACE:
             return Module.jsuno.proxy(val);
         default:
             return val;
@@ -171,7 +171,7 @@ Module.jsuno = {
     },
 
     translateFromAny: function(any, type) {
-        if (type.getTypeClass() === Module.uno.com.sun.star.uno.TypeClass.ANY) {
+        if (type.getTypeClass() === init_unoembind_uno(Module).com.sun.star.uno.TypeClass.ANY) {
             return {type: any.getType(),
                     val: Module.jsuno.translateFromEmbind(any.get(), any.getType())};
         } else {
@@ -197,8 +197,8 @@ Module.jsuno = {
         const arg = new Module.uno_Any(
             Module.uno_Type.Interface('com.sun.star.uno.XInterface'), unoObject);
         const args = new Module.uno_Sequence_any([arg]);
-        const invoke = Module.uno.com.sun.star.script.XInvocation2.query(
-            Module.uno.com.sun.star.script.Invocation.create(
+        const invoke = init_unoembind_uno(Module).com.sun.star.script.XInvocation2.query(
+            init_unoembind_uno(Module).com.sun.star.script.Invocation.create(
                 Module.getUnoComponentContext()).createInstanceWithArguments(args));
         arg.delete();
         args.delete();
@@ -221,7 +221,7 @@ Module.jsuno = {
                         const deleteArgs = [];
                         for (let i = 0; i !== info.aParamTypes.size(); ++i) {
                             switch (info.aParamModes.get(i)) {
-                            case Module.uno.com.sun.star.reflection.ParamMode.IN:
+                            case init_unoembind_uno(Module).com.sun.star.reflection.ParamMode.IN:
                                 {
                                     const {any, owning} = Module.jsuno.translateToAny(
                                         arguments[i], info.aParamTypes.get(i));
@@ -231,11 +231,11 @@ Module.jsuno = {
                                     }
                                     break;
                                 }
-                            case Module.uno.com.sun.star.reflection.ParamMode.INOUT:
+                            case init_unoembind_uno(Module).com.sun.star.reflection.ParamMode.INOUT:
                                 if (Module.jsuno.isEmbindInOutParam(arguments[i])) {
                                     const val = arguments[i].val;
                                     if (info.aParamTypes.get(i).getTypeClass()
-                                        === Module.uno.com.sun.star.uno.TypeClass.ANY)
+                                        === init_unoembind_uno(Module).com.sun.star.uno.TypeClass.ANY)
                                     {
                                         args.set(i, val);
                                         val.delete();
@@ -289,7 +289,7 @@ Module.jsuno = {
                             if (Module.jsuno.isEmbindInOutParam(arguments[j])) {
                                 const val = outparam.get(i);
                                 if (info.aParamTypes.get(j).getTypeClass()
-                                    === Module.uno.com.sun.star.uno.TypeClass.ANY)
+                                    === init_unoembind_uno(Module).com.sun.star.uno.TypeClass.ANY)
                                 {
                                     arguments[j].val = val;
                                 } else {
@@ -334,7 +334,7 @@ Module.jsuno = {
                 if (invoke.hasProperty(prop)) {
                     const info = invoke.getInfoForName(prop, true);
                     if (info.PropertyAttribute
-                        & Module.uno.com.sun.star.beans.PropertyAttribute.READONLY)
+                        & init_unoembind_uno(Module).com.sun.star.beans.PropertyAttribute.READONLY)
                     {
                         throw new Error('set readonly property ' + prop);
                     }
@@ -363,5 +363,15 @@ Module.jsuno = {
         });
     },
 };
+
+Module.addOnPostRun = function(block) {
+    console.log('PLUS: poll and wait for Embind "Module"');  // not needed for QT5
+    const interval = setInterval(function() {
+        console.log('looping');
+        if (typeof Module === 'undefined') return;
+        clearInterval(interval);
+        block();
+    }, 0.1);
+}
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
