@@ -194,9 +194,7 @@ Module.jsuno = {
         if (unoObject === null) {
             return null;
         }
-        if (Module.uno === undefined) {
-            Module.uno = init_unoembind_uno(Module);
-        }
+        Module.initUno();
         const arg = new Module.uno_Any(
             Module.uno_Type.Interface('com.sun.star.uno.XInterface'), unoObject);
         const args = new Module.uno_Sequence_any([arg]);

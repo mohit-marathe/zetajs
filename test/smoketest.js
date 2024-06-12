@@ -5,10 +5,10 @@
 // to have the org.libreoffice.embindtest UNOIDL entities available:
 
 Module.addOnPostRun(function() {
-    const uno = init_unoembind_uno(Module);
-    const css = uno.com.sun.star;
+    Module.initUno();
+    const css = Module.uno.com.sun.star;
     const test = Module.jsuno.proxy(
-        uno.org.libreoffice.embindtest.Test(Module.getUnoComponentContext()));
+        Module.uno.org.libreoffice.embindtest.Test(Module.getUnoComponentContext()));
     {
         const v = test.getBoolean();
         console.assert(v === true);
@@ -77,8 +77,8 @@ Module.addOnPostRun(function() {
     }
     {
         const v = test.getEnum();
-        console.assert(v === uno.org.libreoffice.embindtest.Enum.E_2);
-        console.assert(test.isEnum(uno.org.libreoffice.embindtest.Enum.E_2));
+        console.assert(v === Module.uno.org.libreoffice.embindtest.Enum.E_2);
+        console.assert(test.isEnum(Module.uno.org.libreoffice.embindtest.Enum.E_2));
     }
     {
         const v = test.getStruct();
@@ -193,12 +193,12 @@ Module.addOnPostRun(function() {
     }
     {
         const v = test.getAnyEnum();
-        console.assert(v.val === uno.org.libreoffice.embindtest.Enum.E_2);
+        console.assert(v.val === Module.uno.org.libreoffice.embindtest.Enum.E_2);
         console.assert(test.isAnyEnum(v));
         console.assert(test.isAnyEnum(
             {type: Module.uno_Type.Enum('org.libreoffice.embindtest.Enum'),
-             val: uno.org.libreoffice.embindtest.Enum.E_2}));
-        //TODO: console.assert(test.isAnyEnum(uno.org.libreoffice.embindtest.Enum.E_2));
+             val: Module.uno.org.libreoffice.embindtest.Enum.E_2}));
+        //TODO: console.assert(test.isAnyEnum(Module.uno.org.libreoffice.embindtest.Enum.E_2));
     }
     {
         const v = test.getAnyStruct();
@@ -347,9 +347,9 @@ Module.addOnPostRun(function() {
         console.assert(v[0].val === -123456);
         console.assert(v[1].val === undefined);
         console.assert(v[2].val.length === 3);
-        console.assert(v[2].val[0] === uno.org.libreoffice.embindtest.Enum.E_2);
-        console.assert(v[2].val[1] === uno.org.libreoffice.embindtest.Enum.E3);
-        console.assert(v[2].val[2] === uno.org.libreoffice.embindtest.Enum.E_10);
+        console.assert(v[2].val[0] === Module.uno.org.libreoffice.embindtest.Enum.E_2);
+        console.assert(v[2].val[1] === Module.uno.org.libreoffice.embindtest.Enum.E3);
+        console.assert(v[2].val[2] === Module.uno.org.libreoffice.embindtest.Enum.E_10);
         console.assert(test.isSequenceAny(v));
     }
     {
@@ -366,9 +366,9 @@ Module.addOnPostRun(function() {
     {
         const v = test.getSequenceEnum();
         console.assert(v.length === 3);
-        console.assert(v[0] === uno.org.libreoffice.embindtest.Enum.E_2);
-        console.assert(v[1] === uno.org.libreoffice.embindtest.Enum.E3);
-        console.assert(v[2] === uno.org.libreoffice.embindtest.Enum.E_10);
+        console.assert(v[0] === Module.uno.org.libreoffice.embindtest.Enum.E_2);
+        console.assert(v[1] === Module.uno.org.libreoffice.embindtest.Enum.E3);
+        console.assert(v[2] === Module.uno.org.libreoffice.embindtest.Enum.E_10);
         console.assert(test.isSequenceEnum(v));
     }
     {
@@ -433,7 +433,7 @@ Module.addOnPostRun(function() {
         console.assert(v15.val[0] === 'foo');
         console.assert(v15.val[1] === 'barr');
         console.assert(v15.val[2] === 'bazzz');
-        console.assert(v16.val === uno.org.libreoffice.embindtest.Enum.E_2);
+        console.assert(v16.val === Module.uno.org.libreoffice.embindtest.Enum.E_2);
         console.assert(v17.val.m1 === -123456);
         console.assert(v17.val.m2 === 100.5);
         console.assert(v17.val.m3 === 'hä');
@@ -478,7 +478,7 @@ Module.addOnPostRun(function() {
         console.assert(v15.val.get(0) === 'foo');
         console.assert(v15.val.get(1) === 'barr');
         console.assert(v15.val.get(2) === 'bazzz');
-        console.assert(v16.val === uno.org.libreoffice.embindtest.Enum.E_2);
+        console.assert(v16.val === Module.uno.org.libreoffice.embindtest.Enum.E_2);
         console.assert(v17.val.m1 === -123456);
         console.assert(v17.val.m2 === 100.5);
         console.assert(v17.val.m3 === 'hä');
@@ -513,61 +513,23 @@ Module.addOnPostRun(function() {
     test.StringAttribute = 'hä';
     console.assert(test.StringAttribute === 'hä');
 
-    const obj = {
-        implRefcount: 0,
-        implTypes: new Module.uno_Sequence_type([
-            Module.uno_Type.Interface('com.sun.star.lang.XTypeProvider'),
-            Module.uno_Type.Interface('com.sun.star.task.XJob'),
-            Module.uno_Type.Interface('com.sun.star.task.XJobExecutor')]),
-        implImplementationId: new Module.uno_Sequence_byte([]),
-        queryInterface(type) {
-            if (type == 'com.sun.star.uno.XInterface') {
-                return new Module.uno_Any(
-                    type, css.uno.XInterface.reference(this.implXTypeProvider));
-            } else if (type == 'com.sun.star.lang.XTypeProvider') {
-                return new Module.uno_Any(
-                    type, css.lang.XTypeProvider.reference(this.implXTypeProvider));
-            } else if (type == 'com.sun.star.task.XJob') {
-                return new Module.uno_Any(type, css.task.XJob.reference(this.implXJob));
-            } else if (type == 'com.sun.star.task.XJobExecutor') {
-                return new Module.uno_Any(
-                    type, css.task.XJobExecutor.reference(this.implXJobExecutor));
-            } else {
+    const obj = Module.jsuno.proxy(Module.unoObject(
+        ['com.sun.star.task.XJob', 'com.sun.star.task.XJobExecutor'],
+        {
+            execute(args) {
+                if (args.size() !== 1 || args.get(0).Name !== 'name') {
+                    Module.throwUnoException(
+                        Module.uno_Type.Exception('com.sun.star.lang.IllegalArgumentException'),
+                        {Message: 'bad args', Context: null, ArgumentPosition: 0});
+                }
+                console.log('Hello ' + args.get(0).Value.get());
                 return new Module.uno_Any(Module.uno_Type.Void(), undefined);
-            }
-        },
-        acquire() { ++this.implRefcount; },
-        release() {
-            if (--this.implRefcount === 0) {
-                this.implXTypeProvider.delete();
-                this.implXJob.delete();
-                this.implXJobExecutor.delete();
-                this.implTypes.delete();
-                this.implImplementationId.delete();
-            }
-        },
-        getTypes() { return this.implTypes; },
-        getImplementationId() { return this.implImplementationId; },
-        execute(args) {
-            if (args.size() !== 1 || args.get(0).Name !== 'name') {
-                Module.throwUnoException(
-                    Module.uno_Type.Exception('com.sun.star.lang.IllegalArgumentException'),
-                    {Message: 'bad args', Context: null, ArgumentPosition: 0});
-            }
-            console.log('Hello ' + args.get(0).Value.get());
-            return new Module.uno_Any(Module.uno_Type.Void(), undefined);
-        },
-        trigger(event) { console.log('Ola ' + event); }
-    };
-    obj.implXTypeProvider = css.lang.XTypeProvider.implement(obj);
-    obj.implXJob = css.task.XJob.implement(obj);
-    obj.implXJobExecutor = css.task.XJobExecutor.implement(obj);
-    obj.acquire();
-    proxy = Module.jsuno.proxy(css.uno.XInterface.reference(obj.implXTypeProvider));
-    test.passJob(proxy);
-    test.passJobExecutor(proxy);
-    test.passInterface(proxy);
-    obj.release();
+            },
+            trigger(event) { console.log('Ola ' + event); }
+        }));
+    test.passJob(obj);
+    test.passJobExecutor(obj);
+    test.passInterface(obj);
 });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

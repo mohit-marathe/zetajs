@@ -5,16 +5,16 @@
 Module.addOnPostRun(function() {
     setTimeout(function() {
         {
-            const uno = init_unoembind_uno(Module);
-            const css = uno.com.sun.star;
+            Module.initUno();
+            const css = Module.uno.com.sun.star;
             const xModel = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
             const xText = xModel.getText();
             const xTextCursor = xText.createTextCursor();
             xTextCursor.setString("string here!");
         }
         {
-            const uno = init_unoembind_uno(Module);
-            const css = uno.com.sun.star;
+            Module.initUno();
+            const css = Module.uno.com.sun.star;
             const xModel = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
             const xText = xModel.getText();
             const xParaEnumeration = xText.createEnumeration();
