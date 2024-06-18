@@ -369,6 +369,150 @@ Module.jsuno = {
             }
         });
     },
+
+    translateTypeDescription: function(td) {
+        switch (td.getTypeClass()) {
+        case Module.uno.com.sun.star.uno.TypeClass.VOID:
+            return new Module.uno_Type.Void();
+        case Module.uno.com.sun.star.uno.TypeClass.BOOLEAN:
+            return new Module.uno_Type.Boolean();
+        case Module.uno.com.sun.star.uno.TypeClass.BYTE:
+            return new Module.uno_Type.Byte();
+        case Module.uno.com.sun.star.uno.TypeClass.SHORT:
+            return new Module.uno_Type.Short();
+        case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_SHORT:
+            return new Module.uno_Type.UnsignedShort();
+        case Module.uno.com.sun.star.uno.TypeClass.LONG:
+            return new Module.uno_Type.Long();
+        case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_LONG:
+            return new Module.uno_Type.UnsignedLong();
+        case Module.uno.com.sun.star.uno.TypeClass.HYPER:
+            return new Module.uno_Type.Hyper();
+        case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_HYPER:
+            return new Module.uno_Type.UnsignedHyper();
+        case Module.uno.com.sun.star.uno.TypeClass.FLOAT:
+            return new Module.uno_Type.Float();
+        case Module.uno.com.sun.star.uno.TypeClass.DOUBLE:
+            return new Module.uno_Type.Double();
+        case Module.uno.com.sun.star.uno.TypeClass.CHAR:
+            return new Module.uno_Type.Char();
+        case Module.uno.com.sun.star.uno.TypeClass.STRING:
+            return new Module.uno_Type.String();
+        case Module.uno.com.sun.star.uno.TypeClass.TYPE:
+            return new Module.uno_Type.Type();
+        case Module.uno.com.sun.star.uno.TypeClass.ANY:
+            return new Module.uno_Type.Any();
+        case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
+            return new Module.uno_Type.Sequence(
+                Module.jsuno.translateTypeDescription(
+                    Module.uno.com.sun.star.reflection.XIndirectTypeDescription.query(td)
+                        .getReferencedType()));
+        case Module.uno.com.sun.star.uno.TypeClass.ENUM:
+            return new Module.uno_Type.Enum(td.getName());
+        case Module.uno.com.sun.star.uno.TypeClass.STRUCT:
+            return new Module.uno_Type.Struct(td.getName());
+        case Module.uno.com.sun.star.uno.TypeClass.EXCEPTION:
+            return new Module.uno_Type.Exception(td.getName());
+        case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
+            return new Module.uno_Type.Interface(td.getName());
+        default:
+            throw new Error(
+                'bad type description ' + td.getName() + ' type class ' + td.getTypeClass());
+        }
+    },
+
+    unoObject: function(interfaces, obj) {
+        const wrapper = {};
+        const seen = {'com.sun.star.lang.XTypeProvider': true, 'com.sun.star.uno.XInterface': true};
+        const walk = function(td) {
+            const iname = td.getName();
+            if (!Object.hasOwn(seen, iname)) {
+                seen[iname] = true;
+                if (td.getTypeClass() != Module.uno.com.sun.star.uno.TypeClass.INTERFACE) {
+                    throw new Error('not a UNO interface type: ' + iname);
+                }
+                const itd = Module.uno.com.sun.star.reflection.XInterfaceTypeDescription2.query(td);
+                const bases = itd.getBaseTypes();
+                for (let i = 0; i !== bases.size(); ++i) {
+                    walk(bases.get(i));
+                }
+                bases.delete();
+                const mems = itd.getMembers();
+                for (let i = 0; i !== mems.size(); ++i) {
+                    const atd =
+                       Module.uno.com.sun.star.reflection.XInterfaceAttributeTypeDescription
+                           .query(mems.get(i));
+                    if (atd !== null) {
+                        const aname = atd.getMemberName();
+                        const type = Module.jsuno.translateTypeDescription(atd.getType());
+                        wrappers['get' + aname] = function() {
+                            return Module.jsuno.translateToEmbind(
+                                obj['get' + aname].apply(obj), type, []);
+                        };
+                        if (!atd.isReadOnly()) {
+                            wrappers['set' + aname] = function() {
+                                obj['set' + aname].apply(
+                                    obj, [Module.jsuno.translateFromEmbind(arguments[0], type)]);
+                            };
+                        }
+                    } else {
+                        const mtd =
+                            Module.uno.com.sun.star.reflection.XInterfaceMethodTypeDescription
+                                .query(mems.get(i));
+                        const mname = mtd.getMemberName();
+                        const retType = Module.jsuno.translateTypeDescription(mtd.getReturnType());
+                        const params = [];
+                        const descrs = mtd.getParameters();
+                        for (let j = 0; j !== descrs.size(); ++j) {
+                            const descr = descrs.get(j);
+                            params.push({
+                                type: Module.jsuno.translateTypeDescription(descr.getType()),
+                                dirIn: descr.isIn(), dirOut: descr.isOut()});
+                        }
+                        descrs.delete();
+                        wrapper[mname] = function() {
+                            const args = [];
+                            for (let i = 0; i !== params.length; ++i) {
+                                let arg;
+                                if (params[i].dirOut) {
+                                    arg = {};
+                                    if (params[i].dirIn) {
+                                        arg.val = Module.jsuno.translateFromEmbind(
+                                            arguments[i].val, params[i].type);
+                                    }
+                                } else {
+                                    arg = Module.jsuno.translateFromEmbind(
+                                        arguments[i], params[i].type);
+                                }
+                                args.push(arg);
+                            }
+                            const ret = Module.jsuno.translateToEmbind(
+                                obj[mname].apply(obj, args), retType, []);
+                            for (let i = 0; i !== params.length; ++i) {
+                                if (params[i].dirOut) {
+                                    arguments[i].val = Module.jsuno.translateToEmbind(
+                                        args[i].val, params[i].type, []);
+                                }
+                            }
+                            return ret;
+                        };
+                    }
+                }
+                mems.delete();
+            }
+        };
+        const tdmAny = Module.getUnoComponentContext().getValueByName(
+            '/singletons/com.sun.star.reflection.theTypeDescriptionManager');
+        const tdm = Module.uno.com.sun.star.container.XHierarchicalNameAccess.query(tdmAny.get());
+        interfaces.forEach((i) => {
+            const td = tdm.getByHierarchicalName(i);
+            walk(Module.uno.com.sun.star.reflection.XTypeDescription.query(td.get()));
+            td.delete();
+        })
+        tdmAny.delete();
+        Module.MyFinalizationRegistry.register(wrapper, 'wrapper finalized');
+        return Module.jsuno.proxy(Module.unoObject(interfaces, wrapper));
+    },
 };
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

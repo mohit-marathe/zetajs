@@ -513,20 +513,20 @@ Module.addOnPostRun(function() {
     test.StringAttribute = 'hä';
     console.assert(test.StringAttribute === 'hä');
 
-    const obj = Module.jsuno.proxy(Module.unoObject(
+    const obj = Module.jsuno.unoObject(
         ['com.sun.star.task.XJob', 'com.sun.star.task.XJobExecutor'],
         {
             execute(args) {
-                if (args.size() !== 1 || args.get(0).Name !== 'name') {
+                if (args.length !== 1 || args[0].Name !== 'name') {
                     Module.throwUnoException(
                         Module.uno_Type.Exception('com.sun.star.lang.IllegalArgumentException'),
                         {Message: 'bad args', Context: null, ArgumentPosition: 0});
                 }
-                console.log('Hello ' + args.get(0).Value.get());
-                return new Module.uno_Any(Module.uno_Type.Void(), undefined);
+                console.log('Hello ' + args[0].Value.get());
+                return {type: Module.uno_Type.Void(), val: undefined};
             },
             trigger(event) { console.log('Ola ' + event); }
-        }));
+        });
     test.passJob(obj);
     test.passJobExecutor(obj);
     test.passInterface(obj);
