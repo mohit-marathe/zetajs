@@ -268,14 +268,20 @@ Module.jsuno = {
                         } catch (e) {
                             outparamindex_out.delete();
                             outparam_out.delete();
-                            const [type, message] = getExceptionMessage(e);
-                            if (type === 'com::sun::star::reflection::InvocationTargetException') {
-                                //TODO: get at the wrapped exception
-                                decrementExceptionRefcount(e);
-                                throw new Error('TODO: unidentified UNO exception');
-                            } else {
-                                //TODO:
+                            if (e instanceof Error) {
                                 throw e;
+                            } else {
+                                const [type, message] = getExceptionMessage(e);
+                                if (type ===
+                                    'com::sun::star::reflection::InvocationTargetException')
+                                {
+                                    //TODO: get at the wrapped exception
+                                    decrementExceptionRefcount(e);
+                                    throw new Error('TODO: unidentified UNO exception');
+                                } else {
+                                    //TODO:
+                                    throw e;
+                                }
                             }
                         } finally {
                             deleteArgs.forEach((arg) => arg.delete());
