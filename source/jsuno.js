@@ -36,6 +36,65 @@ Module.jsuno = {
         return Module[name];
     },
 
+    getTypeDescriptionManager: function() {
+        const tdmAny = Module.getUnoComponentContext().getValueByName(
+            '/singletons/com.sun.star.reflection.theTypeDescriptionManager');
+        const tdm = Module.uno.com.sun.star.container.XHierarchicalNameAccess.query(tdmAny.get());
+        tdmAny.delete();
+        return tdm;
+    },
+
+    translateTypeDescription: function(td) {
+        switch (td.getTypeClass()) {
+        case Module.uno.com.sun.star.uno.TypeClass.VOID:
+            return new Module.uno_Type.Void();
+        case Module.uno.com.sun.star.uno.TypeClass.BOOLEAN:
+            return new Module.uno_Type.Boolean();
+        case Module.uno.com.sun.star.uno.TypeClass.BYTE:
+            return new Module.uno_Type.Byte();
+        case Module.uno.com.sun.star.uno.TypeClass.SHORT:
+            return new Module.uno_Type.Short();
+        case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_SHORT:
+            return new Module.uno_Type.UnsignedShort();
+        case Module.uno.com.sun.star.uno.TypeClass.LONG:
+            return new Module.uno_Type.Long();
+        case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_LONG:
+            return new Module.uno_Type.UnsignedLong();
+        case Module.uno.com.sun.star.uno.TypeClass.HYPER:
+            return new Module.uno_Type.Hyper();
+        case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_HYPER:
+            return new Module.uno_Type.UnsignedHyper();
+        case Module.uno.com.sun.star.uno.TypeClass.FLOAT:
+            return new Module.uno_Type.Float();
+        case Module.uno.com.sun.star.uno.TypeClass.DOUBLE:
+            return new Module.uno_Type.Double();
+        case Module.uno.com.sun.star.uno.TypeClass.CHAR:
+            return new Module.uno_Type.Char();
+        case Module.uno.com.sun.star.uno.TypeClass.STRING:
+            return new Module.uno_Type.String();
+        case Module.uno.com.sun.star.uno.TypeClass.TYPE:
+            return new Module.uno_Type.Type();
+        case Module.uno.com.sun.star.uno.TypeClass.ANY:
+            return new Module.uno_Type.Any();
+        case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
+            return new Module.uno_Type.Sequence(
+                Module.jsuno.translateTypeDescription(
+                    Module.uno.com.sun.star.reflection.XIndirectTypeDescription.query(td)
+                        .getReferencedType()));
+        case Module.uno.com.sun.star.uno.TypeClass.ENUM:
+            return new Module.uno_Type.Enum(td.getName());
+        case Module.uno.com.sun.star.uno.TypeClass.STRUCT:
+            return new Module.uno_Type.Struct(td.getName());
+        case Module.uno.com.sun.star.uno.TypeClass.EXCEPTION:
+            return new Module.uno_Type.Exception(td.getName());
+        case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
+            return new Module.uno_Type.Interface(td.getName());
+        default:
+            throw new Error(
+                'bad type description ' + td.getName() + ' type class ' + td.getTypeClass());
+        }
+    },
+
     translateToEmbind: function(obj, type, toDelete) {
         switch (type.getTypeClass()) {
         case Module.uno.com.sun.star.uno.TypeClass.ANY:
@@ -58,6 +117,35 @@ Module.jsuno = {
                 return seq;
             }
             break;
+        case Module.uno.com.sun.star.uno.TypeClass.STRUCT:
+        case Module.uno.com.sun.star.uno.TypeClass.EXCEPTION:
+            {
+                const val = {};
+                const walk = function(td) {
+                    const base = td.getBaseType();
+                    if (base !== null) {
+                        walk(Module.uno.com.sun.star.reflection.XCompoundTypeDescription.query(
+                            base));
+                    }
+                    const types = td.getMemberTypes();
+                    const names = td.getMemberNames();
+                    for (let i = 0; i !== types.size(); ++i) {
+                        const name = names.get(i);
+                        val[name] = Module.jsuno.translateToEmbind(
+                            obj[name], Module.jsuno.translateTypeDescription(types.get(i)),
+                            toDelete);
+                    }
+                    types.delete();
+                    names.delete();
+                };
+                const tdAny = Module.jsuno.getTypeDescriptionManager().getByHierarchicalName(
+                    type.toString());
+                const td = Module.uno.com.sun.star.reflection.XCompoundTypeDescription.query(
+                    tdAny.get());
+                tdAny.delete();
+                walk(td);
+                return obj;
+            }
         case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
             if (obj !== null && type.toString() !== 'com.sun.star.uno.XInterface') {
                 const target = obj[Module.jsuno.getProxyTarget];
@@ -162,6 +250,34 @@ Module.jsuno = {
                     }
                 }
                 return arr;
+            }
+        case Module.uno.com.sun.star.uno.TypeClass.STRUCT:
+        case Module.uno.com.sun.star.uno.TypeClass.EXCEPTION:
+            {
+                const obj = {};
+                const walk = function(td) {
+                    const base = td.getBaseType();
+                    if (base !== null) {
+                        walk(Module.uno.com.sun.star.reflection.XCompoundTypeDescription.query(
+                            base));
+                    }
+                    const types = td.getMemberTypes();
+                    const names = td.getMemberNames();
+                    for (let i = 0; i !== types.size(); ++i) {
+                        const name = names.get(i);
+                        obj[name] = Module.jsuno.translateFromEmbind(
+                            val[name], Module.jsuno.translateTypeDescription(types.get(i)));
+                    }
+                    types.delete();
+                    names.delete();
+                };
+                const tdAny = Module.jsuno.getTypeDescriptionManager().getByHierarchicalName(
+                    type.toString());
+                const td = Module.uno.com.sun.star.reflection.XCompoundTypeDescription.query(
+                    tdAny.get());
+                tdAny.delete();
+                walk(td);
+                return obj;
             }
         case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
             return Module.jsuno.proxy(val);
@@ -370,57 +486,6 @@ Module.jsuno = {
         });
     },
 
-    translateTypeDescription: function(td) {
-        switch (td.getTypeClass()) {
-        case Module.uno.com.sun.star.uno.TypeClass.VOID:
-            return new Module.uno_Type.Void();
-        case Module.uno.com.sun.star.uno.TypeClass.BOOLEAN:
-            return new Module.uno_Type.Boolean();
-        case Module.uno.com.sun.star.uno.TypeClass.BYTE:
-            return new Module.uno_Type.Byte();
-        case Module.uno.com.sun.star.uno.TypeClass.SHORT:
-            return new Module.uno_Type.Short();
-        case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_SHORT:
-            return new Module.uno_Type.UnsignedShort();
-        case Module.uno.com.sun.star.uno.TypeClass.LONG:
-            return new Module.uno_Type.Long();
-        case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_LONG:
-            return new Module.uno_Type.UnsignedLong();
-        case Module.uno.com.sun.star.uno.TypeClass.HYPER:
-            return new Module.uno_Type.Hyper();
-        case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_HYPER:
-            return new Module.uno_Type.UnsignedHyper();
-        case Module.uno.com.sun.star.uno.TypeClass.FLOAT:
-            return new Module.uno_Type.Float();
-        case Module.uno.com.sun.star.uno.TypeClass.DOUBLE:
-            return new Module.uno_Type.Double();
-        case Module.uno.com.sun.star.uno.TypeClass.CHAR:
-            return new Module.uno_Type.Char();
-        case Module.uno.com.sun.star.uno.TypeClass.STRING:
-            return new Module.uno_Type.String();
-        case Module.uno.com.sun.star.uno.TypeClass.TYPE:
-            return new Module.uno_Type.Type();
-        case Module.uno.com.sun.star.uno.TypeClass.ANY:
-            return new Module.uno_Type.Any();
-        case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
-            return new Module.uno_Type.Sequence(
-                Module.jsuno.translateTypeDescription(
-                    Module.uno.com.sun.star.reflection.XIndirectTypeDescription.query(td)
-                        .getReferencedType()));
-        case Module.uno.com.sun.star.uno.TypeClass.ENUM:
-            return new Module.uno_Type.Enum(td.getName());
-        case Module.uno.com.sun.star.uno.TypeClass.STRUCT:
-            return new Module.uno_Type.Struct(td.getName());
-        case Module.uno.com.sun.star.uno.TypeClass.EXCEPTION:
-            return new Module.uno_Type.Exception(td.getName());
-        case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
-            return new Module.uno_Type.Interface(td.getName());
-        default:
-            throw new Error(
-                'bad type description ' + td.getName() + ' type class ' + td.getTypeClass());
-        }
-    },
-
     unoObject: function(interfaces, obj) {
         const wrapper = {};
         const seen = {'com.sun.star.lang.XTypeProvider': true, 'com.sun.star.uno.XInterface': true};
@@ -501,15 +566,12 @@ Module.jsuno = {
                 mems.delete();
             }
         };
-        const tdmAny = Module.getUnoComponentContext().getValueByName(
-            '/singletons/com.sun.star.reflection.theTypeDescriptionManager');
-        const tdm = Module.uno.com.sun.star.container.XHierarchicalNameAccess.query(tdmAny.get());
+        const tdm = Module.jsuno.getTypeDescriptionManager();
         interfaces.forEach((i) => {
             const td = tdm.getByHierarchicalName(i);
             walk(Module.uno.com.sun.star.reflection.XTypeDescription.query(td.get()));
             td.delete();
         })
-        tdmAny.delete();
         Module.MyFinalizationRegistry.register(wrapper, 'wrapper finalized');
         return Module.jsuno.proxy(Module.unoObject(interfaces, wrapper));
     },

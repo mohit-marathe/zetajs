@@ -522,7 +522,7 @@ Module.addOnPostRun(function() {
                         Module.uno_Type.Exception('com.sun.star.lang.IllegalArgumentException'),
                         {Message: 'bad args', Context: null, ArgumentPosition: 0});
                 }
-                console.log('Hello ' + args[0].Value.get());
+                console.log('Hello ' + args[0].Value.val);
                 return {type: Module.uno_Type.Void(), val: undefined};
             },
             trigger(event) { console.log('Ola ' + event); }
