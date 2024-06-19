@@ -1,5 +1,7 @@
 /* -*- Mode: JS; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4; fill-column: 100 -*- */
 
+'use strict';
+
 // Adapted sample code from <https://git.libreoffice.org/core>
 // scripting/examples/python/TableSample.py:
 

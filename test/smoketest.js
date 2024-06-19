@@ -1,5 +1,7 @@
 /* -*- Mode: JS; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4; fill-column: 100 -*- */
 
+'use strict';
+
 // Adapted test code from <https://git.libreoffice.org/core>
 // unotest/source/embindtest/embindtest.js; requires a LibreOffice configured with --enable-dbgutil
 // to have the org.libreoffice.embindtest UNOIDL entities available:
