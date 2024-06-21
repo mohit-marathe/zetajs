@@ -510,7 +510,9 @@ Module.addOnPostRun(function() {
         test.throwRuntimeException();
         console.assert(false);
     } catch (e) {
-        //TODO
+        const exc = Module.jsuno.catchUnoException(e);
+        console.assert(exc.type == 'com.sun.star.uno.RuntimeException');
+        console.assert(exc.val.Message.startsWith('test'));
     }
     test.StringAttribute = 'hä';
     console.assert(test.StringAttribute === 'hä');

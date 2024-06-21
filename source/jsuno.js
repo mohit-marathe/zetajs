@@ -386,20 +386,11 @@ Module.jsuno = {
                         } catch (e) {
                             outparamindex_out.delete();
                             outparam_out.delete();
-                            if (e instanceof Error) {
-                                throw e;
+                            const exc = Module.jsuno.catchUnoException(e);
+                            if (exc.type == 'com.sun.star.reflection.InvocationTargetException') {
+                                Module.jsuno.throwUnoException(exc.val.TargetException);
                             } else {
-                                const [type, message] = getExceptionMessage(e);
-                                if (type ===
-                                    'com::sun::star::reflection::InvocationTargetException')
-                                {
-                                    //TODO: get at the wrapped exception
-                                    decrementExceptionRefcount(e);
-                                    throw new Error('TODO: unidentified UNO exception');
-                                } else {
-                                    //TODO:
-                                    throw e;
-                                }
+                                Module.jsuno.throwUnoException(exc);
                             }
                         } finally {
                             deleteArgs.forEach((arg) => arg.delete());
@@ -486,6 +477,13 @@ Module.jsuno = {
                 }
             }
         });
+    },
+
+    throwUnoException: function(any) { Module.throwUnoException(any.type, any.val); },
+
+    catchUnoException: function(exception) {
+        return Module.jsuno.translateFromAnyAndDelete(
+            Module.catchUnoException(exception), new Module.uno_Type.Any());
     },
 
     unoObject: function(interfaces, obj) {
