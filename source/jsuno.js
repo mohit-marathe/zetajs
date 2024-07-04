@@ -493,7 +493,7 @@ Module.jsuno = {
             const iname = td.getName();
             if (!Object.hasOwn(seen, iname)) {
                 seen[iname] = true;
-                if (td.getTypeClass() != Module.uno.com.sun.star.uno.TypeClass.INTERFACE) {
+                if (td.getTypeClass() !== Module.uno.com.sun.star.uno.TypeClass.INTERFACE) {
                     throw new Error('not a UNO interface type: ' + iname);
                 }
                 const itd = Module.uno.com.sun.star.reflection.XInterfaceTypeDescription2.query(td);
