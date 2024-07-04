@@ -53,7 +53,7 @@ Module.addOnPostRun(function() {
         textFrame.setSize({Width: 15000, Height: 400});
         textFrame.setPropertyValue(
             'AnchorType',
-            {type: new Module.uno_Type.Enum('com.sun.star.text.TextContentAnchorType'),
+            {type: Module.uno_Type.Enum('com.sun.star.text.TextContentAnchorType'),
              val: css.text.TextContentAnchorType.AS_CHARACTER});
         text.insertTextContent(cursor, textFrame, false);
         const textInTextFrame = textFrame.getText();

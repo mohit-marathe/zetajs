@@ -49,48 +49,48 @@ Module.jsuno = {
     translateTypeDescription: function(td) {
         switch (td.getTypeClass()) {
         case Module.uno.com.sun.star.uno.TypeClass.VOID:
-            return new Module.uno_Type.Void();
+            return Module.uno_Type.Void();
         case Module.uno.com.sun.star.uno.TypeClass.BOOLEAN:
-            return new Module.uno_Type.Boolean();
+            return Module.uno_Type.Boolean();
         case Module.uno.com.sun.star.uno.TypeClass.BYTE:
-            return new Module.uno_Type.Byte();
+            return Module.uno_Type.Byte();
         case Module.uno.com.sun.star.uno.TypeClass.SHORT:
-            return new Module.uno_Type.Short();
+            return Module.uno_Type.Short();
         case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_SHORT:
-            return new Module.uno_Type.UnsignedShort();
+            return Module.uno_Type.UnsignedShort();
         case Module.uno.com.sun.star.uno.TypeClass.LONG:
-            return new Module.uno_Type.Long();
+            return Module.uno_Type.Long();
         case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_LONG:
-            return new Module.uno_Type.UnsignedLong();
+            return Module.uno_Type.UnsignedLong();
         case Module.uno.com.sun.star.uno.TypeClass.HYPER:
-            return new Module.uno_Type.Hyper();
+            return Module.uno_Type.Hyper();
         case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_HYPER:
-            return new Module.uno_Type.UnsignedHyper();
+            return Module.uno_Type.UnsignedHyper();
         case Module.uno.com.sun.star.uno.TypeClass.FLOAT:
-            return new Module.uno_Type.Float();
+            return Module.uno_Type.Float();
         case Module.uno.com.sun.star.uno.TypeClass.DOUBLE:
-            return new Module.uno_Type.Double();
+            return Module.uno_Type.Double();
         case Module.uno.com.sun.star.uno.TypeClass.CHAR:
-            return new Module.uno_Type.Char();
+            return Module.uno_Type.Char();
         case Module.uno.com.sun.star.uno.TypeClass.STRING:
-            return new Module.uno_Type.String();
+            return Module.uno_Type.String();
         case Module.uno.com.sun.star.uno.TypeClass.TYPE:
-            return new Module.uno_Type.Type();
+            return Module.uno_Type.Type();
         case Module.uno.com.sun.star.uno.TypeClass.ANY:
-            return new Module.uno_Type.Any();
+            return Module.uno_Type.Any();
         case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
-            return new Module.uno_Type.Sequence(
+            return Module.uno_Type.Sequence(
                 Module.jsuno.translateTypeDescription(
                     Module.uno.com.sun.star.reflection.XIndirectTypeDescription.query(td)
                         .getReferencedType()));
         case Module.uno.com.sun.star.uno.TypeClass.ENUM:
-            return new Module.uno_Type.Enum(td.getName());
+            return Module.uno_Type.Enum(td.getName());
         case Module.uno.com.sun.star.uno.TypeClass.STRUCT:
-            return new Module.uno_Type.Struct(td.getName());
+            return Module.uno_Type.Struct(td.getName());
         case Module.uno.com.sun.star.uno.TypeClass.EXCEPTION:
-            return new Module.uno_Type.Exception(td.getName());
+            return Module.uno_Type.Exception(td.getName());
         case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
-            return new Module.uno_Type.Interface(td.getName());
+            return Module.uno_Type.Interface(td.getName());
         default:
             throw new Error(
                 'bad type description ' + td.getName() + ' type class ' + td.getTypeClass());
@@ -483,7 +483,7 @@ Module.jsuno = {
 
     catchUnoException: function(exception) {
         return Module.jsuno.translateFromAnyAndDelete(
-            Module.catchUnoException(exception), new Module.uno_Type.Any());
+            Module.catchUnoException(exception), Module.uno_Type.Any());
     },
 
     singleton: function(name, context) {
