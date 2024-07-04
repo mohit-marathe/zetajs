@@ -9,8 +9,8 @@
 Module.addOnPostRun(function() {
     Module.initUno();
     const css = Module.uno.com.sun.star;
-    const test = Module.jsuno.proxy(
-        Module.uno.org.libreoffice.embindtest.Test(Module.getUnoComponentContext()));
+    const context = Module.jsuno.proxy(Module.getUnoComponentContext());
+    const test = Module.jsuno.singleton('org.libreoffice.embindtest.Test', context);
     {
         const v = test.getBoolean();
         console.assert(v === true);
@@ -516,6 +516,37 @@ Module.addOnPostRun(function() {
     }
     test.StringAttribute = 'hä';
     console.assert(test.StringAttribute === 'hä');
+    try {
+        Module.jsuno.singleton('unknown', context);
+        console.assert(false);
+    } catch (e) {
+        const exc = Module.jsuno.catchUnoException(e);
+        //TODO: see RETHROW_FAKE_EXCEPTIONS in cppuhelper/source/exc_thrower.cxx:
+        //TODO: console.assert(exc.type == 'com.sun.star.uno.DeploymentException');
+        /*TODO:*/console.assert(exc.type == 'com.sun.star.uno.RuntimeException');
+        console.assert(exc.val.Message.startsWith('cannot get singeleton unknown'));
+    }
+    try {
+        Module.jsuno.service('com.sun.star.reflection.CoreReflection');
+        console.assert(false);
+    } catch (e) {
+        const exc = Module.jsuno.catchUnoException(e);
+        //TODO: see RETHROW_FAKE_EXCEPTIONS in cppuhelper/source/exc_thrower.cxx:
+        //TODO: console.assert(exc.type == 'com.sun.star.uno.DeploymentException');
+        /*TODO:*/console.assert(exc.type == 'com.sun.star.uno.RuntimeException');
+        console.assert(
+            exc.val.Message.startsWith(
+                'unknown single-interface service com.sun.star.reflection.CoreReflection'));
+    }
+    {
+        const urifac = Module.jsuno.service('com.sun.star.uri.UriReferenceFactory').create(context);
+        //...
+    }
+    {
+        const propbag = Module.jsuno.service('com.sun.star.beans.PropertyBag').createWithTypes(
+            context, [Module.uno_Type.Boolean(), Module.uno_Type.Long()], false, false);
+        //...
+    }
 
     const obj = Module.jsuno.unoObject(
         ['com.sun.star.task.XJob', 'com.sun.star.task.XJobExecutor'],

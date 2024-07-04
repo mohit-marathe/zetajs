@@ -486,6 +486,86 @@ Module.jsuno = {
             Module.catchUnoException(exception), new Module.uno_Type.Any());
     },
 
+    singleton: function(name, context) {
+        const any = context.getValueByName('/singletons/' + name);
+        if (any.type.getTypeClass() !== Module.uno.com.sun.star.uno.TypeClass.INTERFACE
+            || any.val === null)
+        {
+            Module.jsuno.throwUnoException({
+                type: Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
+                val: {Message: 'cannot get singeleton ' + name, Context: null}});
+        }
+        return any.val;
+    },
+
+    service: function(name) {
+        const tdAny = Module.jsuno.getTypeDescriptionManager().getByHierarchicalName(name);
+        const td = Module.uno.com.sun.star.reflection.XServiceTypeDescription2.query(tdAny.get());
+        tdAny.delete();
+        if (td === null || !td.isSingleInterfaceBased()) {
+            Module.jsuno.throwUnoException({
+                type: Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
+                val: {Message: 'unknown single-interface service ' + name, Context: null}});
+        }
+        const obj = {};
+        const ctors = td.getConstructors();
+        for (let i = 0; i !== ctors.size(); ++i) {
+            const ctor = ctors.get(i);
+            if (ctor.isDefaultConstructor()) {
+                obj.create = function(context) {
+                    const ifc = context.getServiceManager().createInstanceWithContext(
+                        name, context);
+                    if (ifc === null) {
+                        Module.jsuno.throwUnoException({
+                            type: Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
+                            val: {
+                                Message: 'cannot instantiate single-interface service ' + name,
+                                Context: null}});
+                    }
+                    return ifc;
+                };
+            } else {
+                obj[ctor.getName()] = function() {
+                    const context = arguments[0];
+                    const args = [];
+                    const params = ctor.getParameters();
+                    for (let j = 0; j !== params.size(); ++j) {
+                        const param = params.get(j);
+                        if (param.isRestParameter()) {
+                            for (; j + 1 < arguments.length; ++j) {
+                                args.push(arguments[j + 1]);
+                            }
+                            break;
+                        } else {
+                            let arg = arguments[j + 1];
+                            if (param.getType().getTypeClass()
+                                !== Module.uno.com.sun.star.uno.TypeClass.ANY)
+                            {
+                                arg = {
+                                    type: Module.jsuno.translateTypeDescription(param.getType()),
+                                    val: arg};
+                            }
+                            args.push(arg);
+                        }
+                    }
+                    params.delete();
+                    const ifc = context.getServiceManager().createInstanceWithArgumentsAndContext(
+                        name, args, context);
+                    if (ifc === null) {
+                        Module.jsuno.throwUnoException({
+                            type: Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
+                            val: {
+                                Message: 'cannot instantiate single-interface service ' + name,
+                                Context: null}});
+                    }
+                    return ifc;
+                };
+            }
+        }
+        ctors.delete();
+        return obj;
+    },
+
     unoObject: function(interfaces, obj) {
         const wrapper = {};
         const seen = {'com.sun.star.lang.XTypeProvider': true, 'com.sun.star.uno.XInterface': true};
