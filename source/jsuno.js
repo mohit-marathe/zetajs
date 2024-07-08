@@ -652,7 +652,6 @@ Module.jsuno = {
             walk(Module.uno.com.sun.star.reflection.XTypeDescription.query(td.get()));
             td.delete();
         })
-        Module.MyFinalizationRegistry.register(wrapper, 'wrapper finalized');
         return Module.jsuno.proxy(Module.unoObject(interfaces, wrapper));
     },
 };
