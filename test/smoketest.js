@@ -105,20 +105,20 @@ Module.addOnPostRun(function() {
         const v = test.getAnyByte();
         console.assert(v.val === -12);
         console.assert(test.isAnyByte(v));
-        console.assert(test.isAnyByte({type: Module.uno_Type.Byte(), val: -12}));
+        console.assert(test.isAnyByte(new Module.jsuno.Any(Module.uno_Type.Byte(), -12)));
     }
     {
         const v = test.getAnyShort();
         console.assert(v.val === -1234);
         console.assert(test.isAnyShort(v));
-        console.assert(test.isAnyShort({type: Module.uno_Type.Short(), val: -1234}));
+        console.assert(test.isAnyShort(new Module.jsuno.Any(Module.uno_Type.Short(), -1234)));
     }
     {
         const v = test.getAnyUnsignedShort();
         console.assert(v.val === 54321);
         console.assert(test.isAnyUnsignedShort(v));
         console.assert(test.isAnyUnsignedShort(
-            {type: Module.uno_Type.UnsignedShort(), val: 54321}));
+            new Module.jsuno.Any(Module.uno_Type.UnsignedShort(), 54321)));
     }
     {
         const v = test.getAnyLong();
@@ -143,13 +143,13 @@ Module.addOnPostRun(function() {
         console.assert(v.val === 9876543210n);
         console.assert(test.isAnyUnsignedHyper(v));
         console.assert(test.isAnyUnsignedHyper(
-            {type: Module.uno_Type.UnsignedHyper(), val: 9876543210n}));
+            new Module.jsuno.Any(Module.uno_Type.UnsignedHyper(), 9876543210n)));
     }
     {
         const v = test.getAnyFloat();
         console.assert(v.val === -10.25);
         console.assert(test.isAnyFloat(v));
-        console.assert(test.isAnyFloat({type: Module.uno_Type.Float(), val: -10.25}));
+        console.assert(test.isAnyFloat(new Module.jsuno.Any(Module.uno_Type.Float(), -10.25)));
     }
     {
         const v = test.getAnyDouble();
@@ -161,7 +161,7 @@ Module.addOnPostRun(function() {
         const v = test.getAnyChar();
         console.assert(v.val === 'Ö');
         console.assert(test.isAnyChar(v));
-        console.assert(test.isAnyChar({type: Module.uno_Type.Char(), val: 'Ö'}));
+        console.assert(test.isAnyChar(new Module.jsuno.Any(Module.uno_Type.Char(), 'Ö')));
     }
     {
         const v = test.getAnyString();
@@ -187,19 +187,20 @@ Module.addOnPostRun(function() {
         console.assert(test.isAnySequence(a));
         a.delete();
         console.assert(test.isAnySequence(
-            {type: Module.uno_Type.Sequence(Module.uno_Type.String()), val: s}));
+            new Module.jsuno.Any(Module.uno_Type.Sequence(Module.uno_Type.String()), s)));
         s.delete();
         console.assert(test.isAnySequence(
-            {type: Module.uno_Type.Sequence(Module.uno_Type.String()),
-             val: ["foo", "barr", "bazzz"]}));
+            new Module.jsuno.Any(
+                Module.uno_Type.Sequence(Module.uno_Type.String()), ["foo", "barr", "bazzz"])));
     }
     {
         const v = test.getAnyEnum();
         console.assert(v.val === Module.uno.org.libreoffice.embindtest.Enum.E_2);
         console.assert(test.isAnyEnum(v));
         console.assert(test.isAnyEnum(
-            {type: Module.uno_Type.Enum('org.libreoffice.embindtest.Enum'),
-             val: Module.uno.org.libreoffice.embindtest.Enum.E_2}));
+            new Module.jsuno.Any(
+                Module.uno_Type.Enum('org.libreoffice.embindtest.Enum'),
+                Module.uno.org.libreoffice.embindtest.Enum.E_2)));
         //TODO: console.assert(test.isAnyEnum(Module.uno.org.libreoffice.embindtest.Enum.E_2));
     }
     {
@@ -209,8 +210,9 @@ Module.addOnPostRun(function() {
         console.assert(v.val.m3 === 'hä');
         console.assert(test.isAnyStruct(v));
         console.assert(test.isAnyStruct(
-            {type: Module.uno_Type.Struct('org.libreoffice.embindtest.Struct'),
-             val: {m1: -123456, m2: 100.5, m3: 'hä'}}));
+            new Module.jsuno.Any(
+                Module.uno_Type.Struct('org.libreoffice.embindtest.Struct'),
+                {m1: -123456, m2: 100.5, m3: 'hä'})));
     }
     {
         const v = test.getAnyException();
@@ -221,15 +223,17 @@ Module.addOnPostRun(function() {
         console.assert(v.val.m3 === 'hä');
         console.assert(test.isAnyException(v));
         console.assert(test.isAnyException(
-            {type: Module.uno_Type.Exception('org.libreoffice.embindtest.Exception'),
-             val: {Message: 'error', Context: null, m1: -123456, m2: 100.5, m3: 'hä'}}));
+            new Module.jsuno.Any(
+                Module.uno_Type.Exception('org.libreoffice.embindtest.Exception'),
+                {Message: 'error', Context: null, m1: -123456, m2: 100.5, m3: 'hä'})));
     }
     {
         const v = test.getAnyInterface();
         console.assert(Module.sameUnoObject(v.val, test));
         console.assert(test.isAnyInterface(v));
         console.assert(test.isAnyInterface(
-            {type: Module.uno_Type.Interface('org.libreoffice.embindtest.XTest'), val: test}));
+            new Module.jsuno.Any(
+                Module.uno_Type.Interface('org.libreoffice.embindtest.XTest'), test)));
     }
     {
         const v = test.getSequenceBoolean();
@@ -554,7 +558,7 @@ Module.addOnPostRun(function() {
                         {Message: 'bad args', Context: null, ArgumentPosition: 0});
                 }
                 console.log('Hello ' + args[0].Value.val);
-                return {type: Module.uno_Type.Void(), val: undefined};
+                return new Module.jsuno.Any(Module.uno_Type.Void());
             },
             trigger(event) { console.log('Ola ' + event); }
         });

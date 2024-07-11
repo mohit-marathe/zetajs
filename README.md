@@ -30,8 +30,8 @@ cases.  But client code can always explicitly provide a JS object providing `typ
 properties.  One notable problematic case is UNO enum values, where the conversion code
 unfortunately cannot tell from the JS object alone what UNO enum type it belongs to; enum values
 passed as `ANY` values always need to be wrapped like
-`{type: Module.uno_Type.Enum('com.sun.star.script.FinishReason'),
-val: Module.uno.com.sun.star.script.FinishReason.OK}`.
+`new Module.jsuno.Any(Module.uno_Type.Enum('com.sun.star.script.FinishReason'),
+Module.uno.com.sun.star.script.FinishReason.OK)`.
 
 ## Examples and test code
 

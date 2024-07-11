@@ -100,7 +100,7 @@ Module.jsuno = {
     translateToEmbind: function(obj, type, toDelete) {
         switch (type.getTypeClass()) {
         case Module.uno.com.sun.star.uno.TypeClass.ANY:
-            if ('type' in obj && obj.type instanceof Module.uno_Type && 'val' in obj) {
+            if (obj instanceof Module.jsuno.Any) {
                 const any = new Module.uno_Any(
                     obj.type, Module.jsuno.translateToEmbind(obj.val, obj.type, toDelete));
                 toDelete.push(any);
@@ -210,8 +210,7 @@ Module.jsuno = {
                     } else if (obj instanceof Module.uno_Type) {
                         fromType = Module.uno_Type.Type();
                         val = obj;
-                    } else if ('type' in obj && obj.type instanceof Module.uno_Type && 'val' in obj)
-                    {
+                    } else if (obj instanceof Module.jsuno.Any) {
                         fromType = obj.type;
                         val = Module.jsuno.translateToEmbind(obj.val, obj.type, toDelete);
                     } else {
@@ -238,8 +237,8 @@ Module.jsuno = {
         case Module.uno.com.sun.star.uno.TypeClass.BOOLEAN:
             return Boolean(val);
         case Module.uno.com.sun.star.uno.TypeClass.ANY:
-            return {type: val.getType(),
-                    val: Module.jsuno.translateFromEmbind(val.get(), val.getType())};
+            return new Module.jsuno.Any(
+                val.getType(), Module.jsuno.translateFromEmbind(val.get(), val.getType()));
         case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
             {
                 const arr = [];
@@ -290,8 +289,8 @@ Module.jsuno = {
 
     translateFromAny: function(any, type) {
         if (type.getTypeClass() === Module.uno.com.sun.star.uno.TypeClass.ANY) {
-            return {type: any.getType(),
-                    val: Module.jsuno.translateFromEmbind(any.get(), any.getType())};
+            return new Module.jsuno.Any(
+                any.getType(), Module.jsuno.translateFromEmbind(any.get(), any.getType()));
         } else {
             const val1 = any.get();
             const val2 = Module.jsuno.translateFromEmbind(val1, any.getType());
@@ -479,6 +478,11 @@ Module.jsuno = {
         });
     },
 
+    Any: function(type, val) {
+        this.type = type;
+        this.val = val;
+    },
+
     getUnoComponentContext: function() {
         return Module.jsuno.proxy(Module.getUnoComponentContext());
     },
@@ -495,9 +499,10 @@ Module.jsuno = {
         if (any.type.getTypeClass() !== Module.uno.com.sun.star.uno.TypeClass.INTERFACE
             || any.val === null)
         {
-            Module.jsuno.throwUnoException({
-                type: Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
-                val: {Message: 'cannot get singeleton ' + name, Context: null}});
+            Module.jsuno.throwUnoException(
+                new Module.jsuno.Any(
+                    Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
+                    {Message: 'cannot get singeleton ' + name, Context: null}));
         }
         return any.val;
     },
@@ -507,9 +512,10 @@ Module.jsuno = {
         const td = Module.uno.com.sun.star.reflection.XServiceTypeDescription2.query(tdAny.get());
         tdAny.delete();
         if (td === null || !td.isSingleInterfaceBased()) {
-            Module.jsuno.throwUnoException({
-                type: Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
-                val: {Message: 'unknown single-interface service ' + name, Context: null}});
+            Module.jsuno.throwUnoException(
+                new Module.jsuno.Any(
+                    Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
+                    {Message: 'unknown single-interface service ' + name, Context: null}));
         }
         const obj = {};
         const ctors = td.getConstructors();
@@ -520,11 +526,11 @@ Module.jsuno = {
                     const ifc = context.getServiceManager().createInstanceWithContext(
                         name, context);
                     if (ifc === null) {
-                        Module.jsuno.throwUnoException({
-                            type: Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
-                            val: {
-                                Message: 'cannot instantiate single-interface service ' + name,
-                                Context: null}});
+                        Module.jsuno.throwUnoException(
+                            new Module.jsuno.Any(
+                                Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
+                                {Message: 'cannot instantiate single-interface service ' + name,
+                                 Context: null}));
                     }
                     return ifc;
                 };
@@ -545,9 +551,8 @@ Module.jsuno = {
                             if (param.getType().getTypeClass()
                                 !== Module.uno.com.sun.star.uno.TypeClass.ANY)
                             {
-                                arg = {
-                                    type: Module.jsuno.translateTypeDescription(param.getType()),
-                                    val: arg};
+                                arg = new Module.jsuno.Any(
+                                    Module.jsuno.translateTypeDescription(param.getType()), arg);
                             }
                             args.push(arg);
                         }
@@ -556,11 +561,11 @@ Module.jsuno = {
                     const ifc = context.getServiceManager().createInstanceWithArgumentsAndContext(
                         name, args, context);
                     if (ifc === null) {
-                        Module.jsuno.throwUnoException({
-                            type: Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
-                            val: {
-                                Message: 'cannot instantiate single-interface service ' + name,
-                                Context: null}});
+                        Module.jsuno.throwUnoException(
+                            new Module.jsuno.Any(
+                                Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
+                                {Message: 'cannot instantiate single-interface service ' + name,
+                                 Context: null}));
                     }
                     return ifc;
                 };
