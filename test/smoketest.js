@@ -9,7 +9,7 @@
 Module.addOnPostRun(function() {
     Module.initUno();
     const css = Module.uno.com.sun.star;
-    const context = Module.jsuno.proxy(Module.getUnoComponentContext());
+    const context = Module.jsuno.getUnoComponentContext();
     const test = Module.jsuno.singleton('org.libreoffice.embindtest.Test', context);
     {
         const v = test.getBoolean();

@@ -479,6 +479,10 @@ Module.jsuno = {
         });
     },
 
+    getUnoComponentContext: function() {
+        return Module.jsuno.proxy(Module.getUnoComponentContext());
+    },
+
     throwUnoException: function(any) { Module.throwUnoException(any.type, any.val); },
 
     catchUnoException: function(exception) {
