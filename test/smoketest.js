@@ -521,9 +521,7 @@ Module.addOnPostRun(function() {
         console.assert(false);
     } catch (e) {
         const exc = Module.jsuno.catchUnoException(e);
-        //TODO: see RETHROW_FAKE_EXCEPTIONS in cppuhelper/source/exc_thrower.cxx:
-        //TODO: console.assert(exc.type == 'com.sun.star.uno.DeploymentException');
-        /*TODO:*/console.assert(exc.type == 'com.sun.star.uno.RuntimeException');
+        console.assert(exc.type == 'com.sun.star.uno.DeploymentException');
         console.assert(exc.val.Message.startsWith('cannot get singeleton unknown'));
     }
     try {
@@ -531,9 +529,7 @@ Module.addOnPostRun(function() {
         console.assert(false);
     } catch (e) {
         const exc = Module.jsuno.catchUnoException(e);
-        //TODO: see RETHROW_FAKE_EXCEPTIONS in cppuhelper/source/exc_thrower.cxx:
-        //TODO: console.assert(exc.type == 'com.sun.star.uno.DeploymentException');
-        /*TODO:*/console.assert(exc.type == 'com.sun.star.uno.RuntimeException');
+        console.assert(exc.type == 'com.sun.star.uno.DeploymentException');
         console.assert(
             exc.val.Message.startsWith(
                 'unknown single-interface service com.sun.star.reflection.CoreReflection'));
