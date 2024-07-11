@@ -12,11 +12,11 @@ service to directly make available all the UNO interfaces implemented by the giv
 There is no more need for `query` calls to obtain a reference to specific UNO interfaces.
 
 Also, values of certain UNO types map to more idiomatic JS values now:  UNO sequences map to JS
-arrays, and UNO `ANY` values map to JS objects that have `type` (holding a UNO `TYPE` value) and
-`val` properties.  There is no more need to call `.delete()` on such values.  Similarly, out and
-in-out parameters can be passed via any plain JS objects with a `val` property, instead of requiring
-the special `Module.uno_InOutParam_...` objects (which had to be `.delete()`'ed).  And UNO `BOOLEAN`
-more consistently maps to JS `Boolean` now, avoiding mappings to `0`/`1`.
+arrays, and UNO `ANY` values map to JS Module.jsuno.Any objects.  There is no more need to call
+`.delete()` on such values.  Similarly, out and in-out parameters can be passed via any plain JS
+objects with a `val` property, instead of requiring the special `Module.uno_InOutParam_...` objects
+(which had to be `.delete()`'ed).  And UNO `BOOLEAN` more consistently maps to JS `Boolean` now,
+avoiding mappings to `0`/`1`.
 
 `examples/simple.js` shows how this leads to shorter and more idiomatic code compared to the
 Embind-based example code in the [core repo's](https://git.libreoffice.org/core)
@@ -26,11 +26,10 @@ When a UNO interface method takes a parameter of a specific non-`ANY` UNO type, 
 between these convenient JS argument values and the underlying Embind values works well.  However,
 when such a method parameter is of generic `ANY` type, the conversion code needs to guess an
 appropriate UNO type based solely on the given JS argument value, which does not work well in all
-cases.  But client code can always explicitly provide a JS object providing `type` and `val`
-properties.  One notable problematic case is UNO enum values, where the conversion code
-unfortunately cannot tell from the JS object alone what UNO enum type it belongs to; enum values
-passed as `ANY` values always need to be wrapped like
-`new Module.jsuno.Any(Module.uno_Type.Enum('com.sun.star.script.FinishReason'),
+cases.  But client code can always explicitly provide a JS Module.jsuno.Any object.  One notable
+problematic case is UNO enum values, where the conversion code unfortunately cannot tell from the JS
+object alone what UNO enum type it belongs to; enum values passed as `ANY` values always need to be
+wrapped like `new Module.jsuno.Any(Module.uno_Type.Enum('com.sun.star.script.FinishReason'),
 Module.uno.com.sun.star.script.FinishReason.OK)`.
 
 ## Examples and test code
