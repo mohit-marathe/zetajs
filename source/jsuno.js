@@ -157,7 +157,7 @@ Module.jsuno = {
                     if (embindType === handle.$$.ptrType.registeredClass.name) {
                         return obj;
                     } else {
-                        return Module.jsuno.proxy(Module[embindType].query(obj));
+                        return Module[embindType].query(obj);
                     }
                 }
             }
