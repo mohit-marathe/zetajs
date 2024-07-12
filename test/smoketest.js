@@ -10,7 +10,7 @@ Module.addOnPostRun(function() {
     Module.initUno();
     const css = Module.uno.com.sun.star;
     const context = Module.jsuno.getUnoComponentContext();
-    const test = Module.jsuno.singleton('org.libreoffice.embindtest.Test', context);
+    const test = Module.jsuno.service('org.libreoffice.embindtest.Test').create(context);
     {
         const v = test.getBoolean();
         console.assert(v === true);
@@ -514,8 +514,9 @@ Module.addOnPostRun(function() {
         console.assert(exc.type == 'com.sun.star.uno.RuntimeException');
         console.assert(exc.val.Message.startsWith('test'));
     }
-    test.StringAttribute = 'hä';
     console.assert(test.StringAttribute === 'hä');
+    test.StringAttribute = 'foo';
+    console.assert(test.StringAttribute === 'foo');
     try {
         Module.jsuno.singleton('unknown', context);
         console.assert(false);
