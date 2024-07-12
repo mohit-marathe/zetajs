@@ -197,11 +197,7 @@ Module.addOnPostRun(function() {
         const v = test.getAnyEnum();
         console.assert(v.val === Module.uno.org.libreoffice.embindtest.Enum.E_2);
         console.assert(test.isAnyEnum(v));
-        console.assert(test.isAnyEnum(
-            new Module.jsuno.Any(
-                Module.uno_Type.Enum('org.libreoffice.embindtest.Enum'),
-                Module.uno.org.libreoffice.embindtest.Enum.E_2)));
-        //TODO: console.assert(test.isAnyEnum(Module.uno.org.libreoffice.embindtest.Enum.E_2));
+        console.assert(test.isAnyEnum(Module.uno.org.libreoffice.embindtest.Enum.E_2));
     }
     {
         const v = test.getAnyStruct();

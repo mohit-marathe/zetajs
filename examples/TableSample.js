@@ -51,11 +51,7 @@ Module.addOnPostRun(function() {
         text.insertControlCharacter(cursor, css.text.ControlCharacter.PARAGRAPH_BREAK, false);
         const textFrame = doc.createInstance('com.sun.star.text.TextFrame');
         textFrame.setSize({Width: 15000, Height: 400});
-        textFrame.setPropertyValue(
-            'AnchorType',
-            new Module.jsuno.Any(
-                Module.uno_Type.Enum('com.sun.star.text.TextContentAnchorType'),
-                css.text.TextContentAnchorType.AS_CHARACTER));
+        textFrame.setPropertyValue('AnchorType', css.text.TextContentAnchorType.AS_CHARACTER);
         text.insertTextContent(cursor, textFrame, false);
         const textInTextFrame = textFrame.getText();
         const cursorInTextFrame = textInTextFrame.createTextCursor();

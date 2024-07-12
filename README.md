@@ -26,11 +26,7 @@ When a UNO interface method takes a parameter of a specific non-`ANY` UNO type, 
 between these convenient JS argument values and the underlying Embind values works well.  However,
 when such a method parameter is of generic `ANY` type, the conversion code needs to guess an
 appropriate UNO type based solely on the given JS argument value, which does not work well in all
-cases.  But client code can always explicitly provide a JS Module.jsuno.Any object.  One notable
-problematic case is UNO enum values, where the conversion code unfortunately cannot tell from the JS
-object alone what UNO enum type it belongs to; enum values passed as `ANY` values always need to be
-wrapped like `new Module.jsuno.Any(Module.uno_Type.Enum('com.sun.star.script.FinishReason'),
-Module.uno.com.sun.star.script.FinishReason.OK)`.
+cases.  But client code can always explicitly provide a JS Module.jsuno.Any object.
 
 ## Examples and test code
 

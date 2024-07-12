@@ -214,6 +214,14 @@ Module.jsuno = {
                         fromType = obj.type;
                         val = Module.jsuno.translateToEmbind(obj.val, obj.type, toDelete);
                     } else {
+                        const tag = obj[Module.unoTagSymbol];
+                        if (tag !== undefined) {
+                            if (tag.kind === 'enumerator') {
+                                fromType = Module.uno_Type.Enum(tag.type);
+                                val = obj;
+                                break;
+                            }
+                        }
                         throw new Error('TODO');
                     }
                     break;
