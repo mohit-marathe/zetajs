@@ -8,7 +8,6 @@ Module.addOnPostRun(function() {
     setTimeout(function() {
         {
             Module.initUno();
-            const css = Module.uno.com.sun.star;
             const xModel = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
             const xText = xModel.getText();
             const xTextCursor = xText.createTextCursor();
@@ -16,7 +15,6 @@ Module.addOnPostRun(function() {
         }
         {
             Module.initUno();
-            const css = Module.uno.com.sun.star;
             const xModel = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
             const xText = xModel.getText();
             const xParaEnumeration = xText.createEnumeration();
