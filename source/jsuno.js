@@ -495,53 +495,22 @@ Module.jsuno = {
         return prox;
     },
 
-    Any: function(type, val) {
-        this.type = type;
-        this.val = val;
+    singleton: function(name) {
+        return function(context) {
+            const any = context.getValueByName('/singletons/' + name);
+            if (any.type.getTypeClass() !== Module.uno.com.sun.star.uno.TypeClass.INTERFACE
+                || any.val === null)
+            {
+                Module.jsuno.throwUnoException(
+                    new Module.jsuno.Any(
+                        Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
+                        {Message: 'cannot get singeleton ' + name, Context: null}));
+            }
+            return any.val;
+        };
     },
 
-    sameUnoObject: function(obj1, obj2) {
-        return Module.sameUnoObject(
-            Module.jsuno.translateToEmbind(
-                obj1, Module.uno_Type.Interface('com.sun.star.uno.XInterface'), []),
-            Module.jsuno.translateToEmbind(
-                obj2, Module.uno_Type.Interface('com.sun.star.uno.XInterface'), []));
-    },
-
-    getUnoComponentContext: function() {
-        return Module.jsuno.proxy(Module.getUnoComponentContext());
-    },
-
-    throwUnoException: function(any) { Module.throwUnoException(any.type, any.val); },
-
-    catchUnoException: function(exception) {
-        return Module.jsuno.translateFromAnyAndDelete(
-            Module.catchUnoException(exception), Module.uno_Type.Any());
-    },
-
-    singleton: function(name, context) {
-        const any = context.getValueByName('/singletons/' + name);
-        if (any.type.getTypeClass() !== Module.uno.com.sun.star.uno.TypeClass.INTERFACE
-            || any.val === null)
-        {
-            Module.jsuno.throwUnoException(
-                new Module.jsuno.Any(
-                    Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
-                    {Message: 'cannot get singeleton ' + name, Context: null}));
-        }
-        return any.val;
-    },
-
-    service: function(name) {
-        const tdAny = Module.jsuno.getTypeDescriptionManager().getByHierarchicalName(name);
-        const td = Module.uno.com.sun.star.reflection.XServiceTypeDescription2.query(tdAny.get());
-        tdAny.delete();
-        if (td === null || !td.isSingleInterfaceBased()) {
-            Module.jsuno.throwUnoException(
-                new Module.jsuno.Any(
-                    Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
-                    {Message: 'unknown single-interface service ' + name, Context: null}));
-        }
+    service: function(name, td) {
         const obj = {};
         const ctors = td.getConstructors();
         for (let i = 0; i !== ctors.size(); ++i) {
@@ -599,6 +568,76 @@ Module.jsuno = {
         ctors.delete();
         return obj;
     },
+
+    unoidlProxy: function(path) {
+        return new Proxy({}, {
+            get(target, prop) {
+                if (!Object.hasOwn(target, prop)) {
+                    const name = path + '.' + prop;
+                    console.log('GET 2 <'+name+'>');
+                    const tdm = Module.jsuno.getTypeDescriptionManager();
+                    const tdAny = tdm.getByHierarchicalName(name);
+                    const td = Module.uno.com.sun.star.reflection.XTypeDescription.query(
+                        tdAny.get());
+                    tdAny.delete();
+                    switch (td.getTypeClass()) {
+                    case Module.uno.com.sun.star.uno.TypeClass.MODULE:
+                        target[prop] = Module.jsuno.unoidlProxy(name);
+                        break;
+                    case Module.uno.com.sun.star.uno.TypeClass.SINGLETON:
+                        target[prop] = Module.jsuno.singleton(name);
+                        break;
+                    case Module.uno.com.sun.star.uno.TypeClass.SERVICE:
+                        {
+                            const std = Module.uno.com.sun.star.reflection.XServiceTypeDescription2
+                                  .query(td);
+                            if (std.isSingleInterfaceBased()) {
+                                target[prop] = Module.jsuno.service(name, std);
+                            }
+                            break;
+                        }
+                    }
+                }
+                return target[prop];
+            }
+        });
+    },
+
+    Any: function(type, val) {
+        this.type = type;
+        this.val = val;
+    },
+
+    sameUnoObject: function(obj1, obj2) {
+        return Module.sameUnoObject(
+            Module.jsuno.translateToEmbind(
+                obj1, Module.uno_Type.Interface('com.sun.star.uno.XInterface'), []),
+            Module.jsuno.translateToEmbind(
+                obj2, Module.uno_Type.Interface('com.sun.star.uno.XInterface'), []));
+    },
+
+    getUnoComponentContext: function() {
+        return Module.jsuno.proxy(Module.getUnoComponentContext());
+    },
+
+    throwUnoException: function(any) { Module.throwUnoException(any.type, any.val); },
+
+    catchUnoException: function(exception) {
+        return Module.jsuno.translateFromAnyAndDelete(
+            Module.catchUnoException(exception), Module.uno_Type.Any());
+    },
+
+    uno: new Proxy({}, {
+        get(target, prop) {
+            if (!Object.hasOwn(target, prop)) {
+                const tdm = Module.jsuno.getTypeDescriptionManager();
+                const td = tdm.getByHierarchicalName(prop);
+                td.delete();
+                target[prop] = Module.jsuno.unoidlProxy(prop);
+            }
+            return target[prop];
+        }
+    }),
 
     unoObject: function(interfaces, obj) {
         const wrapper = {};

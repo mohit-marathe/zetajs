@@ -10,7 +10,7 @@ Module.addOnPostRun(function() {
     Module.initUno();
     const css = Module.uno.com.sun.star;
     const context = Module.jsuno.getUnoComponentContext();
-    const test = Module.jsuno.service('org.libreoffice.embindtest.Test').create(context);
+    const test = Module.jsuno.uno.org.libreoffice.embindtest.Test.create(context);
     {
         const v = test.getBoolean();
         console.assert(v === true);
@@ -513,30 +513,16 @@ Module.addOnPostRun(function() {
     console.assert(test.StringAttribute === 'hä');
     test.StringAttribute = 'foo';
     console.assert(test.StringAttribute === 'foo');
-    try {
-        Module.jsuno.singleton('unknown', context);
-        console.assert(false);
-    } catch (e) {
-        const exc = Module.jsuno.catchUnoException(e);
-        console.assert(exc.type == 'com.sun.star.uno.DeploymentException');
-        console.assert(exc.val.Message.startsWith('cannot get singeleton unknown'));
-    }
-    try {
-        Module.jsuno.service('com.sun.star.reflection.CoreReflection');
-        console.assert(false);
-    } catch (e) {
-        const exc = Module.jsuno.catchUnoException(e);
-        console.assert(exc.type == 'com.sun.star.uno.DeploymentException');
-        console.assert(
-            exc.val.Message.startsWith(
-                'unknown single-interface service com.sun.star.reflection.CoreReflection'));
-    }
     {
-        const urifac = Module.jsuno.service('com.sun.star.uri.UriReferenceFactory').create(context);
+        const tdm = Module.jsuno.uno.com.sun.star.beans.theIntrospection(context);
         //...
     }
     {
-        const propbag = Module.jsuno.service('com.sun.star.beans.PropertyBag').createWithTypes(
+        const urifac = Module.jsuno.uno.com.sun.star.uri.UriReferenceFactory.create(context);
+        //...
+    }
+    {
+        const propbag = Module.jsuno.uno.com.sun.star.beans.PropertyBag.createWithTypes(
             context, [Module.uno_Type.Boolean(), Module.uno_Type.Long()], false, false);
         //...
     }
