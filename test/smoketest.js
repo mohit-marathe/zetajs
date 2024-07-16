@@ -562,6 +562,7 @@ Module.addOnPostRun(function() {
     test.passJob(obj);
     test.passJobExecutor(obj);
     test.passInterface(obj);
+    obj.trigger('from JS');
 });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
