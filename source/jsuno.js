@@ -607,12 +607,12 @@ Module.jsuno = {
                     if (atd !== null) {
                         const aname = atd.getMemberName();
                         const type = Module.jsuno.translateTypeDescription(atd.getType());
-                        wrappers['get' + aname] = function() {
+                        wrapper['get' + aname] = function() {
                             return Module.jsuno.translateToEmbind(
                                 obj['get' + aname].apply(obj), type, []);
                         };
                         if (!atd.isReadOnly()) {
-                            wrappers['set' + aname] = function() {
+                            wrapper['set' + aname] = function() {
                                 obj['set' + aname].apply(
                                     obj, [Module.jsuno.translateFromEmbind(arguments[0], type)]);
                             };

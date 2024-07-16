@@ -546,7 +546,8 @@ Module.addOnPostRun(function() {
     }
 
     const obj = Module.jsuno.unoObject(
-        ['com.sun.star.task.XJob', 'com.sun.star.task.XJobExecutor'],
+        ['com.sun.star.task.XJob', 'com.sun.star.task.XJobExecutor',
+         'org.libreoffice.embindtest.XAttributes'],
         {
             execute(args) {
                 if (args.length !== 1 || args[0].Name !== 'name') {
@@ -557,12 +558,31 @@ Module.addOnPostRun(function() {
                 console.log('Hello ' + args[0].Value.val);
                 return new Module.jsuno.Any(Module.uno_Type.Void());
             },
-            trigger(event) { console.log('Ola ' + event); }
+            trigger(event) { console.log('Ola ' + event); },
+            the_LongAttribute: -123456,
+            getLongAttribute() { return this.the_LongAttribute; },
+            setLongAttribute(value) { this.the_LongAttribute = value; },
+            the_StringAttribute: 'hä',
+            getStringAttribute() { return this.the_StringAttribute; },
+            setStringAttribute(value) { this.the_StringAttribute = value; },
+            getReadOnlyAttribute() { return true; }
         });
     test.passJob(obj);
     test.passJobExecutor(obj);
     test.passInterface(obj);
     obj.trigger('from JS');
+    console.assert(obj.LongAttribute === -123456);
+    obj.LongAttribute = 789;
+    console.assert(obj.LongAttribute === 789);
+    console.assert(obj.StringAttribute === 'hä');
+    obj.StringAttribute = 'foo';
+    console.assert(obj.StringAttribute === 'foo');
+    console.assert(obj.ReadOnlyAttribute === true);
+    try {
+        obj.ReadOnlyAttribute = false;
+        console.assert(false);
+    } catch (e) {}
+    console.assert(test.checkAttributes(obj));
 });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
