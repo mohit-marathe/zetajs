@@ -488,6 +488,7 @@ Module.jsuno = {
             for (let i = 0; i != types.size(); ++i) {
                 const td = tdm.getByHierarchicalName(types.get(i).toString());
                 walk(Module.uno.com.sun.star.reflection.XTypeDescription.query(td.get()));
+                td.delete();
             }
             types.delete();
         }
