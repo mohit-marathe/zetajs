@@ -149,15 +149,18 @@ Module.jsuno = {
                 return obj;
             }
         case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
-            if (obj !== null && type.toString() !== 'com.sun.star.uno.XInterface') {
+            if (obj !== null) {
                 const target = obj[Module.jsuno.getProxyTarget];
                 const handle = target === undefined ? obj : target;
                 if (handle instanceof ClassHandle) {
+                    if (type.toString() === 'com.sun.star.uno.XInterface') {
+                        return handle;
+                    }
                     const embindType = 'uno_Type_' + type.toString().replace(/\./g, '$');
                     if (embindType === handle.$$.ptrType.registeredClass.name) {
-                        return obj;
+                        return handle;
                     } else {
-                        return Module[embindType].query(obj);
+                        return Module[embindType].query(handle);
                     }
                 }
             }
@@ -320,175 +323,188 @@ Module.jsuno = {
             return null;
         }
         Module.initUno();
-        const arg = new Module.uno_Any(
-            Module.uno_Type.Interface('com.sun.star.uno.XInterface'), unoObject);
-        const args = new Module.uno_Sequence_any([arg]);
-        const invoke = Module.uno.com.sun.star.script.XInvocation2.query(
-            Module.uno.com.sun.star.script.Invocation.create(
-                Module.getUnoComponentContext()).createInstanceWithArguments(args));
-        arg.delete();
-        args.delete();
-        return new Proxy(unoObject, {
-            get(target, prop) {
-                if (prop === Module.jsuno.getProxyTarget) {
-                    return target;
-                } else if (prop === '$$') {
-                    return Reflect.get(target, prop);
-                } else if (invoke.hasMethod(prop)) {
-                    const info = invoke.getInfoForName(prop, true);
-                    return function() {
-                        if (arguments.length != info.aParamTypes.size()) {
-                            throw new Error(
-                                'bad number of arguments in call to ' + prop + ', expected ' +
-                                    info.aParamTypes.size() + ' vs. actual ' + arguments.length);
-                        }
-                        const args = new Module.uno_Sequence_any(
-                            info.aParamTypes.size(), Module.uno_Sequence.FromSize);
-                        const deleteArgs = [];
-                        for (let i = 0; i !== info.aParamTypes.size(); ++i) {
-                            switch (info.aParamModes.get(i)) {
-                            case Module.uno.com.sun.star.reflection.ParamMode.IN:
-                                {
-                                    const {any, owning} = Module.jsuno.translateToAny(
-                                        arguments[i], info.aParamTypes.get(i));
-                                    args.set(i, any);
-                                    if (owning) {
-                                        deleteArgs.push(any);
-                                    }
-                                    break;
-                                }
-                            case Module.uno.com.sun.star.reflection.ParamMode.INOUT:
-                                if (Module.jsuno.isEmbindInOutParam(arguments[i])) {
-                                    const val = arguments[i].val;
-                                    if (info.aParamTypes.get(i).getTypeClass()
-                                        === Module.uno.com.sun.star.uno.TypeClass.ANY)
-                                    {
-                                        args.set(i, val);
-                                        val.delete();
-                                    } else {
-                                        const any = new Module.uno_Any(
-                                            info.aParamTypes.get(i), val);
-                                        if (Module.jsuno.isEmbindSequence(val)) {
-                                            val.delete();
-                                        }
-                                        args.set(i, any);
-                                        deleteArgs.push(any);
-                                    }
-                                } else {
-                                    const {any, owning} = Module.jsuno.translateToAny(
-                                        arguments[i].val, info.aParamTypes.get(i));
-                                    args.set(i, any);
-                                    if (owning) {
-                                        deleteArgs.push(any);
-                                    }
-                                }
-                                break;
+        const prox = {};
+        prox[Module.jsuno.getProxyTarget] = unoObject;
+        // css.script.XInvocation2::getInfo invents additional members (e.g., an attribute "Foo" if
+        // there is a method "getFoo"), so better determine the actual set of members via
+        // css.lang.XTypeProvider::getTypes:
+        const typeprov = Module.uno.com.sun.star.lang.XTypeProvider.query(unoObject);
+        if (typeprov !== null) {
+            const arg = new Module.uno_Any(
+                Module.uno_Type.Interface('com.sun.star.uno.XInterface'), unoObject);
+            const args = new Module.uno_Sequence_any([arg]);
+            const invoke = Module.uno.com.sun.star.script.XInvocation2.query(
+                Module.uno.com.sun.star.script.Invocation.create(
+                    Module.getUnoComponentContext()).createInstanceWithArguments(args));
+            arg.delete();
+            args.delete();
+            const invokeMethod = function(name, args) {
+                const info = invoke.getInfoForName(name, true);
+                if (args.length != info.aParamTypes.size()) {
+                    throw new Error(
+                        'bad number of arguments in call to ' + name + ', expected ' +
+                            info.aParamTypes.size() + ' vs. actual ' + arg.length);
+                }
+                const unoArgs = new Module.uno_Sequence_any(
+                    info.aParamTypes.size(), Module.uno_Sequence.FromSize);
+                const deleteArgs = [];
+                for (let i = 0; i !== info.aParamTypes.size(); ++i) {
+                    switch (info.aParamModes.get(i)) {
+                    case Module.uno.com.sun.star.reflection.ParamMode.IN:
+                        {
+                            const {any, owning} = Module.jsuno.translateToAny(
+                                args[i], info.aParamTypes.get(i));
+                            unoArgs.set(i, any);
+                            if (owning) {
+                                deleteArgs.push(any);
                             }
+                            break;
                         }
-                        const outparamindex_out = new Module.uno_InOutParam_sequence_short;
-                        const outparam_out = new Module.uno_InOutParam_sequence_any;
-                        let ret;
-                        try {
-                            ret = invoke.invoke(prop, args, outparamindex_out, outparam_out);
-                        } catch (e) {
-                            outparamindex_out.delete();
-                            outparam_out.delete();
-                            const exc = Module.jsuno.catchUnoException(e);
-                            if (exc.type == 'com.sun.star.reflection.InvocationTargetException') {
-                                Module.jsuno.throwUnoException(exc.val.TargetException);
-                            } else {
-                                Module.jsuno.throwUnoException(exc);
-                            }
-                        } finally {
-                            deleteArgs.forEach((arg) => arg.delete());
-                            args.delete();
-                        }
-                        outparamindex = outparamindex_out.val;
-                        outparamindex_out.delete();
-                        outparam = outparam_out.val;
-                        outparam_out.delete();
-                        for (let i = 0; i !== outparamindex.size(); ++i) {
-                            const j = outparamindex.get(i);
-                            if (Module.jsuno.isEmbindInOutParam(arguments[j])) {
-                                const val = outparam.get(i);
-                                if (info.aParamTypes.get(j).getTypeClass()
-                                    === Module.uno.com.sun.star.uno.TypeClass.ANY)
-                                {
-                                    arguments[j].val = val;
-                                } else {
-                                    const val2 = val.get();
-                                    arguments[j].val = val2;
-                                    if (Module.jsuno.isEmbindSequence(val2)) {
-                                        val2.delete();
-                                    }
-                                }
+                    case Module.uno.com.sun.star.reflection.ParamMode.INOUT:
+                        if (Module.jsuno.isEmbindInOutParam(args[i])) {
+                            const val = args[i].val;
+                            if (info.aParamTypes.get(i).getTypeClass()
+                                === Module.uno.com.sun.star.uno.TypeClass.ANY)
+                            {
+                                unoArgs.set(i, val);
                                 val.delete();
                             } else {
-                                arguments[j].val = Module.jsuno.translateFromAnyAndDelete(
-                                outparam.get(i), info.aParamTypes.get(j));
+                                const any = new Module.uno_Any(info.aParamTypes.get(i), val);
+                                if (Module.jsuno.isEmbindSequence(val)) {
+                                    val.delete();
+                                }
+                                unoArgs.set(i, any);
+                                deleteArgs.push(any);
+                            }
+                        } else {
+                            const {any, owning} = Module.jsuno.translateToAny(
+                                args[i].val, info.aParamTypes.get(i));
+                            unoArgs.set(i, any);
+                            if (owning) {
+                                deleteArgs.push(any);
                             }
                         }
-                        outparamindex.delete();
-                        outparam.delete();
-                        return Module.jsuno.translateFromAnyAndDelete(ret, info.aType);
-                    };
-                } else if (invoke.hasProperty(prop)) {
-                    const info = invoke.getInfoForName(prop, true);
-                    let ret;
-                    try {
-                        ret = invoke.getValue(prop);
-                    } catch (e) {
-                        const [type, message] = getExceptionMessage(e);
-                        if (type === 'com::sun::star::reflection::InvocationTargetException') {
-                            //TODO: get at the wrapped exception
-                            decrementExceptionRefcount(e);
-                            throw new Error('TODO: unidentified UNO exception');
-                        } else {
-                            //TODO:
-                            throw e;
-                        }
+                        break;
                     }
-                    return Module.jsuno.translateFromAnyAndDelete(ret, info.aType);
-                } else {
-                    throw new Error('get unknown property ' + prop);
                 }
-            },
-            set(target, prop, value) {
-                if (invoke.hasProperty(prop)) {
-                    const info = invoke.getInfoForName(prop, true);
-                    if (info.PropertyAttribute
-                        & Module.uno.com.sun.star.beans.PropertyAttribute.READONLY)
-                    {
-                        throw new Error('set readonly property ' + prop);
+                const outparamindex_out = new Module.uno_InOutParam_sequence_short;
+                const outparam_out = new Module.uno_InOutParam_sequence_any;
+                let ret;
+                try {
+                    ret = invoke.invoke(name, unoArgs, outparamindex_out, outparam_out);
+                } catch (e) {
+                    outparamindex_out.delete();
+                    outparam_out.delete();
+                    const exc = Module.jsuno.catchUnoException(e);
+                    if (exc.type == 'com.sun.star.reflection.InvocationTargetException') {
+                        Module.jsuno.throwUnoException(exc.val.TargetException);
+                    } else {
+                        Module.jsuno.throwUnoException(exc);
                     }
-                    const {any, owning} = Module.jsuno.translateToAny(value, info.aType);
-                    try {
-                        invoke.setValue(prop, any);
-                    } catch (e) {
-                        const [type, message] = getExceptionMessage(e);
-                        if (type === 'com::sun::star::reflection::InvocationTargetException') {
-                            //TODO: get at the wrapped exception
-                            decrementExceptionRefcount(e);
-                            throw new Error('TODO: unidentified UNO exception');
-                        } else {
-                            //TODO:
-                            throw e;
-                        }
-                    } finally {
-                        if (owning) {
-                            any.delete();
-                        }
-                    }
-                } else {
-                    throw new Error('set unknown property ' + prop);
+                } finally {
+                    deleteArgs.forEach((arg) => arg.delete());
+                    unoArgs.delete();
                 }
+                outparamindex = outparamindex_out.val;
+                outparamindex_out.delete();
+                outparam = outparam_out.val;
+                outparam_out.delete();
+                for (let i = 0; i !== outparamindex.size(); ++i) {
+                    const j = outparamindex.get(i);
+                    if (Module.jsuno.isEmbindInOutParam(args[j])) {
+                        const val = outparam.get(i);
+                        if (info.aParamTypes.get(j).getTypeClass()
+                            === Module.uno.com.sun.star.uno.TypeClass.ANY)
+                        {
+                            args[j].val = val;
+                        } else {
+                            const val2 = val.get();
+                            args[j].val = val2;
+                            if (Module.jsuno.isEmbindSequence(val2)) {
+                                val2.delete();
+                            }
+                        }
+                        val.delete();
+                    } else {
+                        args[j].val = Module.jsuno.translateFromAnyAndDelete(
+                            outparam.get(i), info.aParamTypes.get(j));
+                    }
+                }
+                outparamindex.delete();
+                outparam.delete();
+                return Module.jsuno.translateFromAnyAndDelete(ret, info.aType);
+            };
+            const invokeGetter = function(name) {
+                const info = invoke.getInfoForName(name, true);
+                const ret = invoke.getValue(name);
+                return Module.jsuno.translateFromAnyAndDelete(ret, info.aType);
+            };
+            const invokeSetter = function(name, value) {
+                const info = invoke.getInfoForName(name, true);
+                const deleteArgs = [];
+                const {any, owning} = Module.jsuno.translateToAny(value, info.aType);
+                if (owning) {
+                    deleteArgs.push(any);
+                }
+                invoke.setValue(name, any);
+            };
+            const seen = {'com.sun.star.uno.XInterface': true};
+            const walk = function(td) {
+                const iname = td.getName();
+                if (!Object.hasOwn(seen, iname)) {
+                    seen[iname] = true;
+                    if (td.getTypeClass() !== Module.uno.com.sun.star.uno.TypeClass.INTERFACE) {
+                        throw new Error('not a UNO interface type: ' + iname);
+                    }
+                    const itd = Module.uno.com.sun.star.reflection.XInterfaceTypeDescription2.query(
+                        td);
+                    const bases = itd.getBaseTypes();
+                    for (let i = 0; i !== bases.size(); ++i) {
+                        walk(bases.get(i));
+                    }
+                    bases.delete();
+                    const mems = itd.getMembers();
+                    for (let i = 0; i !== mems.size(); ++i) {
+                        const name = mems.get(i).getMemberName();
+                        const atd =
+                              Module.uno.com.sun.star.reflection.XInterfaceAttributeTypeDescription
+                              .query(mems.get(i));
+                        if (atd !== null) {
+                            Object.defineProperty(prox, name, {
+                                enumerable: true,
+                                get() { return invokeGetter(name); },
+                                set: atd.isReadOnly()
+                                    ? undefined
+                                    : function(value) { return invokeSetter(name, value); }});
+                        } else {
+                            prox[name] = function() { return invokeMethod(name, arguments); };
+                        }
+                    }
+                    mems.delete();
+                }
+            };
+            const tdm = Module.jsuno.getTypeDescriptionManager();
+            const types = typeprov.getTypes();
+            for (let i = 0; i != types.size(); ++i) {
+                const td = tdm.getByHierarchicalName(types.get(i).toString());
+                walk(Module.uno.com.sun.star.reflection.XTypeDescription.query(td.get()));
             }
-        });
+            types.delete();
+        }
+        return prox;
     },
 
     Any: function(type, val) {
         this.type = type;
         this.val = val;
+    },
+
+    sameUnoObject: function(obj1, obj2) {
+        return Module.sameUnoObject(
+            Module.jsuno.translateToEmbind(
+                obj1, Module.uno_Type.Interface('com.sun.star.uno.XInterface'), []),
+            Module.jsuno.translateToEmbind(
+                obj2, Module.uno_Type.Interface('com.sun.star.uno.XInterface'), []));
     },
 
     getUnoComponentContext: function() {

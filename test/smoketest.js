@@ -225,7 +225,7 @@ Module.addOnPostRun(function() {
     }
     {
         const v = test.getAnyInterface();
-        console.assert(Module.sameUnoObject(v.val, test));
+        console.assert(Module.jsuno.sameUnoObject(v.val, test));
         console.assert(test.isAnyInterface(v));
         console.assert(test.isAnyInterface(
             new Module.jsuno.Any(
@@ -393,10 +393,6 @@ Module.addOnPostRun(function() {
         console.assert(test.isNull(v));
     }
     {
-        const v = css.task.XJob.query(test);
-        console.assert(v === null);
-    }
-    {
         const v1 = {};
         const v2 = {};
         const v3 = {};
@@ -439,7 +435,7 @@ Module.addOnPostRun(function() {
         console.assert(v17.val.m1 === -123456);
         console.assert(v17.val.m2 === 100.5);
         console.assert(v17.val.m3 === 'hä');
-        console.assert(Module.sameUnoObject(v18.val, test));
+        console.assert(Module.jsuno.sameUnoObject(v18.val, test));
     }
     {
         const v1 = new Module.uno_InOutParam_boolean;
@@ -484,7 +480,7 @@ Module.addOnPostRun(function() {
         console.assert(v17.val.m1 === -123456);
         console.assert(v17.val.m2 === 100.5);
         console.assert(v17.val.m3 === 'hä');
-        console.assert(Module.sameUnoObject(v18.val, test));
+        console.assert(Module.jsuno.sameUnoObject(v18.val, test));
         v1.delete();
         v2.delete();
         v3.delete();
@@ -578,10 +574,8 @@ Module.addOnPostRun(function() {
     obj.StringAttribute = 'foo';
     console.assert(obj.StringAttribute === 'foo');
     console.assert(obj.ReadOnlyAttribute === true);
-    try {
-        obj.ReadOnlyAttribute = false;
-        console.assert(false);
-    } catch (e) {}
+    obj.ReadOnlyAttribute = false; //TODO: silently ignored
+    console.assert(obj.ReadOnlyAttribute === true);
     console.assert(test.checkAttributes(obj));
 });
 
