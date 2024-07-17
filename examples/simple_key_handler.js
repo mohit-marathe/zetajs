@@ -12,7 +12,7 @@
 "use strict";
 
 // Make variables accessible from the console for debugging.
-let css, xModel, xModel_from_component, xController, refXKeyHandler;
+let xModel, xModel_from_component, xController, refXKeyHandler;
 let evtPressed, evtReleased;
 
 
@@ -20,7 +20,6 @@ function demo() {
     console.log('PLUS: execute example code');
 
     Module.initUno();
-    css = Module.uno.com.sun.star;
 
     /* Implements com.sun.star.awt.XKeyHandler
      * Outputs printable characters typed into the OfficeDocument.
