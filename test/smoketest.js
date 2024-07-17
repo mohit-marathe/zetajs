@@ -8,7 +8,6 @@
 
 Module.addOnPostRun(function() {
     Module.initUno();
-    const css = Module.uno.com.sun.star;
     const context = Module.jsuno.getUnoComponentContext();
     const test = Module.jsuno.uno.org.libreoffice.embindtest.Test.create(context);
     {
