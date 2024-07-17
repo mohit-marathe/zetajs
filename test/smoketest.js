@@ -8,6 +8,7 @@
 
 Module.addOnPostRun(function() {
     Module.initUno();
+    const css = Module.jsuno.uno.com.sun.star;
     const context = Module.jsuno.getUnoComponentContext();
     const test = Module.jsuno.uno.org.libreoffice.embindtest.Test.create(context);
     {
@@ -527,8 +528,8 @@ Module.addOnPostRun(function() {
     }
 
     const obj = Module.jsuno.unoObject(
-        ['com.sun.star.task.XJob', 'com.sun.star.task.XJobExecutor',
-         'org.libreoffice.embindtest.XAttributes'],
+        [css.task.XJob, css.task.XJobExecutor,
+         Module.jsuno.uno.org.libreoffice.embindtest.XAttributes],
         {
             execute(args) {
                 if (args.length !== 1 || args[0].Name !== 'name') {

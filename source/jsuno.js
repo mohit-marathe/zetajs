@@ -582,6 +582,9 @@ Module.jsuno = {
                         tdAny.get());
                     tdAny.delete();
                     switch (td.getTypeClass()) {
+                    case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
+                        target[prop] = {[Module.unoTagSymbol]: {kind: 'interface', type: name}};
+                        break;
                     case Module.uno.com.sun.star.uno.TypeClass.MODULE:
                         target[prop] = Module.jsuno.unoidlProxy(name);
                         break;
@@ -721,12 +724,20 @@ Module.jsuno = {
             }
         };
         const tdm = Module.jsuno.getTypeDescriptionManager();
+        const interfaceNames = [];
         interfaces.forEach((i) => {
-            const td = tdm.getByHierarchicalName(i);
+            let name = i;
+            if (typeof name === 'object' && Object.hasOwn(name, Module.unoTagSymbol)
+                && name[Module.unoTagSymbol].kind === 'interface')
+            {
+                name = name[Module.unoTagSymbol].type;
+            }
+            interfaceNames.push(name);
+            const td = tdm.getByHierarchicalName(name);
             walk(Module.uno.com.sun.star.reflection.XTypeDescription.query(td.get()));
             td.delete();
         })
-        return Module.jsuno.proxy(Module.unoObject(interfaces, wrapper));
+        return Module.jsuno.proxy(Module.unoObject(interfaceNames, wrapper));
     },
 };
 
