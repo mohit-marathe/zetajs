@@ -7,14 +7,14 @@
 Module.addOnPostRun(function() {
     setTimeout(function() {
         {
-            Module.initUno();
+            Module.jsuno_init();
             const xModel = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
             const xText = xModel.getText();
             const xTextCursor = xText.createTextCursor();
             xTextCursor.setString("string here!");
         }
         {
-            Module.initUno();
+            Module.jsuno_init();
             const xModel = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
             const xText = xModel.getText();
             const xParaEnumeration = xText.createEnumeration();

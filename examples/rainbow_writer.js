@@ -80,7 +80,7 @@ function ColorXKeyHandler(xModel) {
 
 
 function init_demo() {
-    Module.initUno();
+    Module.jsuno_init();
     css = Module.uno.com.sun.star;
     uno_bold = new Module.uno_Any(Module.uno_Type.Float(), css.awt.FontWeight.BOLD);
     uno_long = Module.uno_Type.Long();

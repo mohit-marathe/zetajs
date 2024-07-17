@@ -7,7 +7,7 @@
 
 Module.addOnPostRun(function() {
     setTimeout(function() {
-        Module.initUno();
+        Module.jsuno_init();
         const css = Module.jsuno.uno.com.sun.star;
         const doc = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
         const text = doc.getText();

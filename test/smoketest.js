@@ -7,7 +7,7 @@
 // to have the org.libreoffice.embindtest UNOIDL entities available:
 
 Module.addOnPostRun(function() {
-    Module.initUno();
+    Module.jsuno_init();
     const css = Module.jsuno.uno.com.sun.star;
     const context = Module.jsuno.getUnoComponentContext();
     const test = Module.jsuno.uno.org.libreoffice.embindtest.Test.create(context);
@@ -75,7 +75,7 @@ Module.addOnPostRun(function() {
         const v = test.getType();
         console.assert(v.toString() === 'long');
         console.assert(test.isType(v));
-        console.assert(test.isType(Module.uno_Type.Long()));
+        console.assert(test.isType(Module.jsuno.type.long));
     }
     {
         const v = test.getEnum();
@@ -105,20 +105,20 @@ Module.addOnPostRun(function() {
         const v = test.getAnyByte();
         console.assert(v.val === -12);
         console.assert(test.isAnyByte(v));
-        console.assert(test.isAnyByte(new Module.jsuno.Any(Module.uno_Type.Byte(), -12)));
+        console.assert(test.isAnyByte(new Module.jsuno.Any(Module.jsuno.type.byte, -12)));
     }
     {
         const v = test.getAnyShort();
         console.assert(v.val === -1234);
         console.assert(test.isAnyShort(v));
-        console.assert(test.isAnyShort(new Module.jsuno.Any(Module.uno_Type.Short(), -1234)));
+        console.assert(test.isAnyShort(new Module.jsuno.Any(Module.jsuno.type.short, -1234)));
     }
     {
         const v = test.getAnyUnsignedShort();
         console.assert(v.val === 54321);
         console.assert(test.isAnyUnsignedShort(v));
         console.assert(test.isAnyUnsignedShort(
-            new Module.jsuno.Any(Module.uno_Type.UnsignedShort(), 54321)));
+            new Module.jsuno.Any(Module.jsuno.type.unsigned_short, 54321)));
     }
     {
         const v = test.getAnyLong();
@@ -143,13 +143,13 @@ Module.addOnPostRun(function() {
         console.assert(v.val === 9876543210n);
         console.assert(test.isAnyUnsignedHyper(v));
         console.assert(test.isAnyUnsignedHyper(
-            new Module.jsuno.Any(Module.uno_Type.UnsignedHyper(), 9876543210n)));
+            new Module.jsuno.Any(Module.jsuno.type.unsigned_hyper, 9876543210n)));
     }
     {
         const v = test.getAnyFloat();
         console.assert(v.val === -10.25);
         console.assert(test.isAnyFloat(v));
-        console.assert(test.isAnyFloat(new Module.jsuno.Any(Module.uno_Type.Float(), -10.25)));
+        console.assert(test.isAnyFloat(new Module.jsuno.Any(Module.jsuno.type.float, -10.25)));
     }
     {
         const v = test.getAnyDouble();
@@ -161,7 +161,7 @@ Module.addOnPostRun(function() {
         const v = test.getAnyChar();
         console.assert(v.val === 'Ö');
         console.assert(test.isAnyChar(v));
-        console.assert(test.isAnyChar(new Module.jsuno.Any(Module.uno_Type.Char(), 'Ö')));
+        console.assert(test.isAnyChar(new Module.jsuno.Any(Module.jsuno.type.char, 'Ö')));
     }
     {
         const v = test.getAnyString();
@@ -173,7 +173,7 @@ Module.addOnPostRun(function() {
         const v = test.getAnyType();
         console.assert(v.val.toString() === 'long');
         console.assert(test.isAnyType(v));
-        console.assert(test.isAnyType(Module.uno_Type.Long()));
+        console.assert(test.isAnyType(Module.jsuno.type.long));
     }
     {
         const v = test.getAnySequence();
@@ -187,11 +187,11 @@ Module.addOnPostRun(function() {
         console.assert(test.isAnySequence(a));
         a.delete();
         console.assert(test.isAnySequence(
-            new Module.jsuno.Any(Module.uno_Type.Sequence(Module.uno_Type.String()), s)));
+            new Module.jsuno.Any(Module.jsuno.type.sequence(Module.jsuno.type.string), s)));
         s.delete();
         console.assert(test.isAnySequence(
             new Module.jsuno.Any(
-                Module.uno_Type.Sequence(Module.uno_Type.String()), ["foo", "barr", "bazzz"])));
+                Module.jsuno.type.sequence(Module.jsuno.type.string), ["foo", "barr", "bazzz"])));
     }
     {
         const v = test.getAnyEnum();
@@ -207,7 +207,7 @@ Module.addOnPostRun(function() {
         console.assert(test.isAnyStruct(v));
         console.assert(test.isAnyStruct(
             new Module.jsuno.Any(
-                Module.uno_Type.Struct('org.libreoffice.embindtest.Struct'),
+                Module.jsuno.type.struct(Module.jsuno.uno.org.libreoffice.embindtest.Struct),
                 {m1: -123456, m2: 100.5, m3: 'hä'})));
     }
     {
@@ -220,7 +220,7 @@ Module.addOnPostRun(function() {
         console.assert(test.isAnyException(v));
         console.assert(test.isAnyException(
             new Module.jsuno.Any(
-                Module.uno_Type.Exception('org.libreoffice.embindtest.Exception'),
+                Module.jsuno.type.exception(Module.jsuno.uno.org.libreoffice.embindtest.Exception),
                 {Message: 'error', Context: null, m1: -123456, m2: 100.5, m3: 'hä'})));
     }
     {
@@ -229,7 +229,8 @@ Module.addOnPostRun(function() {
         console.assert(test.isAnyInterface(v));
         console.assert(test.isAnyInterface(
             new Module.jsuno.Any(
-                Module.uno_Type.Interface('org.libreoffice.embindtest.XTest'), test)));
+                Module.jsuno.type.interface(Module.jsuno.uno.org.libreoffice.embindtest.XTest),
+                test)));
     }
     {
         const v = test.getSequenceBoolean();
@@ -335,13 +336,15 @@ Module.addOnPostRun(function() {
         console.assert(v[2].toString() === '[]org.libreoffice.embindtest.Enum');
         console.assert(test.isSequenceType(v));
         const s = new Module.uno_Sequence_type([
-            Module.uno_Type.Long(), Module.uno_Type.Void(),
-            Module.uno_Type.Sequence(Module.uno_Type.Enum('org.libreoffice.embindtest.Enum'))]);
+            Module.jsuno.type.long, Module.jsuno.type.void,
+            Module.jsuno.type.sequence(
+                Module.jsuno.type.enum(Module.jsuno.uno.org.libreoffice.embindtest.Enum))]);
         console.assert(test.isSequenceType(s));
         s.delete();
         console.assert(test.isSequenceType([
-            Module.uno_Type.Long(), Module.uno_Type.Void(),
-            Module.uno_Type.Sequence(Module.uno_Type.Enum('org.libreoffice.embindtest.Enum'))]));
+            Module.jsuno.type.long, Module.jsuno.type.void,
+            Module.jsuno.type.sequence(
+                Module.jsuno.type.enum(Module.jsuno.uno.org.libreoffice.embindtest.Enum))]));
     }
     {
         const v = test.getSequenceAny();
@@ -523,7 +526,7 @@ Module.addOnPostRun(function() {
     }
     {
         const propbag = Module.jsuno.uno.com.sun.star.beans.PropertyBag.createWithTypes(
-            context, [Module.uno_Type.Boolean(), Module.uno_Type.Long()], false, false);
+            context, [Module.jsuno.type.boolean, Module.jsuno.type.long], false, false);
         //...
     }
 
@@ -534,11 +537,11 @@ Module.addOnPostRun(function() {
             execute(args) {
                 if (args.length !== 1 || args[0].Name !== 'name') {
                     Module.throwUnoException(
-                        Module.uno_Type.Exception('com.sun.star.lang.IllegalArgumentException'),
+                        Module.jsuno.type.exception(css.lang.IllegalArgumentException),
                         {Message: 'bad args', Context: null, ArgumentPosition: 0});
                 }
                 console.log('Hello ' + args[0].Value.val);
-                return new Module.jsuno.Any(Module.uno_Type.Void());
+                return new Module.jsuno.Any(Module.jsuno.type.void);
             },
             trigger(event) { console.log('Ola ' + event); },
             the_LongAttribute: -123456,

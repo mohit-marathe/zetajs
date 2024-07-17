@@ -19,7 +19,7 @@ let evtPressed, evtReleased;
 function demo() {
     console.log('PLUS: execute example code');
 
-    Module.initUno();
+    Module.jsuno_init();
 
     /* Implements com.sun.star.awt.XKeyHandler
      * Outputs printable characters typed into the OfficeDocument.

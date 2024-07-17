@@ -2,7 +2,11 @@
 
 'use strict';
 
-Module.jsuno = {
+Module.jsuno_init = function() {
+    if (Module.jsuno === undefined) {
+        Module.initUno();
+        Module.jsuno = {
+
     getProxyTarget: Symbol('getProxyTarget'),
 
     isEmbindInOutParam: function(obj) {
@@ -324,7 +328,6 @@ Module.jsuno = {
         if (unoObject === null) {
             return null;
         }
-        Module.initUno();
         const prox = {};
         prox[Module.jsuno.getProxyTarget] = unoObject;
         // css.script.XInvocation2::getInfo invents additional members (e.g., an attribute "Foo" if
@@ -583,8 +586,14 @@ Module.jsuno = {
                     tdAny.delete();
                     switch (td.getTypeClass()) {
                     case Module.uno.com.sun.star.uno.TypeClass.ENUM:
-                    case Module.uno.com.sun.star.uno.TypeClass.CONSTANTS:
                         target[prop] = embindObject[prop];
+                        target[prop][Module.unoTagSymbol] = {kind: 'enum', type: name};
+                        break;
+                    case Module.uno.com.sun.star.uno.TypeClass.STRUCT:
+                        target[prop] = {[Module.unoTagSymbol]: {kind: 'struct', type: name}};
+                        break;
+                    case Module.uno.com.sun.star.uno.TypeClass.EXCEPTION:
+                        target[prop] = {[Module.unoTagSymbol]: {kind: 'exception', type: name}};
                         break;
                     case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
                         target[prop] = {[Module.unoTagSymbol]: {kind: 'interface', type: name}};
@@ -604,11 +613,65 @@ Module.jsuno = {
                             }
                             break;
                         }
+                    case Module.uno.com.sun.star.uno.TypeClass.CONSTANTS:
+                        target[prop] = embindObject[prop];
+                        break;
                     }
                 }
                 return target[prop];
             }
         });
+    },
+
+    type: {
+        void: Module.uno_Type.Void(),
+        boolean: Module.uno_Type.Boolean(),
+        byte: Module.uno_Type.Byte(),
+        short: Module.uno_Type.Short(),
+        unsigned_short: Module.uno_Type.UnsignedShort(),
+        long: Module.uno_Type.Long(),
+        unsigned_long: Module.uno_Type.UnsignedLong(),
+        hyper: Module.uno_Type.Hyper(),
+        unsigned_hyper: Module.uno_Type.UnsignedHyper(),
+        float: Module.uno_Type.Float(),
+        double: Module.uno_Type.Double(),
+        char: Module.uno_Type.Char(),
+        string: Module.uno_Type.String(),
+        type: Module.uno_Type.Type(),
+        any: Module.uno_Type.Any(),
+        sequence: Module.uno_Type.Sequence,
+        enum(name) {
+            if (typeof name === 'function' && Object.hasOwn(name, Module.unoTagSymbol)
+                && name[Module.unoTagSymbol].kind === 'enum')
+            {
+                name = name[Module.unoTagSymbol].type;
+            }
+            return Module.uno_Type.Enum(name);
+        },
+        struct(name) {
+            if (typeof name === 'object' && Object.hasOwn(name, Module.unoTagSymbol)
+                && name[Module.unoTagSymbol].kind === 'struct')
+            {
+                name = name[Module.unoTagSymbol].type;
+            }
+            return Module.uno_Type.Struct(name);
+        },
+        exception(name) {
+            if (typeof name === 'object' && Object.hasOwn(name, Module.unoTagSymbol)
+                && name[Module.unoTagSymbol].kind === 'exception')
+            {
+                name = name[Module.unoTagSymbol].type;
+            }
+            return Module.uno_Type.Exception(name);
+        },
+        interface(name) {
+            if (typeof name === 'object' && Object.hasOwn(name, Module.unoTagSymbol)
+                && name[Module.unoTagSymbol].kind === 'interface')
+            {
+                name = name[Module.unoTagSymbol].type;
+            }
+            return Module.uno_Type.Interface(name);
+        }
     },
 
     Any: function(type, val) {
@@ -744,5 +807,7 @@ Module.jsuno = {
         return Module.jsuno.proxy(Module.unoObject(interfaceNames, wrapper));
     },
 };
+
+}};
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
