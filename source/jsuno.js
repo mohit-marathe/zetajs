@@ -571,7 +571,7 @@ Module.jsuno = {
         return obj;
     },
 
-    unoidlProxy: function(path) {
+    unoidlProxy: function(path, embindObject) {
         return new Proxy({}, {
             get(target, prop) {
                 if (!Object.hasOwn(target, prop)) {
@@ -582,11 +582,15 @@ Module.jsuno = {
                         tdAny.get());
                     tdAny.delete();
                     switch (td.getTypeClass()) {
+                    case Module.uno.com.sun.star.uno.TypeClass.ENUM:
+                    case Module.uno.com.sun.star.uno.TypeClass.CONSTANTS:
+                        target[prop] = embindObject[prop];
+                        break;
                     case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
                         target[prop] = {[Module.unoTagSymbol]: {kind: 'interface', type: name}};
                         break;
                     case Module.uno.com.sun.star.uno.TypeClass.MODULE:
-                        target[prop] = Module.jsuno.unoidlProxy(name);
+                        target[prop] = Module.jsuno.unoidlProxy(name, embindObject[prop]);
                         break;
                     case Module.uno.com.sun.star.uno.TypeClass.SINGLETON:
                         target[prop] = Module.jsuno.singleton(name);
@@ -637,7 +641,7 @@ Module.jsuno = {
                 const tdm = Module.jsuno.getTypeDescriptionManager();
                 const td = tdm.getByHierarchicalName(prop);
                 td.delete();
-                target[prop] = Module.jsuno.unoidlProxy(prop);
+                target[prop] = Module.jsuno.unoidlProxy(prop, Module.uno[prop]);
             }
             return target[prop];
         }

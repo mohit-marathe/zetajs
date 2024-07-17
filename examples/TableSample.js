@@ -8,7 +8,7 @@
 Module.addOnPostRun(function() {
     setTimeout(function() {
         Module.initUno();
-        const css = Module.uno.com.sun.star;
+        const css = Module.jsuno.uno.com.sun.star;
         const doc = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
         const text = doc.getText();
         const cursor = text.createTextCursor();
