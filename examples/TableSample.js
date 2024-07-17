@@ -9,7 +9,8 @@ Module.addOnPostRun(function() {
     setTimeout(function() {
         Module.jsuno_init();
         const css = Module.jsuno.uno.com.sun.star;
-        const doc = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
+        const doc = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
+              .getCurrentFrame().getController().getModel();
         const text = doc.getText();
         const cursor = text.createTextCursor();
         const table = doc.createInstance('com.sun.star.text.TextTable');

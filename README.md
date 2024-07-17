@@ -5,8 +5,8 @@
 capabilities for LOWA.  It aims to provide a nicer, more idiomatic JS experience compared to the
 Embind-based approach.
 
-The starting point is to wrap initial UNO objects obtained through the Embind layer (e.g.,
-`Module.getUnoComponentContext()` or `Module.getCurrentModelFromViewSh()`) in a call to
+The starting point is to wrap initial UNO objects obtained through the Embind layer (i.e.,
+`Module.getUnoComponentContext()`) in a call to
 `Module.jsuno.proxy(...)`.  The resulting `Proxy` internally uses UNO's `css.script.Invocation`
 service to directly make available all the UNO interfaces implemented by the given UNO object.
 There is no more need for `query` calls to obtain a reference to specific UNO interfaces.

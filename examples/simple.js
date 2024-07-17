@@ -8,14 +8,18 @@ Module.addOnPostRun(function() {
     setTimeout(function() {
         {
             Module.jsuno_init();
-            const xModel = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
+            const css = Module.jsuno.uno.com.sun.star;
+            const xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
+                  .getCurrentFrame().getController().getModel();
             const xText = xModel.getText();
             const xTextCursor = xText.createTextCursor();
             xTextCursor.setString("string here!");
         }
         {
             Module.jsuno_init();
-            const xModel = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
+            const css = Module.jsuno.uno.com.sun.star;
+            const xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
+                  .getCurrentFrame().getController().getModel();
             const xText = xModel.getText();
             const xParaEnumeration = xText.createEnumeration();
             while (xParaEnumeration.hasMoreElements()) {

@@ -26,7 +26,8 @@ function run_demo() {
     console.log('PLUS: execute example code');
 
     // Get the currently opened view context.
-    const xModel = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
+    const xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
+          .getCurrentFrame().getController().getModel();
     if (xModel === null) {
         console.log("No OfficeDocument opened.");
         return;

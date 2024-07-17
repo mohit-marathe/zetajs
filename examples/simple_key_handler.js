@@ -43,7 +43,8 @@ function demo() {
 
     // Get the currently opened view context.
     // xModel is somethink like: SwXTextDocument, ScModelObj, SdXImpressDocument
-    xModel = Module.jsuno.proxy(Module.getCurrentModelFromViewSh());
+    xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
+        .getCurrentFrame().getController().getModel();
     if (xModel === null) {
         console.log("No OfficeDocument opened.");
         return;
