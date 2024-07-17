@@ -576,7 +576,6 @@ Module.jsuno = {
             get(target, prop) {
                 if (!Object.hasOwn(target, prop)) {
                     const name = path + '.' + prop;
-                    console.log('GET 2 <'+name+'>');
                     const tdm = Module.jsuno.getTypeDescriptionManager();
                     const tdAny = tdm.getByHierarchicalName(name);
                     const td = Module.uno.com.sun.star.reflection.XTypeDescription.query(
