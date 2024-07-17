@@ -210,12 +210,15 @@ Module.jsuno = {
                     if (obj === null) {
                         fromType = Module.uno_Type.Interface('com.sun.star.uno.XInterface');
                         val = obj;
+                        break;
                     } else if (obj instanceof Module.uno_Type) {
                         fromType = Module.uno_Type.Type();
                         val = obj;
+                        break;
                     } else if (obj instanceof Module.jsuno.Any) {
                         fromType = obj.type;
                         val = Module.jsuno.translateToEmbind(obj.val, obj.type, toDelete);
+                        break;
                     } else {
                         const tag = obj[Module.unoTagSymbol];
                         if (tag !== undefined) {
@@ -225,9 +228,8 @@ Module.jsuno = {
                                 break;
                             }
                         }
-                        throw new Error('TODO');
                     }
-                    break;
+                    // fallthrough
                 default:
                     throw new Error(
                         'bad UNO method call argument ' + obj);
