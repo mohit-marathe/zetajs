@@ -33,7 +33,7 @@ function run_demo() {
     }
     const xController = xModel.getCurrentController();
 
-    const xKeyHandler = Module.unoObject(['com.sun.star.awt.XKeyHandler'], new ColorXKeyHandler(xModel));
+    const xKeyHandler = Module.jsuno.unoObject([css.awt.XKeyHandler], new ColorXKeyHandler(xModel));
     xController.addKeyHandler(xKeyHandler);                   // XUserInputInterception.addKeyHandler()
 
     const xTextCursor = xModel.getText().createTextCursor();  // XTextDocument.getText()
@@ -56,7 +56,7 @@ function ColorXKeyHandler(xModel) {
         xTextCursor.goLeft(1, true);
 
         // Walk the rainbow ;-)
-        const color = new Module.uno_Any(uno_long, rainbow[this.rainbow_i]);
+        const color = new Module.jsuno.Any(uno_long, rainbow[this.rainbow_i]);
         this.rainbow_i++;
         if (this.rainbow_i >= rainbow.length) { this.rainbow_i = 0; }
 
@@ -81,10 +81,10 @@ function ColorXKeyHandler(xModel) {
 
 function init_demo() {
     Module.jsuno_init();
-    css = Module.uno.com.sun.star;
-    uno_bold = new Module.uno_Any(Module.uno_Type.Float(), css.awt.FontWeight.BOLD);
-    uno_long = Module.uno_Type.Long();
-    uno_font_monospace = new Module.uno_Any(Module.uno_Type.String(), "Monospace");
+    css = Module.jsuno.uno.com.sun.star;
+    uno_bold = new Module.jsuno.Any(Module.jsuno.type.float, css.awt.FontWeight.BOLD);
+    uno_long = Module.jsuno.type.long;
+    uno_font_monospace = "Monospace";
 }
 
 

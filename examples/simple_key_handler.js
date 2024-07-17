@@ -12,7 +12,7 @@
 "use strict";
 
 // Make variables accessible from the console for debugging.
-let xModel, xModel_from_component, xController, refXKeyHandler;
+let css, xModel, xModel_from_component, xController, refXKeyHandler;
 let evtPressed, evtReleased;
 
 
@@ -20,13 +20,14 @@ function demo() {
     console.log('PLUS: execute example code');
 
     Module.jsuno_init();
+    css = Module.jsuno.uno.com.sun.star;
 
     /* Implements com.sun.star.awt.XKeyHandler
      * Outputs printable characters typed into the OfficeDocument.
      * Browser console is used for output.
      */
-    const myXKeyHandler = Module.unoObject(
-        ['com.sun.star.awt.XKeyHandler'],
+    const myXKeyHandler = Module.jsuno.unoObject(
+        [css.awt.XKeyHandler],
         {
             keyPressed(e) {
                 console.log('key pressed (' + e.KeyCode + "): " + e.KeyChar);
