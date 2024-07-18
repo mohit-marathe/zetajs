@@ -81,7 +81,6 @@ function ColorXKeyHandler(xModel) {
 
 
 function init_demo() {
-    Module.jsuno_init();
     css = Module.jsuno.uno.com.sun.star;
     uno_bold = new Module.jsuno.Any(Module.jsuno.type.float, css.awt.FontWeight.BOLD);
     uno_long = Module.jsuno.type.long;
@@ -90,19 +89,18 @@ function init_demo() {
 
 
 function onLoad(block) {
-    if (typeof Module.addOnPostRun === 'undefined') {
+    if (typeof Module.jsuno_init === 'undefined') {
         // When loaded as external script with LOWA.
         console.log('PLUS: poll and wait for Embind "Module"');  // not needed for QT5
         const interval = setInterval(function() {
             console.log('looping');
-            if (typeof Module === 'undefined') return;
+            if (typeof Module.jsuno_init === 'undefined') return;
             clearInterval(interval);
-            block();
         }, 0.1);
     } else {
         // When compiled into LOWA via EMSCRIPTEN_EXTRA_SOFFICE_POST_JS.
-        Module.addOnPostRun(block);
     }
+    Module.jsuno_init.then(block);
 }
 
 

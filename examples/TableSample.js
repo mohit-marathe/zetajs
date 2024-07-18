@@ -5,9 +5,8 @@
 // Adapted sample code from <https://git.libreoffice.org/core>
 // scripting/examples/python/TableSample.py:
 
-Module.addOnPostRun(function() {
+Module.jsuno_init.then(function() {
     setTimeout(function() {
-        Module.jsuno_init();
         const css = Module.jsuno.uno.com.sun.star;
         const doc = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
               .getCurrentFrame().getController().getModel();

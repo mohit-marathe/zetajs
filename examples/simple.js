@@ -4,10 +4,9 @@
 
 // Adapted sample code from <https://git.libreoffice.org/core> static/README.wasm.md:
 
-Module.addOnPostRun(function() {
+Module.jsuno_init.then(function() {
     setTimeout(function() {
         {
-            Module.jsuno_init();
             const css = Module.jsuno.uno.com.sun.star;
             const xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
                   .getCurrentFrame().getController().getModel();
@@ -16,7 +15,6 @@ Module.addOnPostRun(function() {
             xTextCursor.setString("string here!");
         }
         {
-            Module.jsuno_init();
             const css = Module.jsuno.uno.com.sun.star;
             const xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
                   .getCurrentFrame().getController().getModel();

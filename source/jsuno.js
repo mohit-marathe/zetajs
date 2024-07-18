@@ -2,9 +2,8 @@
 
 'use strict';
 
-Module.jsuno_init = function() {
-    if (Module.jsuno === undefined) {
-        Module.initUno();
+Module.jsuno_init = new Promise(function (resolve, reject) {
+    Module.jsuno_init$resolve = function() {
         const getProxyTarget = Symbol('getProxyTarget');
         function isEmbindInOutParam(obj) {
             if (obj === undefined || obj === null) {
@@ -782,7 +781,11 @@ Module.jsuno_init = function() {
                 return proxy(Module.unoObject(interfaceNames, wrapper));
             }
         };
-    }
-};
+        resolve();
+    };
+    Module.jsuno_init$reject = reject;
+});
+
+Module.uno_init.then(function() { Module.jsuno_init$resolve(); });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

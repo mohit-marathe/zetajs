@@ -19,7 +19,6 @@ let evtPressed, evtReleased;
 function demo() {
     console.log('PLUS: execute example code');
 
-    Module.jsuno_init();
     css = Module.jsuno.uno.com.sun.star;
 
     /* Implements com.sun.star.awt.XKeyHandler
@@ -64,19 +63,18 @@ function demo() {
 
 
 function onLoad(block) {
-    if (typeof Module.addOnPostRun === 'undefined') {
+    if (typeof Module.jsuno_init === 'undefined') {
         // When compiled into LOWA via EMSCRIPTEN_EXTRA_SOFFICE_POST_JS.
         console.log('PLUS: poll and wait for Embind "Module"');  // not needed for QT5
         const interval = setInterval(function() {
             console.log('looping');
-            if (typeof Module === 'undefined') return;
+            if (typeof Module.jsuno_init === 'undefined') return;
             clearInterval(interval);
-            block();
         }, 0.1);
     } else {
         // When loaded as external script.
-        Module.addOnPostRun(block);
     }
+    Module.jsuno_init.then(block);
 }
 
 

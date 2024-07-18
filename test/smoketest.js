@@ -6,8 +6,7 @@
 // unotest/source/embindtest/embindtest.js; requires a LibreOffice configured with --enable-dbgutil
 // to have the org.libreoffice.embindtest UNOIDL entities available:
 
-Module.addOnPostRun(function() {
-    Module.jsuno_init();
+Module.jsuno_init.then(function() {
     const css = Module.jsuno.uno.com.sun.star;
     const context = Module.jsuno.getUnoComponentContext();
     const test = Module.jsuno.uno.org.libreoffice.embindtest.Test.create(context);
