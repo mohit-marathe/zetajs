@@ -141,7 +141,7 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                         tdAny.get());
                     tdAny.delete();
                     walk(td);
-                    return obj;
+                    return val;
                 }
             case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
                 if (obj !== null) {
