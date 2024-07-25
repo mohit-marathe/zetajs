@@ -5,19 +5,27 @@
 // Adapted sample code from <https://git.libreoffice.org/core> static/README.wasm.md:
 
 Module.jsuno_init.then(function() {
+    function getTextDocument() {
+        const css = Module.jsuno.uno.com.sun.star;
+        const desktop = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext());
+        let xModel = desktop.getCurrentFrame().getController().getModel();
+        if (xModel === null
+            || !xModel.queryInterface(Module.jsuno.type.interface(css.text.XTextDocument)).val)
+        {
+            xModel = desktop.loadComponentFromURL(
+                'file:///android/default-document/example.odt', '_default', 0, []);
+        }
+        return xModel;
+    };
     setTimeout(function() {
         {
-            const css = Module.jsuno.uno.com.sun.star;
-            const xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
-                  .getCurrentFrame().getController().getModel();
+            const xModel = getTextDocument();
             const xText = xModel.getText();
             const xTextCursor = xText.createTextCursor();
             xTextCursor.setString("string here!");
         }
         {
-            const css = Module.jsuno.uno.com.sun.star;
-            const xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
-                  .getCurrentFrame().getController().getModel();
+            const xModel = getTextDocument();
             const xText = xModel.getText();
             const xParaEnumeration = xText.createEnumeration();
             while (xParaEnumeration.hasMoreElements()) {

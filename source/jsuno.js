@@ -437,6 +437,8 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                     }
                     invoke.setValue(name, any);
                 };
+                prox.queryInterface = function() {
+                    return invokeMethod('queryInterface', arguments); };
                 const seen = {'com.sun.star.uno.XInterface': true};
                 function walk(td) {
                     const iname = td.getName();

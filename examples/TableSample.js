@@ -8,8 +8,8 @@
 Module.jsuno_init.then(function() {
     setTimeout(function() {
         const css = Module.jsuno.uno.com.sun.star;
-        const doc = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
-              .getCurrentFrame().getController().getModel();
+        const desktop = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext());
+        const doc = desktop.loadComponentFromURL('private:factory/swriter', '_blank', 0, []);
         const text = doc.getText();
         const cursor = text.createTextCursor();
         const table = doc.createInstance('com.sun.star.text.TextTable');
