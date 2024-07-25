@@ -512,6 +512,24 @@ Module.jsuno_init.then(function() {
         console.assert(exc.type == 'com.sun.star.uno.RuntimeException');
         console.assert(exc.val.Message.startsWith('test'));
     }
+    try {
+        Module.jsuno.throwUnoException(
+            new Module.jsuno.Any(
+                Module.jsuno.type.exception(css.lang.WrappedTargetException),
+                {Message: 'wrapped', Context: test,
+                 TargetException: new Module.jsuno.Any(
+                     Module.jsuno.type.exception(css.uno.RuntimeException),
+                     {Message: 'test', Context: test})}));
+        console.assert(false);
+    } catch (e) {
+        const exc = Module.jsuno.catchUnoException(e);
+        console.assert(exc.type == 'com.sun.star.lang.WrappedTargetException');
+        console.assert(exc.val.Message.startsWith('wrapped'));
+        console.assert(Module.jsuno.sameUnoObject(exc.val.Context, test));
+        console.assert(exc.val.TargetException.type == 'com.sun.star.uno.RuntimeException');
+        console.assert(exc.val.TargetException.val.Message.startsWith('test'));
+        console.assert(Module.jsuno.sameUnoObject(exc.val.TargetException.val.Context, test));
+    }
     console.assert(test.StringAttribute === 'hä');
     test.StringAttribute = 'foo';
     console.assert(test.StringAttribute === 'foo');
@@ -537,7 +555,7 @@ Module.jsuno_init.then(function() {
                 if (args.length !== 1 || args[0].Name !== 'name') {
                     Module.throwUnoException(
                         Module.jsuno.type.exception(css.lang.IllegalArgumentException),
-                        {Message: 'bad args', Context: null, ArgumentPosition: 0});
+                        {Message: 'bad args', Context: null, ArgumentPosition: 0}, []);
                 }
                 console.log('Hello ' + args[0].Value.val);
                 return new Module.jsuno.Any(Module.jsuno.type.void);

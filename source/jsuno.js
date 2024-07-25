@@ -671,7 +671,11 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
             getUnoComponentContext: function() {
                 return proxy(Module.getUnoComponentContext());
             },
-            throwUnoException: function(any) { Module.throwUnoException(any.type, any.val); },
+            throwUnoException: function(any) {
+                const toDelete = [];
+                const val = translateToEmbind(any.val, any.type, toDelete);
+                Module.throwUnoException(any.type, val, toDelete);
+            },
             catchUnoException: function(exception) {
                 return translateFromAnyAndDelete(
                     Module.catchUnoException(exception), Module.uno_Type.Any());
