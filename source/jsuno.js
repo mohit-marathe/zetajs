@@ -332,7 +332,7 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                     if (args.length != info.aParamTypes.size()) {
                         throw new Error(
                             'bad number of arguments in call to ' + name + ', expected ' +
-                                info.aParamTypes.size() + ' vs. actual ' + arg.length);
+                                info.aParamTypes.size() + ' vs. actual ' + args.length);
                     }
                     const unoArgs = new Module.uno_Sequence_any(
                         info.aParamTypes.size(), Module.uno_Sequence.FromSize);
