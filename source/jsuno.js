@@ -394,9 +394,9 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                         deleteArgs.forEach((arg) => arg.delete());
                         unoArgs.delete();
                     }
-                    outparamindex = outparamindex_out.val;
+                    const outparamindex = outparamindex_out.val;
                     outparamindex_out.delete();
-                    outparam = outparam_out.val;
+                    const outparam = outparam_out.val;
                     outparam_out.delete();
                     for (let i = 0; i !== outparamindex.size(); ++i) {
                         const j = outparamindex.get(i);
