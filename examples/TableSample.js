@@ -18,7 +18,7 @@ Module.jsuno_init.then(function() {
         table.setPropertyValue('BackTransparent', false);
         table.setPropertyValue('BackColor', 13421823);
         const rows = table.getRows();
-        const row = rows.getByIndex(0).val;
+        const row = Module.jsuno.fromAny(rows.getByIndex(0));
         row.setPropertyValue('BackTransparent', false);
         row.setPropertyValue('BackColor', 6710932);
         const insertTextIntoCell = function(cellName, text, color) {

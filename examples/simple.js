@@ -10,7 +10,8 @@ Module.jsuno_init.then(function() {
         const desktop = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext());
         let xModel = desktop.getCurrentFrame().getController().getModel();
         if (xModel === null
-            || !xModel.queryInterface(Module.jsuno.type.interface(css.text.XTextDocument)).val)
+            || !Module.jsuno.fromAny(
+                xModel.queryInterface(Module.jsuno.type.interface(css.text.XTextDocument))))
         {
             xModel = desktop.loadComponentFromURL(
                 'file:///android/default-document/example.odt', '_default', 0, []);
@@ -30,7 +31,7 @@ Module.jsuno_init.then(function() {
             const xParaEnumeration = xText.createEnumeration();
             while (xParaEnumeration.hasMoreElements()) {
                 const next = xParaEnumeration.nextElement();
-                const xParagraph = next.val;
+                const xParagraph = Module.jsuno.fromAny(next);
                 const color = Math.floor(Math.random() * 0xFFFFFF);
                 xParagraph.setPropertyValue("CharColor", color);
             }

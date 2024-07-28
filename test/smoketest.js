@@ -86,101 +86,101 @@ Module.jsuno_init.then(function() {
         console.assert(v.m1 === -123456);
         console.assert(v.m2 === 100.5);
         console.assert(v.m3 === 'hä');
-        console.assert(v.m4.val === true);
+        console.assert(Module.jsuno.fromAny(v.m4) === true);
         console.assert(test.isStruct({m1: -123456, m2: 100.5, m3: 'hä', m4: true}));
     }
     {
         const v = test.getAnyVoid();
-        console.assert(v.val === undefined);
+        console.assert(Module.jsuno.fromAny(v) === undefined);
         console.assert(test.isAnyVoid(v));
         console.assert(test.isAnyVoid(undefined));
     }
     {
         const v = test.getAnyBoolean();
-        console.assert(v.val === true);
+        console.assert(Module.jsuno.fromAny(v) === true);
         console.assert(test.isAnyBoolean(v));
         console.assert(test.isAnyBoolean(true));
     }
     {
         const v = test.getAnyByte();
-        console.assert(v.val === -12);
+        console.assert(Module.jsuno.fromAny(v) === -12);
         console.assert(test.isAnyByte(v));
         console.assert(test.isAnyByte(new Module.jsuno.Any(Module.jsuno.type.byte, -12)));
     }
     {
         const v = test.getAnyShort();
-        console.assert(v.val === -1234);
+        console.assert(Module.jsuno.fromAny(v) === -1234);
         console.assert(test.isAnyShort(v));
         console.assert(test.isAnyShort(new Module.jsuno.Any(Module.jsuno.type.short, -1234)));
     }
     {
         const v = test.getAnyUnsignedShort();
-        console.assert(v.val === 54321);
+        console.assert(Module.jsuno.fromAny(v) === 54321);
         console.assert(test.isAnyUnsignedShort(v));
         console.assert(test.isAnyUnsignedShort(
             new Module.jsuno.Any(Module.jsuno.type.unsigned_short, 54321)));
     }
     {
         const v = test.getAnyLong();
-        console.assert(v.val === -123456);
+        console.assert(Module.jsuno.fromAny(v) === -123456);
         console.assert(test.isAnyLong(v));
         console.assert(test.isAnyLong(-123456));
     }
     {
         const v = test.getAnyUnsignedLong();
-        console.assert(v.val === 3456789012);
+        console.assert(Module.jsuno.fromAny(v) === 3456789012);
         console.assert(test.isAnyUnsignedLong(v));
         console.assert(test.isAnyUnsignedLong(3456789012));
     }
     {
         const v = test.getAnyHyper();
-        console.assert(v.val === -123456789n);
+        console.assert(Module.jsuno.fromAny(v) === -123456789n);
         console.assert(test.isAnyHyper(v));
         console.assert(test.isAnyHyper(-123456789n));
     }
     {
         const v = test.getAnyUnsignedHyper();
-        console.assert(v.val === 9876543210n);
+        console.assert(Module.jsuno.fromAny(v) === 9876543210n);
         console.assert(test.isAnyUnsignedHyper(v));
         console.assert(test.isAnyUnsignedHyper(
             new Module.jsuno.Any(Module.jsuno.type.unsigned_hyper, 9876543210n)));
     }
     {
         const v = test.getAnyFloat();
-        console.assert(v.val === -10.25);
+        console.assert(Module.jsuno.fromAny(v) === -10.25);
         console.assert(test.isAnyFloat(v));
         console.assert(test.isAnyFloat(new Module.jsuno.Any(Module.jsuno.type.float, -10.25)));
     }
     {
         const v = test.getAnyDouble();
-        console.assert(v.val === 100.5);
+        console.assert(Module.jsuno.fromAny(v) === 100.5);
         console.assert(test.isAnyDouble(v));
         console.assert(test.isAnyDouble(100.5));
     }
     {
         const v = test.getAnyChar();
-        console.assert(v.val === 'Ö');
+        console.assert(Module.jsuno.fromAny(v) === 'Ö');
         console.assert(test.isAnyChar(v));
         console.assert(test.isAnyChar(new Module.jsuno.Any(Module.jsuno.type.char, 'Ö')));
     }
     {
         const v = test.getAnyString();
-        console.assert(v.val === 'hä');
+        console.assert(Module.jsuno.fromAny(v) === 'hä');
         console.assert(test.isAnyString(v));
         console.assert(test.isAnyString('hä'));
     }
     {
         const v = test.getAnyType();
-        console.assert(v.val.toString() === 'long');
+        console.assert(Module.jsuno.fromAny(v).toString() === 'long');
         console.assert(test.isAnyType(v));
         console.assert(test.isAnyType(Module.jsuno.type.long));
     }
     {
         const v = test.getAnySequence();
-        console.assert(v.val.length === 3);
-        console.assert(v.val[0] === 'foo');
-        console.assert(v.val[1] === 'barr');
-        console.assert(v.val[2] === 'bazzz');
+        console.assert(Module.jsuno.fromAny(v).length === 3);
+        console.assert(Module.jsuno.fromAny(v)[0] === 'foo');
+        console.assert(Module.jsuno.fromAny(v)[1] === 'barr');
+        console.assert(Module.jsuno.fromAny(v)[2] === 'bazzz');
         console.assert(test.isAnySequence(v));
         const s = new Module.uno_Sequence_string(["foo", "barr", "bazzz"]);
         const a = new Module.uno_Any(Module.uno_Type.Sequence(Module.uno_Type.String()), s);
@@ -195,16 +195,17 @@ Module.jsuno_init.then(function() {
     }
     {
         const v = test.getAnyEnum();
-        console.assert(v.val === Module.jsuno.uno.org.libreoffice.embindtest.Enum.E_2);
+        console.assert(
+            Module.jsuno.fromAny(v) === Module.jsuno.uno.org.libreoffice.embindtest.Enum.E_2);
         console.assert(test.isAnyEnum(v));
         console.assert(test.isAnyEnum(Module.jsuno.uno.org.libreoffice.embindtest.Enum.E_2));
     }
     {
         const v = test.getAnyStruct();
-        console.assert(v.val.m1 === -123456);
-        console.assert(v.val.m2 === 100.5);
-        console.assert(v.val.m3 === 'hä');
-        console.assert(v.val.m4.val === true);
+        console.assert(Module.jsuno.fromAny(v).m1 === -123456);
+        console.assert(Module.jsuno.fromAny(v).m2 === 100.5);
+        console.assert(Module.jsuno.fromAny(v).m3 === 'hä');
+        console.assert(Module.jsuno.fromAny(Module.jsuno.fromAny(v).m4) === true);
         console.assert(test.isAnyStruct(v));
         console.assert(test.isAnyStruct(
             new Module.jsuno.Any(
@@ -213,11 +214,11 @@ Module.jsuno_init.then(function() {
     }
     {
         const v = test.getAnyException();
-        console.assert(v.val.Message.startsWith('error'));
-        console.assert(v.val.Context === null);
-        console.assert(v.val.m1 === -123456);
-        console.assert(v.val.m2 === 100.5);
-        console.assert(v.val.m3 === 'hä');
+        console.assert(Module.jsuno.fromAny(v).Message.startsWith('error'));
+        console.assert(Module.jsuno.fromAny(v).Context === null);
+        console.assert(Module.jsuno.fromAny(v).m1 === -123456);
+        console.assert(Module.jsuno.fromAny(v).m2 === 100.5);
+        console.assert(Module.jsuno.fromAny(v).m3 === 'hä');
         console.assert(test.isAnyException(v));
         console.assert(test.isAnyException(
             new Module.jsuno.Any(
@@ -226,7 +227,7 @@ Module.jsuno_init.then(function() {
     }
     {
         const v = test.getAnyInterface();
-        console.assert(Module.jsuno.sameUnoObject(v.val, test));
+        console.assert(Module.jsuno.sameUnoObject(Module.jsuno.fromAny(v), test));
         console.assert(test.isAnyInterface(v));
         console.assert(test.isAnyInterface(
             new Module.jsuno.Any(
@@ -350,12 +351,16 @@ Module.jsuno_init.then(function() {
     {
         const v = test.getSequenceAny();
         console.assert(v.length === 3);
-        console.assert(v[0].val === -123456);
-        console.assert(v[1].val === undefined);
-        console.assert(v[2].val.length === 3);
-        console.assert(v[2].val[0] === Module.jsuno.uno.org.libreoffice.embindtest.Enum.E_2);
-        console.assert(v[2].val[1] === Module.jsuno.uno.org.libreoffice.embindtest.Enum.E3);
-        console.assert(v[2].val[2] === Module.jsuno.uno.org.libreoffice.embindtest.Enum.E_10);
+        console.assert(Module.jsuno.fromAny(v[0]) === -123456);
+        console.assert(Module.jsuno.fromAny(v[1]) === undefined);
+        console.assert(Module.jsuno.fromAny(v[2]).length === 3);
+        console.assert(
+            Module.jsuno.fromAny(v[2])[0] === Module.jsuno.uno.org.libreoffice.embindtest.Enum.E_2);
+        console.assert(
+            Module.jsuno.fromAny(v[2])[1] === Module.jsuno.uno.org.libreoffice.embindtest.Enum.E3);
+        console.assert(
+            Module.jsuno.fromAny(v[2])[2]
+                === Module.jsuno.uno.org.libreoffice.embindtest.Enum.E_10);
         console.assert(test.isSequenceAny(v));
     }
     {
@@ -383,15 +388,15 @@ Module.jsuno_init.then(function() {
         console.assert(v[0].m1 === -123456);
         console.assert(v[0].m2 === -100.5);
         console.assert(v[0].m3 === 'foo');
-        console.assert(v[0].m4.val === undefined);
+        console.assert(Module.jsuno.fromAny(v[0].m4) === undefined);
         console.assert(v[1].m1 === 1);
         console.assert(v[1].m2 === 1.25);
         console.assert(v[1].m3 === 'barr');
-        console.assert(v[1].m4.val === true);
+        console.assert(Module.jsuno.fromAny(v[1].m4) === true);
         console.assert(v[2].m1 === 123456);
         console.assert(v[2].m2 === 100.75);
         console.assert(v[2].m3 === 'bazzz');
-        console.assert(v[2].m4.val === 'buzzz');
+        console.assert(Module.jsuno.fromAny(v[2].m4) === 'buzzz');
         console.assert(test.isSequenceStruct(v));
     }
     {
@@ -433,7 +438,7 @@ Module.jsuno_init.then(function() {
         console.assert(v11.val === 'Ö');
         console.assert(v12.val === 'hä');
         console.assert(v13.val.toString() === 'long');
-        console.assert(v14.val.val === -123456)
+        console.assert(Module.jsuno.fromAny(v14.val) === -123456)
         console.assert(v15.val.length === 3);
         console.assert(v15.val[0] === 'foo');
         console.assert(v15.val[1] === 'barr');
@@ -442,7 +447,7 @@ Module.jsuno_init.then(function() {
         console.assert(v17.val.m1 === -123456);
         console.assert(v17.val.m2 === 100.5);
         console.assert(v17.val.m3 === 'hä');
-        console.assert(v17.val.m4.val === true);
+        console.assert(Module.jsuno.fromAny(v17.val.m4) === true);
         console.assert(Module.jsuno.sameUnoObject(v18.val, test));
     }
     {
@@ -518,7 +523,7 @@ Module.jsuno_init.then(function() {
     } catch (e) {
         const exc = Module.jsuno.catchUnoException(e);
         console.assert(exc.type == 'com.sun.star.uno.RuntimeException');
-        console.assert(exc.val.Message.startsWith('test'));
+        console.assert(Module.jsuno.fromAny(exc).Message.startsWith('test'));
     }
     try {
         Module.jsuno.throwUnoException(
@@ -532,11 +537,14 @@ Module.jsuno_init.then(function() {
     } catch (e) {
         const exc = Module.jsuno.catchUnoException(e);
         console.assert(exc.type == 'com.sun.star.lang.WrappedTargetException');
-        console.assert(exc.val.Message.startsWith('wrapped'));
+        console.assert(Module.jsuno.fromAny(exc).Message.startsWith('wrapped'));
         console.assert(Module.jsuno.sameUnoObject(exc.val.Context, test));
-        console.assert(exc.val.TargetException.type == 'com.sun.star.uno.RuntimeException');
-        console.assert(exc.val.TargetException.val.Message.startsWith('test'));
-        console.assert(Module.jsuno.sameUnoObject(exc.val.TargetException.val.Context, test));
+        console.assert(
+            Module.jsuno.fromAny(exc).TargetException.type == 'com.sun.star.uno.RuntimeException');
+        console.assert(Module.jsuno.fromAny(exc).TargetException.val.Message.startsWith('test'));
+        console.assert(
+            Module.jsuno.sameUnoObject(
+                Module.jsuno.fromAny(Module.jsuno.fromAny(exc).TargetException).Context, test));
     }
     console.assert(test.StringAttribute === 'hä');
     test.StringAttribute = 'foo';
@@ -565,7 +573,7 @@ Module.jsuno_init.then(function() {
                         Module.jsuno.type.exception(css.lang.IllegalArgumentException),
                         {Message: 'bad args', Context: null, ArgumentPosition: 0}, []);
                 }
-                console.log('Hello ' + args[0].Value.val);
+                console.log('Hello ' + Module.jsuno.fromAny(args[0].Value));
                 return new Module.jsuno.Any(Module.jsuno.type.void);
             },
             trigger(event) { console.log('Ola ' + event); },

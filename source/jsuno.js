@@ -661,6 +661,7 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                 this.type = type;
                 this.val = val;
             },
+            fromAny: function(val) { return val instanceof Module.jsuno.Any ? val.val : val; },
             sameUnoObject: function(obj1, obj2) {
                 return Module.sameUnoObject(
                     translateToEmbind(
