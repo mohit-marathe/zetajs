@@ -86,7 +86,10 @@ Module.jsuno_init.then(function() {
         console.assert(v.m1 === -123456);
         console.assert(v.m2 === 100.5);
         console.assert(v.m3 === 'hä');
-        console.assert(test.isStruct({m1: -123456, m2: 100.5, m3: 'hä'}));
+        console.assert(v.m4.val === true);
+        console.assert(test.isStruct({
+            m1: -123456, m2: 100.5, m3: 'hä',
+            m4: new Module.jsuno.Any(Module.jsuno.type.boolean, true)}));
     }
     {
         const v = test.getAnyVoid();
@@ -203,11 +206,13 @@ Module.jsuno_init.then(function() {
         console.assert(v.val.m1 === -123456);
         console.assert(v.val.m2 === 100.5);
         console.assert(v.val.m3 === 'hä');
+        console.assert(v.val.m4.val === true);
         console.assert(test.isAnyStruct(v));
         console.assert(test.isAnyStruct(
             new Module.jsuno.Any(
                 Module.jsuno.type.struct(Module.jsuno.uno.org.libreoffice.embindtest.Struct),
-                {m1: -123456, m2: 100.5, m3: 'hä'})));
+                {m1: -123456, m2: 100.5, m3: 'hä',
+                 m4: new Module.jsuno.Any(Module.jsuno.type.boolean, true)})));
     }
     {
         const v = test.getAnyException();
@@ -381,12 +386,15 @@ Module.jsuno_init.then(function() {
         console.assert(v[0].m1 === -123456);
         console.assert(v[0].m2 === -100.5);
         console.assert(v[0].m3 === 'foo');
+        console.assert(v[0].m4.val === undefined);
         console.assert(v[1].m1 === 1);
         console.assert(v[1].m2 === 1.25);
         console.assert(v[1].m3 === 'barr');
+        console.assert(v[1].m4.val === true);
         console.assert(v[2].m1 === 123456);
         console.assert(v[2].m2 === 100.75);
         console.assert(v[2].m3 === 'bazzz');
+        console.assert(v[2].m4.val === 'buzzz');
         console.assert(test.isSequenceStruct(v));
     }
     {
@@ -437,6 +445,7 @@ Module.jsuno_init.then(function() {
         console.assert(v17.val.m1 === -123456);
         console.assert(v17.val.m2 === 100.5);
         console.assert(v17.val.m3 === 'hä');
+        console.assert(v17.val.m4.val === true);
         console.assert(Module.jsuno.sameUnoObject(v18.val, test));
     }
     {
@@ -482,6 +491,7 @@ Module.jsuno_init.then(function() {
         console.assert(v17.val.m1 === -123456);
         console.assert(v17.val.m2 === 100.5);
         console.assert(v17.val.m3 === 'hä');
+        console.assert(v17.val.m4.get() === true);
         console.assert(Module.jsuno.sameUnoObject(v18.val, test));
         v1.delete();
         v2.delete();
@@ -501,6 +511,7 @@ Module.jsuno_init.then(function() {
         v15.val.delete();
         v15.delete();
         v16.delete();
+        v17.val.m4.delete();
         v17.delete();
         v18.delete();
     }
