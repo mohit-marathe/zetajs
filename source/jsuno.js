@@ -96,13 +96,13 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
         function translateToEmbind(obj, type, toDelete) {
             switch (type.getTypeClass()) {
             case Module.uno.com.sun.star.uno.TypeClass.ANY:
-                if (obj instanceof Module.jsuno.Any) {
-                    const any = new Module.uno_Any(
-                        obj.type, translateToEmbind(obj.val, obj.type, toDelete));
-                    toDelete.push(any);
+                {
+                    const {any, owning} = translateToAny(obj, Module.uno_Type.Any());
+                    if (owning) {
+                        toDelete.push(any);
+                    }
                     return any;
                 }
-                break;
             case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
                 if (Array.isArray(obj)) {
                     const ctype = type.getSequenceComponentType();

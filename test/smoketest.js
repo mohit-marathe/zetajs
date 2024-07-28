@@ -87,9 +87,7 @@ Module.jsuno_init.then(function() {
         console.assert(v.m2 === 100.5);
         console.assert(v.m3 === 'hä');
         console.assert(v.m4.val === true);
-        console.assert(test.isStruct({
-            m1: -123456, m2: 100.5, m3: 'hä',
-            m4: new Module.jsuno.Any(Module.jsuno.type.boolean, true)}));
+        console.assert(test.isStruct({m1: -123456, m2: 100.5, m3: 'hä', m4: true}));
     }
     {
         const v = test.getAnyVoid();
@@ -211,8 +209,7 @@ Module.jsuno_init.then(function() {
         console.assert(test.isAnyStruct(
             new Module.jsuno.Any(
                 Module.jsuno.type.struct(Module.jsuno.uno.org.libreoffice.embindtest.Struct),
-                {m1: -123456, m2: 100.5, m3: 'hä',
-                 m4: new Module.jsuno.Any(Module.jsuno.type.boolean, true)})));
+                {m1: -123456, m2: 100.5, m3: 'hä', m4: true})));
     }
     {
         const v = test.getAnyException();
