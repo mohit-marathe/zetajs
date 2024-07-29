@@ -209,7 +209,7 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                             fromType = Module.uno_Type.Type();
                             val = obj;
                             break;
-                        } else if (obj instanceof Module.jsuno.Any) {
+                        } else if (obj instanceof Any) {
                             fromType = obj.type;
                             val = translateToEmbind(obj.val, obj.type, toDelete);
                             break;
@@ -242,8 +242,7 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
             case Module.uno.com.sun.star.uno.TypeClass.BOOLEAN:
                 return Boolean(val);
             case Module.uno.com.sun.star.uno.TypeClass.ANY:
-                return new Module.jsuno.Any(
-                    val.getType(), translateFromEmbind(val.get(), val.getType()));
+                return new Any(val.getType(), translateFromEmbind(val.get(), val.getType()));
             case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
                 {
                     const arr = [];
@@ -292,8 +291,7 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
         };
         function translateFromAny(any, type) {
             if (type.getTypeClass() === Module.uno.com.sun.star.uno.TypeClass.ANY) {
-                return new Module.jsuno.Any(
-                    any.getType(), translateFromEmbind(any.get(), any.getType()));
+                return new Any(any.getType(), translateFromEmbind(any.get(), any.getType()));
             } else {
                 const val1 = any.get();
                 const val2 = translateFromEmbind(val1, any.getType());
@@ -384,11 +382,11 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                     } catch (e) {
                         outparamindex_out.delete();
                         outparam_out.delete();
-                        const exc = Module.jsuno.catchUnoException(e);
+                        const exc = catchUnoException(e);
                         if (exc.type == 'com.sun.star.reflection.InvocationTargetException') {
-                            Module.jsuno.throwUnoException(exc.val.TargetException);
+                            throwUnoException(exc.val.TargetException);
                         } else {
-                            Module.jsuno.throwUnoException(exc);
+                            throwUnoException(exc);
                         }
                     } finally {
                         deleteArgs.forEach((arg) => arg.delete());
@@ -490,8 +488,8 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                 if (any.type.getTypeClass() !== Module.uno.com.sun.star.uno.TypeClass.INTERFACE
                     || any.val === null)
                 {
-                    Module.jsuno.throwUnoException(
-                        new Module.jsuno.Any(
+                    throwUnoException(
+                        new Any(
                             Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
                             {Message: 'cannot get singeleton ' + name, Context: null}));
                 }
@@ -508,8 +506,8 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                         const ifc = context.getServiceManager().createInstanceWithContext(
                             name, context);
                         if (ifc === null) {
-                            Module.jsuno.throwUnoException(
-                                new Module.jsuno.Any(
+                            throwUnoException(
+                                new Any(
                                     Module.uno_Type.Exception(
                                         'com.sun.star.uno.DeploymentException'),
                                     {Message: 'cannot instantiate single-interface service ' + name,
@@ -534,8 +532,7 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                                 if (param.getType().getTypeClass()
                                     !== Module.uno.com.sun.star.uno.TypeClass.ANY)
                                 {
-                                    arg = new Module.jsuno.Any(
-                                        translateTypeDescription(param.getType()), arg);
+                                    arg = new Any(translateTypeDescription(param.getType()), arg);
                                 }
                                 args.push(arg);
                             }
@@ -544,8 +541,8 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                         const ifc = context.getServiceManager()
                               .createInstanceWithArgumentsAndContext(name, args, context);
                         if (ifc === null) {
-                            Module.jsuno.throwUnoException(
-                                new Module.jsuno.Any(
+                            throwUnoException(
+                                new Any(
                                     Module.uno_Type.Exception(
                                         'com.sun.star.uno.DeploymentException'),
                                     {Message: 'cannot instantiate single-interface service ' + name,
@@ -606,6 +603,19 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                 }
             });
         };
+        function Any(type, val) {
+            this.type = type;
+            this.val = val;
+        };
+        function throwUnoException(any) {
+            const toDelete = [];
+            const val = translateToEmbind(any.val, any.type, toDelete);
+            Module.throwUnoException(any.type, val, toDelete);
+        };
+        function catchUnoException(exception) {
+            return translateFromAnyAndDelete(
+                Module.catchUnoException(exception), Module.uno_Type.Any());
+        };
         Module.jsuno = {
             type: {
                 void: Module.uno_Type.Void(),
@@ -657,11 +667,8 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                     return Module.uno_Type.Interface(name);
                 }
             },
-            Any: function(type, val) {
-                this.type = type;
-                this.val = val;
-            },
-            fromAny: function(val) { return val instanceof Module.jsuno.Any ? val.val : val; },
+            Any,
+            fromAny: function(val) { return val instanceof Any ? val.val : val; },
             sameUnoObject: function(obj1, obj2) {
                 return Module.sameUnoObject(
                     translateToEmbind(
@@ -672,15 +679,8 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
             getUnoComponentContext: function() {
                 return proxy(Module.getUnoComponentContext());
             },
-            throwUnoException: function(any) {
-                const toDelete = [];
-                const val = translateToEmbind(any.val, any.type, toDelete);
-                Module.throwUnoException(any.type, val, toDelete);
-            },
-            catchUnoException: function(exception) {
-                return translateFromAnyAndDelete(
-                    Module.catchUnoException(exception), Module.uno_Type.Any());
-            },
+            throwUnoException,
+            catchUnoException,
             uno: new Proxy({}, {
                 get(target, prop) {
                     if (!Object.hasOwn(target, prop)) {
