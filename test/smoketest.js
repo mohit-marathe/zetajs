@@ -122,11 +122,38 @@ Module.jsuno_init.then(function() {
                 m13: Module.jsuno.type.long, m14: -123456, m15: ['foo', 'barr', 'bazzz'],
                 m16: Module.jsuno.uno.org.libreoffice.embindtest.Enum.E_2,
                 m17: new Module.jsuno.uno.org.libreoffice.embindtest.StructLong({m: -123456}),
-                m18: {
-                    m1: new Module.jsuno.uno.org.libreoffice.embindtest.StructString({m: 'foo'}),
-                    m2: -123456, m3: -123456,
-                    m4: new Module.jsuno.uno.org.libreoffice.embindtest.StructString({m: 'barr'})},
+                m18: new Module.jsuno.uno.org.libreoffice.embindtest.Template(
+                    [Module.jsuno.type.any,
+                     Module.jsuno.type.struct(
+                         Module.jsuno.uno.org.libreoffice.embindtest.StructString)],
+                    {m1: new Module.jsuno.uno.org.libreoffice.embindtest.StructString({m: 'foo'}),
+                     m2: -123456, m3: -123456,
+                     m4: new Module.jsuno.uno.org.libreoffice.embindtest.StructString(
+                         {m: 'barr'})}),
                 m19: test})));
+        const def = new Module.jsuno.uno.org.libreoffice.embindtest.Struct();
+        console.assert(def.m1 === false);
+        console.assert(def.m2 === 0);
+        console.assert(def.m3 === 0);
+        console.assert(def.m4 === 0);
+        console.assert(def.m5 === 0);
+        console.assert(def.m6 === 0);
+        console.assert(def.m7 === 0n);
+        console.assert(def.m8 === 0n);
+        console.assert(def.m9 === 0);
+        console.assert(def.m10 === 0);
+        console.assert(def.m11 === '\0');
+        console.assert(def.m12 === '');
+        console.assert(def.m13.toString() === 'void');
+        console.assert(Module.jsuno.fromAny(def.m14) === undefined);
+        console.assert(def.m15.length === 0);
+        console.assert(def.m16 === Module.jsuno.uno.org.libreoffice.embindtest.Enum.E_10);
+        console.assert(def.m17.m === 0);
+        console.assert(def.m18.m1.m === '');
+        console.assert(def.m18.m2 === 0);
+        console.assert(Module.jsuno.fromAny(def.m18.m3) === undefined);
+        console.assert(def.m18.m4.m === '');
+        console.assert(def.m19 === null);
     }
     {
         const v = test.getTemplate();
@@ -135,10 +162,22 @@ Module.jsuno_init.then(function() {
         console.assert(Module.jsuno.fromAny(v.m3) === -123456);
         console.assert(v.m4.m === 'barr');
         console.assert(
-            test.isTemplate({
-                m1: new Module.jsuno.uno.org.libreoffice.embindtest.StructString({m: 'foo'}),
-                m2: -123456, m3: -123456,
-                m4: new Module.jsuno.uno.org.libreoffice.embindtest.StructString({m: 'barr'})}));
+            test.isTemplate(
+                new Module.jsuno.uno.org.libreoffice.embindtest.Template(
+                    [Module.jsuno.type.any,
+                     Module.jsuno.type.struct(
+                         Module.jsuno.uno.org.libreoffice.embindtest.StructString)],
+                    {m1: new Module.jsuno.uno.org.libreoffice.embindtest.StructString({m: 'foo'}),
+                     m2: -123456, m3: -123456,
+                     m4: new Module.jsuno.uno.org.libreoffice.embindtest.StructString(
+                         {m: 'barr'})})));
+        const def = new Module.jsuno.uno.org.libreoffice.embindtest.Template(
+            [Module.jsuno.type.any,
+             Module.jsuno.type.struct(Module.jsuno.uno.org.libreoffice.embindtest.StructString)]);
+        console.assert(def.m1.m === '');
+        console.assert(def.m2 === 0);
+        console.assert(Module.jsuno.fromAny(def.m3) === undefined);
+        console.assert(def.m4.m === '');
     }
     {
         const v = test.getAnyVoid();
