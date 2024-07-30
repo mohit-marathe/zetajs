@@ -220,6 +220,14 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                                     fromType = Module.uno_Type.Enum(tag.type);
                                     val = obj;
                                     break;
+                                } else if (tag.kind === 'struct-instance') {
+                                    fromType = Module.uno_Type.Struct(tag.type);
+                                    val = translateToEmbind(obj, fromType, toDelete);
+                                    break;
+                                } else if (tag.kind === 'exception-instance') {
+                                    fromType = Module.uno_Type.Exception(tag.type);
+                                    val = translateToEmbind(obj, fromType, toDelete);
+                                    break;
                                 }
                             }
                         }
@@ -555,6 +563,99 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
             ctors.delete();
             return obj;
         };
+        function computeMembers(type, obj) {
+            const td = Module.uno.com.sun.star.reflection.XCompoundTypeDescription.query(type);
+            const base = td.getBaseType();
+            if (base !== null) {
+                computeMembers(base, obj);
+            }
+            const types = td.getMemberTypes();
+            const names = td.getMemberNames();
+            for (let i = 0; i !== types.size(); ++i) {
+                let memtype = types.get(i);
+                if (memtype.getTypeClass() === Module.uno.com.sun.star.uno.TypeClass.UNKNOWN) {
+                    const paramName = names.get(i);
+                    let paramType;
+                    const std = Module.uno.com.sun.star.reflection.XStructTypeDescription.query(
+                        type);
+                    const params = std.getTypeParameters();
+                    for (let i = 0; i !== params.size(); ++i) {
+                        if (params.get(i) === paramName) {
+                            const args =std.getTypeArguments();
+                            memtype = args.get(i);
+                            args.delete();
+                            break;
+                        }
+                    }
+                    params.delete();
+                }
+                let val;
+                switch (memtype.getTypeClass()) {
+                case Module.uno.com.sun.star.uno.TypeClass.BOOLEAN:
+                    val = false;
+                    break;
+                case Module.uno.com.sun.star.uno.TypeClass.BYTE:
+                case Module.uno.com.sun.star.uno.TypeClass.SHORT:
+                case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_SHORT:
+                case Module.uno.com.sun.star.uno.TypeClass.LONG:
+                case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_LONG:
+                case Module.uno.com.sun.star.uno.TypeClass.FLOAT:
+                case Module.uno.com.sun.star.uno.TypeClass.DOUBLE:
+                    val = 0;
+                    break;
+                case Module.uno.com.sun.star.uno.TypeClass.HYPER:
+                case Module.uno.com.sun.star.uno.TypeClass.UNSIGNED_HYPER:
+                    val = 0n;
+                    break;
+                case Module.uno.com.sun.star.uno.TypeClass.CHAR:
+                    val = '\0';
+                    break;
+                case Module.uno.com.sun.star.uno.TypeClass.STRING:
+                    val = '';
+                    break;
+                case Module.uno.com.sun.star.uno.TypeClass.TYPE:
+                    val = Module.uno_Type.Void();
+                    break;
+                case Module.uno.com.sun.star.uno.TypeClass.ANY:
+                    val = undefined;
+                    break;
+                case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
+                    val = [];
+                    break;
+                case Module.uno.com.sun.star.uno.TypeClass.ENUM:
+                    {
+                        const names = Module.uno.com.sun.star.reflection.XEnumTypeDescription.query(
+                            memtype).getEnumNames();
+                        val = Module[
+                            'uno_Type_' + memtype.getName().toString().replace(/\./g, '$')][
+                                names.get(0)];
+                        names.delete();
+                        break;
+                    }
+                case Module.uno.com.sun.star.uno.TypeClass.STRUCT:
+                    {
+                        //TODO: Make val an instanceof the corresponding struct constructor
+                        // function:
+                        const members = {};
+                        computeMembers(memtype, members);
+                        val = {};
+                        populate(val, members);
+                        break;
+                    }
+                case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
+                    val = null;
+                    break;
+                }
+                obj[names.get(i)] = val;
+            }
+            types.delete();
+            names.delete();
+        };
+        function populate(obj, members, values) {
+            for (let i in members) {
+                obj[i] = (values !== undefined && i in values ? values : members)[i];
+            }
+        };
         function unoidlProxy(path, embindObject) {
             return new Proxy({}, {
                 get(target, prop) {
@@ -571,11 +672,39 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                             target[prop][Module.unoTagSymbol] = {kind: 'enum', type: name};
                             break;
                         case Module.uno.com.sun.star.uno.TypeClass.STRUCT:
-                            target[prop] = {[Module.unoTagSymbol]: {kind: 'struct', type: name}};
-                            break;
+                            {
+                                const params = Module.uno.com.sun.star.reflection
+                                      .XStructTypeDescription.query(td).getTypeParameters();
+                                const template = params.size() != 0;
+                                params.delete();
+                                if (template) {
+                                    target[prop] = {
+                                        [Module.unoTagSymbol]: {kind: 'struct', type: name}};
+                                } else {
+                                    const members = {};
+                                    computeMembers(td, members);
+                                    target[prop] = function(values) {
+                                        populate(this, members, values);
+                                        this[Module.unoTagSymbol] = {
+                                            kind: 'struct-instance', type: name};
+                                    };
+                                    target[prop][Module.unoTagSymbol] = {
+                                        kind: 'struct', type: name};
+                                }
+                                break;
+                            }
                         case Module.uno.com.sun.star.uno.TypeClass.EXCEPTION:
-                            target[prop] = {[Module.unoTagSymbol]: {kind: 'exception', type: name}};
-                            break;
+                            {
+                                const members = {};
+                                computeMembers(td, members);
+                                target[prop] = function(values) {
+                                    populate(this, members, values);
+                                    this[Module.unoTagSymbol] = {
+                                        kind: 'exception-instance', type: name};
+                                };
+                                target[prop][Module.unoTagSymbol] = {kind: 'exception', type: name};
+                                break;
+                            }
                         case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
                             target[prop] = {[Module.unoTagSymbol]: {kind: 'interface', type: name}};
                             break;
@@ -643,7 +772,8 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                     return Module.uno_Type.Enum(name);
                 },
                 struct(name) {
-                    if (typeof name === 'object' && Object.hasOwn(name, Module.unoTagSymbol)
+                    if ((typeof name === 'object' || typeof name === 'function')
+                        && Object.hasOwn(name, Module.unoTagSymbol)
                         && name[Module.unoTagSymbol].kind === 'struct')
                     {
                         name = name[Module.unoTagSymbol].type;
@@ -651,7 +781,7 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                     return Module.uno_Type.Struct(name);
                 },
                 exception(name) {
-                    if (typeof name === 'object' && Object.hasOwn(name, Module.unoTagSymbol)
+                    if (typeof name === 'function' && Object.hasOwn(name, Module.unoTagSymbol)
                         && name[Module.unoTagSymbol].kind === 'exception')
                     {
                         name = name[Module.unoTagSymbol].type;
