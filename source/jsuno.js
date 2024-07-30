@@ -497,9 +497,8 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                     || any.val === null)
                 {
                     throwUnoException(
-                        new Any(
-                            Module.uno_Type.Exception('com.sun.star.uno.DeploymentException'),
-                            {Message: 'cannot get singeleton ' + name, Context: null}));
+                        new uno.com.sun.star.uno.DeploymentException(
+                            {Message: 'cannot get singeleton ' + name}));
                 }
                 return any.val;
             };
@@ -515,11 +514,9 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                             name, context);
                         if (ifc === null) {
                             throwUnoException(
-                                new Any(
-                                    Module.uno_Type.Exception(
-                                        'com.sun.star.uno.DeploymentException'),
-                                    {Message: 'cannot instantiate single-interface service ' + name,
-                                     Context: null}));
+                                new uno.com.sun.star.uno.DeploymentException(
+                                    {Message:
+                                     'cannot instantiate single-interface service ' + name}));
                         }
                         return ifc;
                     };
@@ -550,11 +547,9 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                               .createInstanceWithArgumentsAndContext(name, args, context);
                         if (ifc === null) {
                             throwUnoException(
-                                new Any(
-                                    Module.uno_Type.Exception(
-                                        'com.sun.star.uno.DeploymentException'),
-                                    {Message: 'cannot instantiate single-interface service ' + name,
-                                     Context: null}));
+                                new uno.com.sun.star.uno.DeploymentException(
+                                    {Message:
+                                     'cannot instantiate single-interface service ' + name}));
                         }
                         return ifc;
                     };
@@ -748,6 +743,17 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
             return translateFromAnyAndDelete(
                 Module.catchUnoException(exception), Module.uno_Type.Any());
         };
+        const uno = new Proxy({}, {
+            get(target, prop) {
+                if (!Object.hasOwn(target, prop)) {
+                    const tdm = getTypeDescriptionManager();
+                    const td = tdm.getByHierarchicalName(prop);
+                    td.delete();
+                    target[prop] = unoidlProxy(prop, Module.uno[prop]);
+                }
+                return target[prop];
+            }
+        });
         Module.jsuno = {
             type: {
                 void: Module.uno_Type.Void(),
@@ -814,17 +820,7 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
             },
             throwUnoException,
             catchUnoException,
-            uno: new Proxy({}, {
-                get(target, prop) {
-                    if (!Object.hasOwn(target, prop)) {
-                        const tdm = getTypeDescriptionManager();
-                        const td = tdm.getByHierarchicalName(prop);
-                        td.delete();
-                        target[prop] = unoidlProxy(prop, Module.uno[prop]);
-                    }
-                    return target[prop];
-                }
-            }),
+            uno,
             unoObject: function(interfaces, obj) {
                 const wrapper = {};
                 const seen = {
