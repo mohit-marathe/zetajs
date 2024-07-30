@@ -90,6 +90,15 @@ Module.jsuno_init.then(function() {
         console.assert(test.isStruct({m1: -123456, m2: 100.5, m3: 'hä', m4: true}));
     }
     {
+        const v = test.getTemplate();
+        console.assert(v.m1.m === 'foo');
+        console.assert(v.m2 === -123456);
+        console.assert(Module.jsuno.fromAny(v.m3) === -123456);
+        console.assert(v.m4.m === 'barr');
+        console.assert(
+            test.isTemplate({m1: {m: 'foo'}, m2: -123456, m3: -123456, m4: {m: 'barr'}}));
+    }
+    {
         const v = test.getAnyVoid();
         console.assert(Module.jsuno.fromAny(v) === undefined);
         console.assert(test.isAnyVoid(v));
