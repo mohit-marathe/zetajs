@@ -567,23 +567,7 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
             const types = td.getMemberTypes();
             const names = td.getMemberNames();
             for (let i = 0; i !== types.size(); ++i) {
-                let memtype = types.get(i);
-                if (memtype.getTypeClass() === Module.uno.com.sun.star.uno.TypeClass.UNKNOWN) {
-                    const paramName = names.get(i);
-                    let paramType;
-                    const std = Module.uno.com.sun.star.reflection.XStructTypeDescription.query(
-                        type);
-                    const params = std.getTypeParameters();
-                    for (let i = 0; i !== params.size(); ++i) {
-                        if (params.get(i) === paramName) {
-                            const args =std.getTypeArguments();
-                            memtype = args.get(i);
-                            args.delete();
-                            break;
-                        }
-                    }
-                    params.delete();
-                }
+                const memtype = types.get(i);
                 let val;
                 switch (memtype.getTypeClass()) {
                 case Module.uno.com.sun.star.uno.TypeClass.BOOLEAN:
