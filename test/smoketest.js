@@ -768,12 +768,13 @@ Module.jsuno_init.then(function() {
         {
             execute(args) {
                 if (args.length !== 1 || args[0].Name !== 'name') {
-                    Module.throwUnoException(
-                        Module.jsuno.type.exception(css.lang.IllegalArgumentException),
-                        {Message: 'bad args', Context: null, ArgumentPosition: 0}, []);
+                    Module.jsuno.throwUnoException(
+                        new Module.jsuno.Any(
+                            Module.jsuno.type.exception(css.lang.IllegalArgumentException),
+                            {Message: 'bad args', Context: null, ArgumentPosition: 0}, []));
                 }
                 console.log('Hello ' + Module.jsuno.fromAny(args[0].Value));
-                return new Module.jsuno.Any(Module.jsuno.type.void);
+                return undefined;
             },
             trigger(event) { console.log('Ola ' + event); },
             the_LongAttribute: -123456,
