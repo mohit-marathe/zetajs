@@ -736,10 +736,13 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
             this.type = type;
             this.val = val;
         };
-        function throwUnoException(any) {
+        function throwUnoException(exception) {
+            const {any, owning} = translateToAny(exception, Module.uno_Type.Any());
             const toDelete = [];
-            const val = translateToEmbind(any.val, any.type, toDelete);
-            Module.throwUnoException(any.type, val, toDelete);
+            if (owning) {
+                toDelete.push(any);
+            }
+            Module.throwUnoException(any.getType(), any.get(), toDelete);
         };
         function catchUnoException(exception) {
             return translateFromAnyAndDelete(

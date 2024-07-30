@@ -726,11 +726,9 @@ Module.jsuno_init.then(function() {
     }
     try {
         Module.jsuno.throwUnoException(
-            new Module.jsuno.Any(
-                Module.jsuno.type.exception(css.lang.WrappedTargetException),
+            new css.lang.WrappedTargetException(
                 {Message: 'wrapped', Context: test,
-                 TargetException: new Module.jsuno.Any(
-                     Module.jsuno.type.exception(css.uno.RuntimeException),
+                 TargetException: new css.uno.RuntimeException(
                      {Message: 'test', Context: test})}));
         console.assert(false);
     } catch (e) {
@@ -769,9 +767,7 @@ Module.jsuno_init.then(function() {
             execute(args) {
                 if (args.length !== 1 || args[0].Name !== 'name') {
                     Module.jsuno.throwUnoException(
-                        new Module.jsuno.Any(
-                            Module.jsuno.type.exception(css.lang.IllegalArgumentException),
-                            {Message: 'bad args', Context: null, ArgumentPosition: 0}));
+                        new css.lang.IllegalArgumentException({Message: 'bad args'}));
                 }
                 console.log('Hello ' + Module.jsuno.fromAny(args[0].Value));
                 return undefined;
