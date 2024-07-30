@@ -771,7 +771,7 @@ Module.jsuno_init.then(function() {
                     Module.jsuno.throwUnoException(
                         new Module.jsuno.Any(
                             Module.jsuno.type.exception(css.lang.IllegalArgumentException),
-                            {Message: 'bad args', Context: null, ArgumentPosition: 0}, []));
+                            {Message: 'bad args', Context: null, ArgumentPosition: 0}));
                 }
                 console.log('Hello ' + Module.jsuno.fromAny(args[0].Value));
                 return undefined;
