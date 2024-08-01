@@ -937,6 +937,11 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                         && name[Module.unoTagSymbol].kind === 'interface')
                     {
                         name = name[Module.unoTagSymbol].type;
+                    } else if (name instanceof Module.uno_Type
+                               && (name.getTypeClass()
+                                   === Module.uno.com.sun.star.uno.TypeClass.INTERFACE))
+                    {
+                        name = name.toString();
                     }
                     interfaceNames.push(name);
                     const td = tdm.getByHierarchicalName(name);
