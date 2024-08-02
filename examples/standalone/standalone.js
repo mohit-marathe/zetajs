@@ -22,7 +22,8 @@ Module.jsuno_init.then(function() {
     config.commitChanges();
 
     const ctrl = css.frame.Desktop.create(context)
-          .loadComponentFromURL('private:factory/swriter', '_blank', 0, []).getCurrentController();
+          .loadComponentFromURL('private:factory/swriter', '_default', 0, [])
+          .getCurrentController();
     const transformUrl = function(url) {
         const ioparam = {val: new css.util.URL({Complete: url})};
         css.util.URLTransformer.create(context).parseStrict(ioparam);
