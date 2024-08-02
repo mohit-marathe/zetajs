@@ -35,6 +35,10 @@ Module.jsuno_init.then(function() {
         queryDispatch(urlObj).dispatch(urlObj, []);
     }
 
+    const topwin = css.awt.Toolkit.create(context).getActiveTopWindow();
+    topwin.IsMaximized = true;
+    topwin.setMenuBar(null);
+
     // Turn off sidebar:
     dispatch('.uno:Sidebar');
 
