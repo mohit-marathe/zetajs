@@ -36,7 +36,7 @@ Module.jsuno_init.then(function() {
     }
 
     const topwin = css.awt.Toolkit.create(context).getActiveTopWindow();
-    topwin.IsMaximized = true;
+    topwin.FullScreen = true;
     topwin.setMenuBar(null);
 
     // Turn off sidebar:
