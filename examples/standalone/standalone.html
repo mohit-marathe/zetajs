@@ -6,7 +6,9 @@
   </style>
   <body>
     <label><input type=checkbox id="bold" disabled="true"/> Bold</label>
-    <canvas id="canvas" oncontextmenu="event.preventDefault()" contenteditable="true"/>
+    <canvas
+      id="canvas" contenteditable="true"
+      oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"/>
     <script type="text/javascript">
       const canvas = document.getElementById('canvas');
       var Module = {qtCanvasElements: [canvas]};
