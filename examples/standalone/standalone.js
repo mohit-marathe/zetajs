@@ -51,6 +51,11 @@ Module.jsuno_init.then(function() {
 
     bold.onchange = function() {
         dispatch('.uno:Bold');
+        // Give focus to the LO canvas to avoid issues with
+        // <https://bugs.documentfoundation.org/show_bug.cgi?id=162291> "Setting Bold is undone when
+        // clicking into non-empty document" when the user would need to click into the canvas to
+        // give back focus to it:
+        canvas.focus();
     };
     bold.disabled = false;
 });
