@@ -20,6 +20,10 @@ endef
 .PHONY: all
 all: | out
 
+.PHONY: clean
+clean:
+	rm -fr out
+
 out:
 	mkdir $@
 
