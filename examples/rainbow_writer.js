@@ -27,11 +27,7 @@ function run_demo() {
 
     // Get the currently opened view context.
     const xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
-          .getCurrentFrame().getController().getModel();
-    if (xModel === null) {
-        console.log("No OfficeDocument opened.");
-        return;
-    }
+          .loadComponentFromURL('private:factory/swriter', '_default', 0, []);
     const xController = xModel.getCurrentController();
 
     const xKeyHandler = Module.jsuno.unoObject([css.awt.XKeyHandler], new ColorXKeyHandler(xModel));

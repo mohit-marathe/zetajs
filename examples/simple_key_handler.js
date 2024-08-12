@@ -43,11 +43,7 @@ function demo() {
     // Get the currently opened view context.
     // xModel is somethink like: SwXTextDocument, ScModelObj, SdXImpressDocument
     xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
-        .getCurrentFrame().getController().getModel();
-    if (xModel === null) {
-        console.log("No OfficeDocument opened.");
-        return;
-    }
+        .loadComponentFromURL('private:factory/swriter', '_default', 0, []);
     xController = xModel.getCurrentController();
 
     xController.addKeyHandler(myXKeyHandler);
