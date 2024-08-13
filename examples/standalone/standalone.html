@@ -9,11 +9,11 @@
     <label><input type=checkbox id="italic" disabled="true"/> Italic</label>
     <label><input type=checkbox id="underline" disabled="true"/> Underline</label>
     <canvas
-      id="canvas" contenteditable="true"
+      id="qtcanvas" contenteditable="true"
       oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"/>
     <script type="text/javascript">
-      const canvas = document.getElementById('canvas');
-      var Module = {qtCanvasElements: [canvas]};
+      const canvas = document.getElementById('qtcanvas');
+      var Module = {canvas};
     </script>
     <script src="soffice.js" type="text/javascript"></script>
     <script src="jsuno.js" type="text/javascript"></script>
