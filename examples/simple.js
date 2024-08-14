@@ -18,25 +18,23 @@ Module.jsuno_init.then(function() {
         }
         return xModel;
     };
-    setTimeout(function() {
-        {
-            const xModel = getTextDocument();
-            const xText = xModel.getText();
-            const xTextCursor = xText.createTextCursor();
-            xTextCursor.setString("string here!");
+    {
+        const xModel = getTextDocument();
+        const xText = xModel.getText();
+        const xTextCursor = xText.createTextCursor();
+        xTextCursor.setString("string here!");
+    }
+    {
+        const xModel = getTextDocument();
+        const xText = xModel.getText();
+        const xParaEnumeration = xText.createEnumeration();
+        while (xParaEnumeration.hasMoreElements()) {
+            const next = xParaEnumeration.nextElement();
+            const xParagraph = Module.jsuno.fromAny(next);
+            const color = Math.floor(Math.random() * 0xFFFFFF);
+            xParagraph.setPropertyValue("CharColor", color);
         }
-        {
-            const xModel = getTextDocument();
-            const xText = xModel.getText();
-            const xParaEnumeration = xText.createEnumeration();
-            while (xParaEnumeration.hasMoreElements()) {
-                const next = xParaEnumeration.nextElement();
-                const xParagraph = Module.jsuno.fromAny(next);
-                const color = Math.floor(Math.random() * 0xFFFFFF);
-                xParagraph.setPropertyValue("CharColor", color);
-            }
-        }
-    }, 10000);
+    }
 });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
