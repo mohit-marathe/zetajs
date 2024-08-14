@@ -25,7 +25,7 @@ function demo() {
 function run_demo() {
     console.log('PLUS: execute example code');
 
-    // Get the currently opened view context.
+    // Open a new writer document.
     const xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
           .loadComponentFromURL('private:factory/swriter', '_default', 0, []);
     const xController = xModel.getCurrentController();
@@ -84,27 +84,14 @@ function init_demo() {
 }
 
 
-function onLoad(block) {
-    if (typeof Module.jsuno_init === 'undefined') {
-        // When loaded as external script with LOWA.
-        console.log('PLUS: poll and wait for Embind "Module"');  // not needed for QT5
-        const interval = setInterval(function() {
-            console.log('looping');
-            if (typeof Module.jsuno_init === 'undefined') return;
-            clearInterval(interval);
-        }, 0.1);
-    } else {
-        // When compiled into LOWA via EMSCRIPTEN_EXTRA_SOFFICE_POST_JS.
-    }
-    Module.jsuno_init.then(block);
-}
-
-
-onLoad(function() {
-    console.log('PLUS: wait 10 seconds for LO UI and UNO to settle');
-    setTimeout(function() {  // Waits 10 seconds for UNO.
-        demo();
-    }, 10000);
-});
+// When loaded as external script with LOWA, Module.uno_init may be defined immediatly.
+console.log('PLUS: poll and wait for Embind "Module"');  // not needed for QT5
+const interval = setInterval(function() {
+    console.log('looping');
+    if (typeof Module.uno_init === 'undefined') return;
+    clearInterval(interval);
+    Module.uno_init.then(Module.jsuno_init$resolve);
+    Module.jsuno_init.then(demo);
+}, 0.1);
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

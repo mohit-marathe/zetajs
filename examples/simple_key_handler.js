@@ -40,7 +40,7 @@ function demo() {
             }
         });
 
-    // Get the currently opened view context.
+    // Open a new writer document.
     // xModel is somethink like: SwXTextDocument, ScModelObj, SdXImpressDocument
     xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
         .loadComponentFromURL('private:factory/swriter', '_default', 0, []);
@@ -58,27 +58,22 @@ function demo() {
 }
 
 
-function onLoad(block) {
-    if (typeof Module.jsuno_init === 'undefined') {
-        // When compiled into LOWA via EMSCRIPTEN_EXTRA_SOFFICE_POST_JS.
-        console.log('PLUS: poll and wait for Embind "Module"');  // not needed for QT5
-        const interval = setInterval(function() {
-            console.log('looping');
-            if (typeof Module.jsuno_init === 'undefined') return;
-            clearInterval(interval);
-        }, 0.1);
-    } else {
-        // When loaded as external script.
-    }
-    Module.jsuno_init.then(block);
+// When loaded as external script with LOWA, Module.uno_init may be defined immediatly.
+try {
+    //Module.uno_init.then(Module.jsuno_init$resolve);
+    Module.jsuno_init.then(demo);
+} catch (e) {
+    //
 }
-
-
-onLoad(function() {
-    console.log('PLUS: wait 10 seconds for LO UI and UNO to settle');
-    setTimeout(function() {  // Waits 10 seconds for UNO.
-        demo();
-    }, 10000);
-});
+console.log('PLUS: poll and wait for Embind "Module"');  // not needed for QT5
+const interval = setInterval(function() {
+    console.log('looping');
+    if (typeof Module.uno_init === 'undefined') return;
+    clearInterval(interval);
+    // Can't determine if Module.uno_init.then has already ran successfully.
+    // So just run it in case this is loaded as external script with LOWA.
+    Module.uno_init.then(Module.jsuno_init$resolve);
+    Module.jsuno_init.then(demo);
+}, 0.1);
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
