@@ -831,8 +831,10 @@ Module.jsuno_init.then(function() {
     obj.StringAttribute = 'foo';
     console.assert(obj.StringAttribute === 'foo');
     console.assert(obj.ReadOnlyAttribute === true);
-    obj.ReadOnlyAttribute = false; //TODO: silently ignored
-    console.assert(obj.ReadOnlyAttribute === true);
+    try {
+        obj.ReadOnlyAttribute = false;
+        console.assert(false);
+    } catch (e) {}
     console.assert(test.checkAttributes(obj));
 });
 
