@@ -949,7 +949,8 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                     td.delete();
                 })
                 return proxy(Module.unoObject(interfaceNames, wrapper));
-            }
+            },
+            mainPort: Module.uno_mainPort
         };
         resolve();
     };
