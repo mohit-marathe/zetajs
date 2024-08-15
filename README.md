@@ -30,4 +30,12 @@ cases.  But client code can always explicitly provide a JS Module.jsuno.Any obje
 
 ## Examples and test code
 
-One way to run all the provided example and test code is to build LOWA with a `EMSCRIPTEN_EXTRA_SOFFICE_POST_JS=/path/to/jsuno/source/jsuno.js /path/to/jsuno/test/smoketest.js /path/to/jsuno/examples/simple.js /path/to/jsuno/examples/TableSample.js` configuration option (e.g., as a line in `autogen.input`), with `/path/to/jsuno` adapted accordingly.  (The `test/smoketest.js` code requires a LibreOffice configured with `--enable-dbgutil` to have the `org.libreoffice.embindtest` UNOIDL entities available.)
+One way to run some of the provided example and test code is to serve those files next to `qt_soffice.html`, along with some `include.js` that looks like
+```
+Module.uno_scripts = [
+    'jsuno/source/jsuno.js',
+    'jsuno/test/smoketest.js',
+    'jsuno/examples/simple.js',
+    'jsuno/examples/TableSample.js'];
+```
+(or whatever the paths where you serve them, relative to `qt_soffice.html`; `jsuno.js` always needs to come first), and to build LOWA with an `EMSCRIPTEN_EXTRA_SOFFICE_POST_JS=/path/to/include.js` configuration option (e.g., as a line in `autogen.input`), with `/path/to` adapted accordingly.  (The `test/smoketest.js` code requires a LibreOffice configured with `--enable-dbgutil` to have the `org.libreoffice.embindtest` UNOIDL entities available.)
