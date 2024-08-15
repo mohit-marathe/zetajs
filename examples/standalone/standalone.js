@@ -3,10 +3,6 @@
 'use strict';
 
 Module.jsuno_init.then(function() {
-    const bold = document.getElementById('bold');
-    const italic = document.getElementById('italic');
-    const underline = document.getElementById('underline');
-
     const css = Module.jsuno.uno.com.sun.star;
     const context = Module.jsuno.getUnoComponentContext();
 
@@ -44,26 +40,33 @@ Module.jsuno_init.then(function() {
     // Turn off sidebar:
     dispatch('.uno:Sidebar');
 
-    const button = function(element, url) {
+    const urls = {};
+    const button = function(id, url) {
+        urls[id] = url;
         const urlObj = transformUrl(url);
         const listener = Module.jsuno.unoObject([css.frame.XStatusListener], {
             disposing: function(source) {},
-            statusChanged: function(state) { element.checked = Module.jsuno.fromAny(state.State); }
+            statusChanged: function(state) {
+                Module.jsuno.mainPort.postMessage({
+                    cmd: 'state', id, state: Module.jsuno.fromAny(state.State)});
+            }
         });
         queryDispatch(urlObj).addStatusListener(listener, urlObj);
-        element.onchange = function() {
-            dispatch(url);
-            // Give focus to the LO canvas to avoid issues with
-            // <https://bugs.documentfoundation.org/show_bug.cgi?id=162291> "Setting Bold is undone
-            // when clicking into non-empty document" when the user would need to click into the
-            // canvas to give back focus to it:
-            canvas.focus();
-        };
-        element.disabled = false;
+        Module.jsuno.mainPort.postMessage({cmd: 'enable', id});
     };
-    button(bold, '.uno:Bold');
-    button(italic, '.uno:Italic');
-    button(underline, '.uno:Underline');
+    button('bold', '.uno:Bold');
+    button('italic', '.uno:Italic');
+    button('underline', '.uno:Underline');
+
+    Module.jsuno.mainPort.onmessage = function (e) {
+        switch (e.data.cmd) {
+        case 'toggle':
+            dispatch(urls[e.data.id]);
+            break;
+        default:
+            throw Error('Unknonwn message command ' + e.data.cmd);
+        }
+    }
 });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

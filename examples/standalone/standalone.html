@@ -13,10 +13,40 @@
       oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"/>
     <script type="text/javascript">
       const canvas = document.getElementById('qtcanvas');
-      var Module = {canvas};
+      var Module = {canvas, uno_scripts: ['./jsuno.js', './standalone.js']};
     </script>
     <script src="soffice.js" type="text/javascript"></script>
-    <script src="jsuno.js" type="text/javascript"></script>
-    <script src="standalone.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      Module.uno_main.then(function(port) {
+          const elements = {};
+          function button(id) {
+              const element = document.getElementById(id);
+              element.onchange = function() {
+                  port.postMessage({cmd: 'toggle', id});
+                  // Give focus to the LO canvas to avoid issues with
+                  // <https://bugs.documentfoundation.org/show_bug.cgi?id=162291> "Setting Bold is
+                  // undone when clicking into non-empty document" when the user would need to click
+                  // into the canvas to give back focus to it:
+                  canvas.focus();
+              }
+              elements[id] = element;
+          };
+          button('bold');
+          button('italic');
+          button('underline');
+          port.onmessage = function(e) {
+              switch (e.data.cmd) {
+              case 'enable':
+                  elements[e.data.id].disabled = false;
+                  break;
+              case 'state':
+                  elements[e.data.id].checked = e.data.state;
+                  break;
+              default:
+                  throw Error('Unknonwn message command ' + e.data.cmd);
+              }
+          };
+      });
+    </script>
   </body>
 </html>
