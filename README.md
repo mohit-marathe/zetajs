@@ -38,4 +38,4 @@ Module.uno_scripts = [
     'jsuno/examples/simple.js',
     'jsuno/examples/TableSample.js'];
 ```
-(or whatever the paths where you serve them, relative to `qt_soffice.html`; `jsuno.js` always needs to come first), and to build LOWA with an `EMSCRIPTEN_EXTRA_SOFFICE_POST_JS=/path/to/include.js` configuration option (e.g., as a line in `autogen.input`), with `/path/to` adapted accordingly.  (The `test/smoketest.js` code requires a LibreOffice configured with `--enable-dbgutil` to have the `org.libreoffice.embindtest` UNOIDL entities available.)
+(or whatever the paths where you serve them, relative to `qt_soffice.html`; `jsuno.js` always needs to come first), and to build LOWA with an `EMSCRIPTEN_EXTRA_SOFFICE_PRE_JS=/path/to/include.js` configuration option (e.g., as a line in `autogen.input`), with `/path/to` adapted accordingly.  (The `test/smoketest.js` code requires a LibreOffice configured with `--enable-dbgutil` to have the `org.libreoffice.embindtest` UNOIDL entities available.)
