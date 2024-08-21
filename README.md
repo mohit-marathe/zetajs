@@ -3,13 +3,13 @@
 `source/jsuno.js` provides a JS-`Proxy`-based wrapper on top of the
 [Embind-based](https://blog.allotropia.de/2024/04/30/libreoffice-javascripted/) JS scripting
 capabilities for LOWA.  It aims to provide a nicer, more idiomatic JS experience compared to the
-Embind-based approach.
+Embind-based approach.  The starting point is the `Module.jsuno_init` `Promise` that provides the
+`Module.jsuno` facilities.
 
-The starting point is to wrap initial UNO objects obtained through the Embind layer (i.e.,
-`Module.getUnoComponentContext()`) in a call to
-`Module.jsuno.proxy(...)`.  The resulting `Proxy` internally uses UNO's `css.script.Invocation`
-service to directly make available all the UNO interfaces implemented by the given UNO object.
-There is no more need for `query` calls to obtain a reference to specific UNO interfaces.
+Compared to the underlying Embind layer, UNO objects are reprsented by proxying JS objects that
+internally uses UNO's `css.script.Invocation` service to directly make available all the UNO
+interfaces implemented by the given UNO object.  There is no more need for `query` calls to obtain a
+reference to specific UNO interfaces.
 
 Also, values of certain UNO types map to more idiomatic JS values now:  UNO sequences map to JS
 arrays, and UNO `ANY` values map to JS `Module.jsuno.Any` objects.  There is no more need to call
