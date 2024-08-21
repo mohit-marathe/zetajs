@@ -1,6 +1,6 @@
 # Nice LOWA Access from JavaScript via UNO
 
-`source/jsuno.js` provides a JS-`Proxy`-based wrapper on top of the
+`source/jsuno.js` provides a wrapper on top of the
 [Embind-based](https://blog.allotropia.de/2024/04/30/libreoffice-javascripted/) JS scripting
 capabilities for LOWA.  It aims to provide a nicer, more idiomatic JS experience compared to the
 Embind-based approach.  The starting point is the `Module.jsuno_init` `Promise` that provides the
