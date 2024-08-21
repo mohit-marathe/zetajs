@@ -12,7 +12,7 @@ service to directly make available all the UNO interfaces implemented by the giv
 There is no more need for `query` calls to obtain a reference to specific UNO interfaces.
 
 Also, values of certain UNO types map to more idiomatic JS values now:  UNO sequences map to JS
-arrays, and UNO `ANY` values map to JS Module.jsuno.Any objects.  There is no more need to call
+arrays, and UNO `ANY` values map to JS `Module.jsuno.Any` objects.  There is no more need to call
 `.delete()` on such values.  Similarly, out and in-out parameters can be passed via any plain JS
 objects with a `val` property, instead of requiring the special `Module.uno_InOutParam_...` objects
 (which had to be `.delete()`'ed).  And UNO `BOOLEAN` more consistently maps to JS `Boolean` now,
@@ -26,7 +26,7 @@ When a UNO interface method takes a parameter of a specific non-`ANY` UNO type, 
 between these convenient JS argument values and the underlying Embind values works well.  However,
 when such a method parameter is of generic `ANY` type, the conversion code needs to guess an
 appropriate UNO type based solely on the given JS argument value, which does not work well in all
-cases.  But client code can always explicitly provide a JS Module.jsuno.Any object.
+cases.  But client code can always explicitly provide a JS `Module.jsuno.Any` object.
 
 ## Examples and test code
 
