@@ -2,9 +2,16 @@
 
 'use strict';
 
-Module.jsuno.then(function(jsuno) {
-    const css = jsuno.uno.com.sun.star;
-    const context = jsuno.getUnoComponentContext();
+
+// global variables: zetajs environment
+let jsuno, css = null;
+
+// global variables: demo specific
+let context, ctrl, urls = null;
+
+
+function demo() {
+    context = jsuno.getUnoComponentContext();
 
     // Turn off toolbars:
     const config = css.configuration.ReadWriteAccess.create(context, 'en-US')
@@ -19,19 +26,9 @@ Module.jsuno.then(function(jsuno) {
     }
     config.commitChanges();
 
-    const ctrl = css.frame.Desktop.create(context)
+    ctrl = css.frame.Desktop.create(context)
           .loadComponentFromURL('private:factory/swriter', '_default', 0, [])
           .getCurrentController();
-    const transformUrl = function(url) {
-        const ioparam = {val: new css.util.URL({Complete: url})};
-        css.util.URLTransformer.create(context).parseStrict(ioparam);
-        return ioparam.val;
-    }
-    const queryDispatch = function(urlObj) { return ctrl.queryDispatch(urlObj, '_self', 0); }
-    const dispatch = function(url) {
-        const urlObj = transformUrl(url);
-        queryDispatch(urlObj).dispatch(urlObj, []);
-    }
 
     const topwin = css.awt.Toolkit.create(context).getActiveTopWindow();
     topwin.FullScreen = true;
@@ -40,19 +37,7 @@ Module.jsuno.then(function(jsuno) {
     // Turn off sidebar:
     dispatch('.uno:Sidebar');
 
-    const urls = {};
-    const button = function(id, url) {
-        urls[id] = url;
-        const urlObj = transformUrl(url);
-        const listener = jsuno.unoObject([css.frame.XStatusListener], {
-            disposing: function(source) {},
-            statusChanged: function(state) {
-                jsuno.mainPort.postMessage({cmd: 'state', id, state: jsuno.fromAny(state.State)});
-            }
-        });
-        queryDispatch(urlObj).addStatusListener(listener, urlObj);
-        jsuno.mainPort.postMessage({cmd: 'enable', id});
-    };
+    urls = {};
     button('bold', '.uno:Bold');
     button('italic', '.uno:Italic');
     button('underline', '.uno:Underline');
@@ -66,6 +51,42 @@ Module.jsuno.then(function(jsuno) {
             throw Error('Unknonwn message command ' + e.data.cmd);
         }
     }
+}
+
+function button(id, url) {
+    urls[id] = url;
+    const urlObj = transformUrl(url);
+    const listener = jsuno.unoObject([css.frame.XStatusListener], {
+        disposing: function(source) {},
+        statusChanged: function(state) {
+            jsuno.mainPort.postMessage({cmd: 'state', id, state: jsuno.fromAny(state.State)});
+        }
+    });
+    queryDispatch(urlObj).addStatusListener(listener, urlObj);
+    jsuno.mainPort.postMessage({cmd: 'enable', id});
+}
+
+function transformUrl(url) {
+    const ioparam = {val: new css.util.URL({Complete: url})};
+    css.util.URLTransformer.create(context).parseStrict(ioparam);
+    return ioparam.val;
+}
+
+function queryDispatch(urlObj) {
+    return ctrl.queryDispatch(urlObj, '_self', 0);
+}
+
+function dispatch(url) {
+    const urlObj = transformUrl(url);
+    queryDispatch(urlObj).dispatch(urlObj, []);
+}
+
+Module.jsuno.then(function(pJsuno) {
+    // initializing zetajs environment
+    jsuno = pJsuno;
+    css = jsuno.uno.com.sun.star;
+    // launching demo
+    demo();
 });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
