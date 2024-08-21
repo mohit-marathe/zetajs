@@ -3,8 +3,8 @@
 `source/jsuno.js` provides a wrapper on top of the
 [Embind-based](https://blog.allotropia.de/2024/04/30/libreoffice-javascripted/) JS scripting
 capabilities for LOWA.  It aims to provide a nicer, more idiomatic JS experience compared to the
-Embind-based approach.  The starting point is the `Module.jsuno_init` `Promise` that provides the
-`Module.jsuno` facilities.
+Embind-based approach.  The starting point is the `Module.jsuno` `Promise` that provides the
+`jsuno` facilities.
 
 Compared to the underlying Embind layer, UNO objects are reprsented by proxying JS objects that
 internally uses UNO's `css.script.Invocation` service to directly make available all the UNO
@@ -12,7 +12,7 @@ interfaces implemented by the given UNO object.  There is no more need for `quer
 reference to specific UNO interfaces.
 
 Also, values of certain UNO types map to more idiomatic JS values now:  UNO sequences map to JS
-arrays, and UNO `ANY` values map to JS `Module.jsuno.Any` objects.  There is no more need to call
+arrays, and UNO `ANY` values map to JS `jsuno.Any` objects.  There is no more need to call
 `.delete()` on such values.  Similarly, out and in-out parameters can be passed via any plain JS
 objects with a `val` property, instead of requiring the special `Module.uno_InOutParam_...` objects
 (which had to be `.delete()`'ed).  And UNO `BOOLEAN` more consistently maps to JS `Boolean` now,
@@ -26,7 +26,7 @@ When a UNO interface method takes a parameter of a specific non-`ANY` UNO type, 
 between these convenient JS argument values and the underlying Embind values works well.  However,
 when such a method parameter is of generic `ANY` type, the conversion code needs to guess an
 appropriate UNO type based solely on the given JS argument value, which does not work well in all
-cases.  But client code can always explicitly provide a JS `Module.jsuno.Any` object.
+cases.  But client code can always explicitly provide a JS `jsuno.Any` object.
 
 ## Examples and test code
 

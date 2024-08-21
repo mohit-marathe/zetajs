@@ -12,20 +12,20 @@
 "use strict";
 
 // Make variables accessible from the console for debugging.
-let css, xModel, xModel_from_component, xController, refXKeyHandler;
+let jsuno, css, xModel, xModel_from_component, xController, refXKeyHandler;
 let evtPressed, evtReleased;
 
 
 function demo() {
     console.log('PLUS: execute example code');
 
-    css = Module.jsuno.uno.com.sun.star;
+    css = jsuno.uno.com.sun.star;
 
     /* Implements com.sun.star.awt.XKeyHandler
      * Outputs printable characters typed into the OfficeDocument.
      * Browser console is used for output.
      */
-    const myXKeyHandler = Module.jsuno.unoObject(
+    const myXKeyHandler = jsuno.unoObject(
         [css.awt.XKeyHandler],
         {
             keyPressed(e) {
@@ -42,7 +42,7 @@ function demo() {
 
     // Open a new writer document.
     // xModel is somethink like: SwXTextDocument, ScModelObj, SdXImpressDocument
-    xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
+    xModel = css.frame.Desktop.create(jsuno.getUnoComponentContext())
         .loadComponentFromURL('private:factory/swriter', '_default', 0, []);
     xController = xModel.getCurrentController();
 
@@ -60,8 +60,8 @@ function demo() {
 
 // When loaded as external script with LOWA, Module.uno_init may be defined immediatly.
 try {
-    //Module.uno_init.then(Module.jsuno_init$resolve);
-    Module.jsuno_init.then(demo);
+    //Module.uno_init.then(Module.jsuno$resolve);
+    Module.jsuno.then(jsuno_ => { jsuno = jsuno_; demo(); });
 } catch (e) {
     //
 }
@@ -72,8 +72,8 @@ const interval = setInterval(function() {
     clearInterval(interval);
     // Can't determine if Module.uno_init.then has already ran successfully.
     // So just run it in case this is loaded as external script with LOWA.
-    Module.uno_init.then(Module.jsuno_init$resolve);
-    Module.jsuno_init.then(demo);
+    Module.uno_init.then(Module.jsuno$resolve);
+    Module.jsuno.then(jsuno_ => { jsuno = jsuno_; demo(); });
 }, 0.1);
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

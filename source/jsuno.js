@@ -2,8 +2,8 @@
 
 'use strict';
 
-Module.jsuno_init = new Promise(function (resolve, reject) {
-    Module.jsuno_init$resolve = function() {
+Module.jsuno = new Promise(function (resolve, reject) {
+    Module.jsuno$resolve = function() {
         const getProxyTarget = Symbol('getProxyTarget');
         function isEmbindInOutParam(obj) {
             if (obj === undefined || obj === null) {
@@ -784,7 +784,7 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
                 return target[prop];
             }
         });
-        Module.jsuno = {
+        const jsuno = {
             type: {
                 void: Module.uno_Type.Void(),
                 boolean: Module.uno_Type.Boolean(),
@@ -952,11 +952,11 @@ Module.jsuno_init = new Promise(function (resolve, reject) {
             },
             mainPort: Module.uno_mainPort
         };
-        resolve();
+        resolve(jsuno);
     };
-    Module.jsuno_init$reject = reject;
+    Module.jsuno$reject = reject;
 });
 
-Module.uno_init.then(function() { Module.jsuno_init$resolve(); });
+Module.uno_init.then(function() { Module.jsuno$resolve(); });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

@@ -13,7 +13,7 @@
 
 //              [     red,   orange,   yellow,    green,     blue,   violet]
 const rainbow = [0xE50000, 0xF08500, 0xFFEE00, 0x008121, 0x004CFF, 0x760188];
-let css, uno_bold, uno_long, uno_font_monospace;
+let jsuno, css, uno_bold, uno_long, uno_font_monospace;
 
 
 function demo() {
@@ -26,11 +26,11 @@ function run_demo() {
     console.log('PLUS: execute example code');
 
     // Open a new writer document.
-    const xModel = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext())
+    const xModel = css.frame.Desktop.create(jsuno.getUnoComponentContext())
           .loadComponentFromURL('private:factory/swriter', '_default', 0, []);
     const xController = xModel.getCurrentController();
 
-    const xKeyHandler = Module.jsuno.unoObject([css.awt.XKeyHandler], new ColorXKeyHandler(xModel));
+    const xKeyHandler = jsuno.unoObject([css.awt.XKeyHandler], new ColorXKeyHandler(xModel));
     xController.addKeyHandler(xKeyHandler);                   // XUserInputInterception.addKeyHandler()
 
     const xTextCursor = xModel.getText().createTextCursor();  // XTextDocument.getText()
@@ -53,7 +53,7 @@ function ColorXKeyHandler(xModel) {
         xTextCursor.goLeft(1, true);
 
         // Walk the rainbow ;-)
-        const color = new Module.jsuno.Any(uno_long, rainbow[this.rainbow_i]);
+        const color = new jsuno.Any(uno_long, rainbow[this.rainbow_i]);
         this.rainbow_i++;
         if (this.rainbow_i >= rainbow.length) { this.rainbow_i = 0; }
 
@@ -77,9 +77,9 @@ function ColorXKeyHandler(xModel) {
 
 
 function init_demo() {
-    css = Module.jsuno.uno.com.sun.star;
-    uno_bold = new Module.jsuno.Any(Module.jsuno.type.float, css.awt.FontWeight.BOLD);
-    uno_long = Module.jsuno.type.long;
+    css = jsuno.uno.com.sun.star;
+    uno_bold = new jsuno.Any(jsuno.type.float, css.awt.FontWeight.BOLD);
+    uno_long = jsuno.type.long;
     uno_font_monospace = "Monospace";
 }
 
@@ -90,8 +90,8 @@ const interval = setInterval(function() {
     console.log('looping');
     if (typeof Module.uno_init === 'undefined') return;
     clearInterval(interval);
-    Module.uno_init.then(Module.jsuno_init$resolve);
-    Module.jsuno_init.then(demo);
+    Module.uno_init.then(Module.jsuno$resolve);
+    Module.jsuno.then(jsuno_ => { jsuno = jsuno_; demo(); });
 }, 0.1);
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

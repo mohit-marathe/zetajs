@@ -2,18 +2,18 @@
 
 'use strict';
 
-Module.jsuno_init.then(function() {
-    const css = Module.jsuno.uno.com.sun.star;
-    const context = Module.jsuno.getUnoComponentContext();
+Module.jsuno.then(function(jsuno) {
+    const css = jsuno.uno.com.sun.star;
+    const context = jsuno.getUnoComponentContext();
 
     // Turn off toolbars:
     const config = css.configuration.ReadWriteAccess.create(context, 'en-US')
-    const uielems = Module.jsuno.fromAny(
+    const uielems = jsuno.fromAny(
         config.getByHierarchicalName(
             '/org.openoffice.Office.UI.WriterWindowState/UIElements/States'));
     for (const i of uielems.getElementNames()) {
-        const uielem = Module.jsuno.fromAny(uielems.getByName(i));
-        if (Module.jsuno.fromAny(uielem.getByName('Visible'))) {
+        const uielem = jsuno.fromAny(uielems.getByName(i));
+        if (jsuno.fromAny(uielem.getByName('Visible'))) {
             uielem.setPropertyValue('Visible', false);
         }
     }
@@ -44,21 +44,20 @@ Module.jsuno_init.then(function() {
     const button = function(id, url) {
         urls[id] = url;
         const urlObj = transformUrl(url);
-        const listener = Module.jsuno.unoObject([css.frame.XStatusListener], {
+        const listener = jsuno.unoObject([css.frame.XStatusListener], {
             disposing: function(source) {},
             statusChanged: function(state) {
-                Module.jsuno.mainPort.postMessage({
-                    cmd: 'state', id, state: Module.jsuno.fromAny(state.State)});
+                jsuno.mainPort.postMessage({cmd: 'state', id, state: jsuno.fromAny(state.State)});
             }
         });
         queryDispatch(urlObj).addStatusListener(listener, urlObj);
-        Module.jsuno.mainPort.postMessage({cmd: 'enable', id});
+        jsuno.mainPort.postMessage({cmd: 'enable', id});
     };
     button('bold', '.uno:Bold');
     button('italic', '.uno:Italic');
     button('underline', '.uno:Underline');
 
-    Module.jsuno.mainPort.onmessage = function (e) {
+    jsuno.mainPort.onmessage = function (e) {
         switch (e.data.cmd) {
         case 'toggle':
             dispatch(urls[e.data.id]);

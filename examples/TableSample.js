@@ -5,9 +5,9 @@
 // Adapted sample code from <https://git.libreoffice.org/core>
 // scripting/examples/python/TableSample.py:
 
-Module.jsuno_init.then(function() {
-    const css = Module.jsuno.uno.com.sun.star;
-    const desktop = css.frame.Desktop.create(Module.jsuno.getUnoComponentContext());
+Module.jsuno.then(function(jsuno) {
+    const css = jsuno.uno.com.sun.star;
+    const desktop = css.frame.Desktop.create(jsuno.getUnoComponentContext());
     const doc = desktop.loadComponentFromURL('private:factory/swriter', '_blank', 0, []);
     const text = doc.getText();
     const cursor = text.createTextCursor();
@@ -17,7 +17,7 @@ Module.jsuno_init.then(function() {
     table.setPropertyValue('BackTransparent', false);
     table.setPropertyValue('BackColor', 13421823);
     const rows = table.getRows();
-    const row = Module.jsuno.fromAny(rows.getByIndex(0));
+    const row = jsuno.fromAny(rows.getByIndex(0));
     row.setPropertyValue('BackTransparent', false);
     row.setPropertyValue('BackColor', 6710932);
     const insertTextIntoCell = function(cellName, text, color) {
