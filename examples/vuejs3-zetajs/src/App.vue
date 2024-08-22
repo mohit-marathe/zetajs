@@ -1,5 +1,5 @@
 <script setup lang=ts>
-  // TODO...
+  import ControlBar from '@/components/ControlBar.vue'
 </script>
 
 <script lang=ts>
@@ -19,13 +19,10 @@
 <template>
   <div id="app">
     <h1>zetajs</h1><br>
-    <label><input type=checkbox id="bold" disabled="true"/> Bold</label>
-    <label><input type=checkbox id="italic" disabled="true"/> Italic</label>
-    <label><input type=checkbox id="underline" disabled="true"/> Underline</label><br>
+    <ControlBar/>
     <canvas
       id="qtcanvas" contenteditable="true"
       oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
       width="560" height="360"/><br>
-    <h1>bottom</h1>
   </div>
 </template>
