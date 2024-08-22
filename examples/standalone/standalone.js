@@ -4,10 +4,10 @@
 
 
 // global variables: zetajs environment
-let jsuno, css = null;
+let jsuno, css;
 
 // global variables: demo specific
-let context, ctrl, urls = null;
+let context, ctrl, urls;
 
 
 function demo() {
