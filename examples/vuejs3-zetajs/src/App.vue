@@ -7,11 +7,8 @@
     mounted() {
       const pre_soffice_js = document.createElement("script");
       pre_soffice_js.src = "/pre_soffice.js";
+      pre_soffice_js.onload = ControlBar.init_control_bar;
       document.body.appendChild(pre_soffice_js);
-
-      const soffice_js = document.createElement("script");
-      soffice_js.src = "/soffice.js";
-      document.body.appendChild(soffice_js);
     },
   };
 </script>

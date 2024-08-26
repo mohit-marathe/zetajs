@@ -37,20 +37,10 @@ export default {
       ];
     },
   },
+  init_control_bar: function() {
+    passTbDataToJs(tbDataForJs);
+  },
 };
-
-console.log('PLUS: poll and wait for "passTbDataToJs"');
-let passTbDataIntMax = 200;
-const passTbDataInt = setInterval(function() {
-  console.log('PLUS: passTbDataToJs: looping');
-  if (passTbDataIntMax-- < 1) clearInterval(passTbDataInt);
-  // pre_soffice.js defines passTbDataToJs after this file ran.
-  // And Variables can't be accessed the other way around.
-  if (typeof passTbDataToJs === 'undefined') return;
-  clearInterval(passTbDataInt);
-  console.log('PLUS: passTbDataToJs: found');
-  passTbDataToJs(tbDataForJs);
-}, 50);  // 0.05 seconds
 </script>
 
 

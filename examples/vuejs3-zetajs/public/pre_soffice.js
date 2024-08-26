@@ -9,34 +9,9 @@ const canvas = document.getElementById('qtcanvas');
 var Module = {canvas, uno_scripts: ['./jsuno.js', './standalone.js']};
 
 
-console.log('PLUS: Module: poll and wait for Embind "Module"');
-let moduleIntMax = 200;
-const moduleInt = setInterval(function() {
-  console.log('PLUS: Module: looping');
-  if (moduleIntMax-- < 1) clearInterval(moduleInt);
-  // When loaded as external script with LOWA *sometimes* this needs a moment to become defined.
-  if (typeof Module.uno_init === 'undefined') return;
-  clearInterval(moduleInt);
-  console.log('PLUS: Module: found');
-  Module.uno_main.then(function(pThrPort) {
-    thrPort = pThrPort;
-    thrPort.onmessage = function(e) {
-      switch (e.data.cmd) {
-      case 'enable':
-        setToolbarActive(e.data.id, true);
-        break;
-      case 'state':
-        setToolbarActive(e.data.id, e.data.state);
-        break;
-      default:
-        throw Error('Unknown message command ' + e.data.cmd);
-      }
-    };
-  });
-}, 50);  // 0.05 seconds
-
 function passTbDataToJs(pTbDataJs) {
   tbDataJs = pTbDataJs;
+  console.log('PLUS: assigned tbDataJs');
 }
 
 function toggleFormatting(id) {
@@ -54,5 +29,30 @@ function setToolbarActive(id, value) {
   // Need to set "active" on "tbDataJs" to trigger an UI update.
   tbDataJs.active = tbDataJs.active;
 }
+
+
+const soffice_js = document.createElement("script");
+soffice_js.src = "/soffice.js";
+// "onload" runs after the loaded script has run.
+soffice_js.onload = function() {
+  console.log('PLUS: Configuring Module');
+  Module.uno_main.then(function(pThrPort) {
+    thrPort = pThrPort;
+    thrPort.onmessage = function(e) {
+      switch (e.data.cmd) {
+      case 'enable':
+        setToolbarActive(e.data.id, true);
+        break;
+      case 'state':
+        setToolbarActive(e.data.id, e.data.state);
+        break;
+      default:
+        throw Error('Unknown message command ' + e.data.cmd);
+      }
+    };
+  });
+};
+// Hint: "canvas" and "Module" must exist before the next line.
+document.body.appendChild(soffice_js);
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
