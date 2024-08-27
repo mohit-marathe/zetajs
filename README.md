@@ -30,6 +30,29 @@ cases.  But client code can always explicitly provide a JS `jsuno.Any` object.
 
 ## Examples and test code
 
+You'll need a LOWA (LibreOffice WASM) build. There the foler `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot.
+
+Examples in the sub-folder of examples/ have own instructions how to run.  
+The single files directly in the examples/ folder may be run according to one of the following descriptions.
+
+If you're not using emrun as webserver, you'll need to set two headers. Here are the needed config lines for Apache:
+
+```
+Header add Cross-Origin-Opener-Policy "same-origin"
+Header add Cross-Origin-Embedder-Policy "require-corp"
+```
+
+### Via uno_scripts in qt_soffice.html
+
+Add this line right before `</body>` in `qt_soffice.html` and replace `EXAMPLE_FILE.js` with the example you choose.  
+Then add the mentioned files to the webroot.
+
+```
+    <script type="text/javascript">Module["uno_scripts"] = ['jsuno.js', 'EXAMPLE_FILE.js']</script>
+```
+
+### Via building with EMSCRIPTEN_EXTRA_SOFFICE_PRE_JS
+
 One way to run some of the provided example and test code is to serve those files next to `qt_soffice.html`, along with some `include.js` that looks like
 ```
 Module.uno_scripts = [

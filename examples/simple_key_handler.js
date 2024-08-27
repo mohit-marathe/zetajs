@@ -1,14 +1,6 @@
 /* -*- Mode: JS; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4; fill-column: 100 -*- */
 // SPDX-License-Identifier: MPL-2.0
 
-/* USAGE:
- * Use as described in README.md.
- * Alternatively add the following files to the webroot and to qt_soffice.html
- * before </body>:
- *     <script type="text/javascript" src="jsuno.js"></script>
- *     <script type="text/javascript" src="THIS_SCRIPT.js"></script>
- */
-
 "use strict";
 
 // Make variables accessible from the console for debugging.
@@ -18,8 +10,6 @@ let evtPressed, evtReleased;
 
 function demo() {
     console.log('PLUS: execute example code');
-
-    css = jsuno.uno.com.sun.star;
 
     /* Implements com.sun.star.awt.XKeyHandler
      * Outputs printable characters typed into the OfficeDocument.
@@ -58,22 +48,12 @@ function demo() {
 }
 
 
-// When loaded as external script with LOWA, Module.uno_init may be defined immediatly.
-try {
-    //Module.uno_init.then(Module.jsuno$resolve);
-    Module.jsuno.then(jsuno_ => { jsuno = jsuno_; demo(); });
-} catch (e) {
-    //
-}
-console.log('PLUS: poll and wait for Embind "Module"');  // not needed for QT5
-const interval = setInterval(function() {
-    console.log('looping');
-    if (typeof Module.uno_init === 'undefined') return;
-    clearInterval(interval);
-    // Can't determine if Module.uno_init.then has already ran successfully.
-    // So just run it in case this is loaded as external script with LOWA.
-    Module.uno_init.then(Module.jsuno$resolve);
-    Module.jsuno.then(jsuno_ => { jsuno = jsuno_; demo(); });
-}, 0.1);
+Module.jsuno.then(function(pJsuno) {
+    // initializing zetajs environment
+    jsuno = pJsuno;
+    css = jsuno.uno.com.sun.star;
+    // launching demo
+    demo();
+});
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
