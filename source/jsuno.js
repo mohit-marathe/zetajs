@@ -11,31 +11,15 @@ Module.jsuno = new Promise(function (resolve, reject) {
             value.forEach((val) => val.delete());
         });
         const getProxyTarget = Symbol('getProxyTarget');
-        const gcWrapTag = Symbol('gcWrapTag');
         function gcWrap(obj) {
             // Embind has already registered obj at some FinalizationRegistry that prints the
             // "Embind found a leaked C++ instance" warning, which we want to suppress; and if we
             // registered obj itself also at our deleting FinalizationRegistry, the Embind one might
             // fire first and still print the warning; so instead wrap obj in a Proxy and register
             // that:
-            const proxy = new Proxy(obj, {
-                has(o, prop) { return prop === gcWrapTag || (prop in o); }
-            });
+            const proxy = new Proxy(obj, {});
             Module.uno$jsuno_deleteRegistry.register(proxy, [obj]);
             return proxy
-        }
-        function isEmbindInOutParam(obj) {
-            if (obj === undefined || obj === null) {
-                return false;
-            }
-            const prot = Object.getPrototypeOf(obj);
-            return 'constructor' in prot && typeof prot.constructor.name === 'string'
-                && prot.constructor.name.startsWith('uno_InOutParam_');
-        };
-        function isEmbindType(obj) { return !Object.hasOwn(obj, gcWrapTag); }
-        function isEmbindSequence(obj) { return !(obj instanceof Array); };
-        function isEmbindInterface(obj) {
-            return obj !== null && !Object.hasOwn(obj, getProxyTarget);
         }
         function getEmbindSequenceCtor(componentType) {
             let typename = componentType.toString();
@@ -444,46 +428,15 @@ Module.jsuno = new Promise(function (resolve, reject) {
                                     break;
                                 }
                             case Module.uno.com.sun.star.reflection.ParamMode.INOUT:
-                                if (isEmbindInOutParam(args[i])) {
-                                    const val = args[i].val;
-                                    const ty = info.aParamTypes.get(i);
-                                    const tc = ty.getTypeClass();
-                                    ty.delete();
-                                    if (tc === Module.uno.com.sun.star.uno.TypeClass.ANY) {
-                                        unoArgs.set(i, val);
-                                        val.delete();
-                                    } else {
-                                        const any = new Module.uno_Any(
-                                            info.aParamTypes.get(i), val);
-                                        switch (tc) {
-                                        case Module.uno.com.sun.star.uno.TypeClass.TYPE:
-                                            if (isEmbindType(val)) {
-                                                val.delete();
-                                            }
-                                            break;
-                                        case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
-                                            if (isEmbindSequence(val)) {
-                                                val.delete();
-                                            }
-                                            break;
-                                        case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
-                                            if (isEmbindInterface(val)) {
-                                                val.delete();
-                                            }
-                                            break;
-                                        }
-                                        unoArgs.set(i, any);
-                                        deleteArgs.push(any);
-                                    }
-                                } else {
+                                {
                                     const {any, owning} = translateToAny(
                                         args[i].val, info.aParamTypes.get(i));
                                     unoArgs.set(i, any);
                                     if (owning) {
                                         deleteArgs.push(any);
                                     }
+                                    break;
                                 }
-                                break;
                             }
                         }
                         const outparamindex_out = new Module.uno_InOutParam_sequence_short;
@@ -510,40 +463,9 @@ Module.jsuno = new Promise(function (resolve, reject) {
                         outparam_out.delete();
                         for (let i = 0; i !== outparamindex.size(); ++i) {
                             const j = outparamindex.get(i);
-                            if (isEmbindInOutParam(args[j])) {
-                                const val = outparam.get(i);
-                                const ty = info.aParamTypes.get(j);
-                                const tc = ty.getTypeClass();
-                                ty.delete();
-                                if (tc === Module.uno.com.sun.star.uno.TypeClass.ANY) {
-                                    args[j].val = val;
-                                } else {
-                                    const val2 = val.get();
-                                    args[j].val = val2;
-                                    switch (tc) {
-                                    case Module.uno.com.sun.star.uno.TypeClass.TYPE:
-                                        if (isEmbindType(val2)) {
-                                            val2.delete();
-                                        }
-                                        break;
-                                    case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
-                                        if (isEmbindSequence(val2)) {
-                                            val2.delete();
-                                        }
-                                        break;
-                                    case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
-                                        if (isEmbindInterface(val2)) {
-                                            val2.delete();
-                                        }
-                                        break;
-                                    }
-                                }
-                                val.delete();
-                            } else {
-                                const ty = info.aParamTypes.get(j);
-                                args[j].val = translateFromAnyAndDelete(outparam.get(i), ty);
-                                ty.delete();
-                            }
+                            const ty = info.aParamTypes.get(j);
+                            args[j].val = translateFromAnyAndDelete(outparam.get(i), ty);
+                            ty.delete();
                         }
                         outparamindex.delete();
                         outparam.delete();
