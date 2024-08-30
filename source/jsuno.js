@@ -322,7 +322,14 @@ Module.jsuno = new Promise(function (resolve, reject) {
             case Module.uno.com.sun.star.uno.TypeClass.STRUCT:
             case Module.uno.com.sun.star.uno.TypeClass.EXCEPTION:
                 {
-                    const obj = {};
+                    const obj = {
+                        [Module.unoTagSymbol]: {
+                            kind: type.getTypeClass()
+                                == Module.uno.com.sun.star.uno.TypeClass.STRUCT
+                                ? 'struct-instance' : 'exception-instance',
+                            type: type.toString()
+                        }
+                    };
                     function walk(td) {
                         const base = td.getBaseType();
                         if (base !== null) {
@@ -449,9 +456,9 @@ Module.jsuno = new Promise(function (resolve, reject) {
                             outparam_out.delete();
                             const exc = catchUnoException(e);
                             if (exc.type == 'com.sun.star.reflection.InvocationTargetException') {
-                                throwUnoException(exc.val.TargetException);
+                                throwUnoException(exc.val.TargetException.val);
                             } else {
-                                throwUnoException(exc);
+                                throwUnoException(exc.val);
                             }
                         } finally {
                             deleteArgs.forEach((arg) => arg.delete());
@@ -857,17 +864,9 @@ Module.jsuno = new Promise(function (resolve, reject) {
             this.val = val;
         };
         function throwUnoException(exception) {
-            let type;
-            let val;
-            if (exception instanceof Any) {
-                type = exception.type;
-                val = exception.val;
-            } else {
-                type = gcWrap(Module.uno_Type.Exception(exception[Module.unoTagSymbol].type));
-                val = exception;
-            }
+            const type = gcWrap(Module.uno_Type.Exception(exception[Module.unoTagSymbol].type));
             const toDelete = [];
-            val = translateToEmbind(val, type, toDelete);
+            const val = translateToEmbind(exception, type, toDelete);
             Module.throwUnoException(type, val, toDelete);
         };
         function catchUnoException(exception) {
