@@ -689,26 +689,30 @@ Module.jsuno.then(function(jsuno) {
         //...
     }
 
+    const objImpl = {
+        execute(args) {
+            if (args.length !== 1 || args[0].Name !== 'name') {
+                jsuno.throwUnoException(
+                    new css.lang.IllegalArgumentException({Message: 'bad args'}));
+            }
+            console.log('Hello ' + jsuno.fromAny(args[0].Value));
+            return undefined;
+        },
+        trigger(event) { console.log('Ola ' + event); },
+        the_LongAttribute: -123456,
+        getLongAttribute() { return this.the_LongAttribute; },
+        setLongAttribute(value) { this.the_LongAttribute = value; },
+        the_StringAttribute: 'hä',
+        getStringAttribute() { return this.the_StringAttribute; },
+        setStringAttribute(value) { this.the_StringAttribute = value; },
+        getReadOnlyAttribute() { return true; }
+    };
+    Module.jsunoSmoketestFinalizationRegistry = new FinalizationRegistry(
+        value => console.log('Finalized: ' + value));
+    Module.jsunoSmoketestFinalizationRegistry.register(objImpl, 'objImpl');
     const obj = jsuno.unoObject(
         [css.task.XJob, css.task.XJobExecutor, jsuno.uno.org.libreoffice.embindtest.XAttributes],
-        {
-            execute(args) {
-                if (args.length !== 1 || args[0].Name !== 'name') {
-                    jsuno.throwUnoException(
-                        new css.lang.IllegalArgumentException({Message: 'bad args'}));
-                }
-                console.log('Hello ' + jsuno.fromAny(args[0].Value));
-                return undefined;
-            },
-            trigger(event) { console.log('Ola ' + event); },
-            the_LongAttribute: -123456,
-            getLongAttribute() { return this.the_LongAttribute; },
-            setLongAttribute(value) { this.the_LongAttribute = value; },
-            the_StringAttribute: 'hä',
-            getStringAttribute() { return this.the_StringAttribute; },
-            setStringAttribute(value) { this.the_StringAttribute = value; },
-            getReadOnlyAttribute() { return true; }
-        });
+        objImpl);
     console.assert(
         jsuno.fromAny(
             obj.queryInterface(jsuno.type.interface(jsuno.uno.org.libreoffice.embindtest.XTest)))
