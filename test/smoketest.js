@@ -709,6 +709,19 @@ Module.jsuno.then(function(jsuno) {
             setStringAttribute(value) { this.the_StringAttribute = value; },
             getReadOnlyAttribute() { return true; }
         });
+    console.assert(
+        jsuno.fromAny(
+            obj.queryInterface(jsuno.type.interface(jsuno.uno.org.libreoffice.embindtest.XTest)))
+            === undefined);
+    console.assert(
+        jsuno.sameUnoObject(
+            jsuno.fromAny(obj.queryInterface(jsuno.type.interface(css.uno.XInterface))), obj));
+    console.assert(
+        jsuno.sameUnoObject(
+            jsuno.fromAny(
+                obj.queryInterface(
+                    jsuno.type.interface(jsuno.uno.org.libreoffice.embindtest.XAttributes))),
+            obj));
     test.passJob(obj);
     test.passJobExecutor(obj);
     test.passInterface(obj);
