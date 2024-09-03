@@ -707,6 +707,9 @@ Module.jsuno.then(function(jsuno) {
         setStringAttribute(value) { this.the_StringAttribute = value; },
         getReadOnlyAttribute() { return true; }
     };
+    // Watch for a "Finalized: objImpl" log line in the console (but see
+    // <https://github.com/emscripten-core/emscripten/pull/22488> "Let leakWarning carry the string
+    // representation, not the stack itself"):
     Module.jsunoSmoketestFinalizationRegistry = new FinalizationRegistry(
         value => console.log('Finalized: ' + value));
     Module.jsunoSmoketestFinalizationRegistry.register(objImpl, 'objImpl');
