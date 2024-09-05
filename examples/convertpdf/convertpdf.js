@@ -2,12 +2,12 @@
 
 'use strict';
 
-Module.jsuno.then(function(jsuno) {
-    const css = jsuno.uno.com.sun.star;
-    const context = jsuno.getUnoComponentContext();
+Module.zetajs.then(function(zetajs) {
+    const css = zetajs.uno.com.sun.star;
+    const context = zetajs.getUnoComponentContext();
     const desktop = css.frame.Desktop.create(context);
 
-    jsuno.mainPort.onmessage = function (e) {
+    zetajs.mainPort.onmessage = function (e) {
         switch (e.data.cmd) {
         case 'convert':
             try {
@@ -21,15 +21,15 @@ Module.jsuno.then(function(jsuno) {
                     [new css.beans.PropertyValue({Name: 'Overwrite', Value: true}),
                      new css.beans.PropertyValue(
                          {Name: 'FilterName', Value: 'writer_pdf_Export'})]);
-                if (jsuno.fromAny(doc.queryInterface(jsuno.type.interface(css.util.XCloseable))) !==
-                    undefined)
+                if (zetajs.fromAny(doc.queryInterface(zetajs.type.interface(css.util.XCloseable)))
+                    !== undefined)
                 {
                     doc.close(false);
                 }
-                jsuno.mainPort.postMessage({cmd: 'converted', name: e.data.name, from, to});
+                zetajs.mainPort.postMessage({cmd: 'converted', name: e.data.name, from, to});
             } catch (e) {
-                const exc = jsuno.catchUnoException(e);
-                console.log('TODO', exc.type, jsuno.fromAny(exc).Message);
+                const exc = zetajs.catchUnoException(e);
+                console.log('TODO', exc.type, zetajs.fromAny(exc).Message);
             }
             break;
         default:
@@ -37,7 +37,7 @@ Module.jsuno.then(function(jsuno) {
         }
     }
 
-    jsuno.mainPort.postMessage({cmd: 'start'});
+    zetajs.mainPort.postMessage({cmd: 'start'});
 });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

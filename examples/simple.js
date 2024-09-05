@@ -4,13 +4,14 @@
 
 // Adapted sample code from <https://git.libreoffice.org/core> static/README.wasm.md:
 
-Module.jsuno.then(function(jsuno) {
+Module.zetajs.then(function(zetajs) {
     function getTextDocument() {
-        const css = jsuno.uno.com.sun.star;
-        const desktop = css.frame.Desktop.create(jsuno.getUnoComponentContext());
+        const css = zetajs.uno.com.sun.star;
+        const desktop = css.frame.Desktop.create(zetajs.getUnoComponentContext());
         let xModel = desktop.getCurrentFrame().getController().getModel();
         if (xModel === null
-            || !jsuno.fromAny(xModel.queryInterface(jsuno.type.interface(css.text.XTextDocument))))
+            || !zetajs.fromAny(
+                xModel.queryInterface(zetajs.type.interface(css.text.XTextDocument))))
         {
             xModel = desktop.loadComponentFromURL(
                 'file:///android/default-document/example.odt', '_default', 0, []);
@@ -29,7 +30,7 @@ Module.jsuno.then(function(jsuno) {
         const xParaEnumeration = xText.createEnumeration();
         while (xParaEnumeration.hasMoreElements()) {
             const next = xParaEnumeration.nextElement();
-            const xParagraph = jsuno.fromAny(next);
+            const xParagraph = zetajs.fromAny(next);
             const color = Math.floor(Math.random() * 0xFFFFFF);
             xParagraph.setPropertyValue("CharColor", color);
         }

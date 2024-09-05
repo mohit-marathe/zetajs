@@ -4,7 +4,7 @@
 "use strict";
 
 // Make variables accessible from the console for debugging.
-let jsuno, css, xModel, xModel_from_component, xController, refXKeyHandler;
+let zetajs, css, xModel, xModel_from_component, xController, refXKeyHandler;
 let evtPressed, evtReleased;
 
 
@@ -15,7 +15,7 @@ function demo() {
      * Outputs printable characters typed into the OfficeDocument.
      * Browser console is used for output.
      */
-    const myXKeyHandler = jsuno.unoObject(
+    const myXKeyHandler = zetajs.unoObject(
         [css.awt.XKeyHandler],
         {
             keyPressed(e) {
@@ -32,7 +32,7 @@ function demo() {
 
     // Open a new writer document.
     // xModel is somethink like: SwXTextDocument, ScModelObj, SdXImpressDocument
-    xModel = css.frame.Desktop.create(jsuno.getUnoComponentContext())
+    xModel = css.frame.Desktop.create(zetajs.getUnoComponentContext())
         .loadComponentFromURL('private:factory/swriter', '_default', 0, []);
     xController = xModel.getCurrentController();
 
@@ -48,10 +48,10 @@ function demo() {
 }
 
 
-Module.jsuno.then(function(pJsuno) {
+Module.zetajs.then(function(pZetajs) {
     // initializing zetajs environment
-    jsuno = pJsuno;
-    css = jsuno.uno.com.sun.star;
+    zetajs = pZetajs;
+    css = zetajs.uno.com.sun.star;
     // launching demo
     demo();
 });

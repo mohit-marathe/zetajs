@@ -2,12 +2,12 @@
 
 'use strict';
 
-Module.jsuno = new Promise(function (resolve, reject) {
-    Module.jsuno$resolve = function() {
-        // A FinalizationRegistry for jsuno objects that own Embind objects that, in turn, should be
-        // .delete()'d (so that Embind doesn't print any "Embind found a leaked C++ instance"
+Module.zetajs = new Promise(function (resolve, reject) {
+    Module.zetajs$resolve = function() {
+        // A FinalizationRegistry for zetajs objects that own Embind objects that, in turn, should
+        // be .delete()'d (so that Embind doesn't print any "Embind found a leaked C++ instance"
         // warnings for them); it is tied to Module so it doesn't itself get GC'ed early:
-        Module.uno$jsuno_deleteRegistry = new FinalizationRegistry(function(value) {
+        Module.uno$zetajs_deleteRegistry = new FinalizationRegistry(function(value) {
             value.forEach((val) => val.delete());
         });
         const getProxyTarget = Symbol('getProxyTarget');
@@ -18,7 +18,7 @@ Module.jsuno = new Promise(function (resolve, reject) {
             // fire first and still print the warning; so instead wrap obj in a Proxy and register
             // that:
             const proxy = new Proxy(obj, {});
-            Module.uno$jsuno_deleteRegistry.register(proxy, [obj]);
+            Module.uno$zetajs_deleteRegistry.register(proxy, [obj]);
             return proxy
         }
         function getEmbindSequenceCtor(componentType) {
@@ -390,7 +390,7 @@ Module.jsuno = new Promise(function (resolve, reject) {
             }
             const prox = {};
             const toDelete = [unoObject];
-            Module.uno$jsuno_deleteRegistry.register(prox, toDelete);
+            Module.uno$zetajs_deleteRegistry.register(prox, toDelete);
             prox[getProxyTarget] = unoObject;
             // css.script.XInvocation2::getInfo invents additional members (e.g., an attribute "Foo"
             // if there is a method "getFoo"), so better determine the actual set of members via
@@ -889,7 +889,7 @@ Module.jsuno = new Promise(function (resolve, reject) {
                 return target[prop];
             }
         });
-        const jsuno = {
+        const zetajs = {
             type: {
                 void: gcWrap(Module.uno_Type.Void()),
                 boolean: gcWrap(Module.uno_Type.Boolean()),
@@ -963,7 +963,7 @@ Module.jsuno = new Promise(function (resolve, reject) {
             unoObject: function(interfaces, obj) {
                 const wrapper = {};
                 const toDelete = [];
-                Module.uno$jsuno_deleteRegistry.register(wrapper, toDelete);
+                Module.uno$zetajs_deleteRegistry.register(wrapper, toDelete);
                 const seen = {
                     'com.sun.star.lang.XTypeProvider': true, 'com.sun.star.uno.XInterface': true};
                 function walk(td) {
@@ -1082,11 +1082,11 @@ Module.jsuno = new Promise(function (resolve, reject) {
             },
             mainPort: Module.uno_mainPort
         };
-        resolve(jsuno);
+        resolve(zetajs);
     };
-    Module.jsuno$reject = reject;
+    Module.zetajs$reject = reject;
 });
 
-Module.uno_init.then(function() { Module.jsuno$resolve(); });
+Module.uno_init.then(function() { Module.zetajs$resolve(); });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

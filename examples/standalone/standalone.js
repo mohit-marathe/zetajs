@@ -4,23 +4,23 @@
 
 
 // global variables: zetajs environment
-let jsuno, css;
+let zetajs, css;
 
 // global variables: demo specific
 let context, ctrl, urls;
 
 
 function demo() {
-    context = jsuno.getUnoComponentContext();
+    context = zetajs.getUnoComponentContext();
 
     // Turn off toolbars:
     const config = css.configuration.ReadWriteAccess.create(context, 'en-US')
-    const uielems = jsuno.fromAny(
+    const uielems = zetajs.fromAny(
         config.getByHierarchicalName(
             '/org.openoffice.Office.UI.WriterWindowState/UIElements/States'));
     for (const i of uielems.getElementNames()) {
-        const uielem = jsuno.fromAny(uielems.getByName(i));
-        if (jsuno.fromAny(uielem.getByName('Visible'))) {
+        const uielem = zetajs.fromAny(uielems.getByName(i));
+        if (zetajs.fromAny(uielem.getByName('Visible'))) {
             uielem.setPropertyValue('Visible', false);
         }
     }
@@ -42,7 +42,7 @@ function demo() {
     button('italic', '.uno:Italic');
     button('underline', '.uno:Underline');
 
-    jsuno.mainPort.onmessage = function (e) {
+    zetajs.mainPort.onmessage = function (e) {
         switch (e.data.cmd) {
         case 'toggle':
             dispatch(urls[e.data.id]);
@@ -56,14 +56,14 @@ function demo() {
 function button(id, url) {
     urls[id] = url;
     const urlObj = transformUrl(url);
-    const listener = jsuno.unoObject([css.frame.XStatusListener], {
+    const listener = zetajs.unoObject([css.frame.XStatusListener], {
         disposing: function(source) {},
         statusChanged: function(state) {
-            jsuno.mainPort.postMessage({cmd: 'state', id, state: jsuno.fromAny(state.State)});
+            zetajs.mainPort.postMessage({cmd: 'state', id, state: zetajs.fromAny(state.State)});
         }
     });
     queryDispatch(urlObj).addStatusListener(listener, urlObj);
-    jsuno.mainPort.postMessage({cmd: 'enable', id});
+    zetajs.mainPort.postMessage({cmd: 'enable', id});
 }
 
 function transformUrl(url) {
@@ -81,10 +81,10 @@ function dispatch(url) {
     queryDispatch(urlObj).dispatch(urlObj, []);
 }
 
-Module.jsuno.then(function(pJsuno) {
+Module.zetajs.then(function(pZetajs) {
     // initializing zetajs environment
-    jsuno = pJsuno;
-    css = jsuno.uno.com.sun.star;
+    zetajs = pZetajs;
+    css = zetajs.uno.com.sun.star;
     // launching demo
     demo();
 });
