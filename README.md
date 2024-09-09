@@ -6,7 +6,7 @@ capabilities for LOWA.  It aims to provide a nicer, more idiomatic JS experience
 Embind-based approach.  The starting point is the `Module.zetajs` `Promise` that provides the
 `zetajs` facilities.
 
-Compared to the underlying Embind layer, UNO objects are reprsented by proxying JS objects that
+Compared to the underlying Embind layer, UNO objects are represented by proxying JS objects that
 internally uses UNO's `css.script.Invocation` service to directly make available all the UNO
 interfaces implemented by the given UNO object.  There is no more need for `query` calls to obtain a
 reference to specific UNO interfaces.
@@ -30,10 +30,10 @@ cases.  But client code can always explicitly provide a JS `zetajs.Any` object.
 
 ## Examples and test code
 
-You'll need a LOWA (LibreOffice WASM) build. There the foler `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot.
+You'll need a LOWA (LibreOffice WASM) build. There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot.
 
-Examples in the sub-folder of examples/ have own instructions how to run.  
-The single files directly in the examples/ folder may be run according to one of the following descriptions.
+Examples in the sub-folder of `examples/` have own instructions how to run.
+The single files directly in the `examples/` folder may be run according to one of the following descriptions.
 
 If you're not using emrun as webserver, you'll need to set two headers. Here are the needed config lines for Apache:
 
@@ -44,7 +44,7 @@ Header add Cross-Origin-Embedder-Policy "require-corp"
 
 ### Via uno_scripts in qt_soffice.html
 
-Add this line right before `</body>` in `qt_soffice.html` and replace `EXAMPLE_FILE.js` with the example you choose.  
+Add this line right before `</body>` in `qt_soffice.html` and replace `EXAMPLE_FILE.js` with the example you choose.
 Then add the mentioned files to the webroot.
 
 ```
