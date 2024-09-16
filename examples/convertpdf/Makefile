@@ -7,7 +7,7 @@ source := \
     $(LOWAINSTDIR)soffice.js \
     $(LOWAINSTDIR)soffice.wasm \
     $(LOWAINSTDIR)soffice.worker.js \
-    ../../source/zetajs.js \
+    ../../source/zeta.js \
     convertpdf.js \
     convertpdf.html
 

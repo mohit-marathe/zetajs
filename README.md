@@ -1,6 +1,6 @@
 # Nice LOWA Access from JavaScript via UNO
 
-`source/zetajs.js` provides a wrapper on top of the
+`source/zeta.js` provides a wrapper on top of the
 [Embind-based](https://blog.allotropia.de/2024/04/30/libreoffice-javascripted/) JS scripting
 capabilities for LOWA.  It aims to provide a nicer, more idiomatic JS experience compared to the
 Embind-based approach.  The starting point is the `Module.zetajs` `Promise` that provides the
@@ -48,7 +48,7 @@ Add this line right before `</body>` in `qt_soffice.html` and replace `EXAMPLE_F
 Then add the mentioned files to the webroot.
 
 ```
-    <script type="text/javascript">Module["uno_scripts"] = ['zetajs.js', 'EXAMPLE_FILE.js']</script>
+    <script type="text/javascript">Module["uno_scripts"] = ['zeta.js', 'EXAMPLE_FILE.js']</script>
 ```
 
 ### Via building with EMSCRIPTEN_EXTRA_SOFFICE_PRE_JS
@@ -56,9 +56,9 @@ Then add the mentioned files to the webroot.
 One way to run some of the provided example and test code is to serve those files next to `qt_soffice.html`, along with some `include.js` that looks like
 ```
 Module.uno_scripts = [
-    'zetajs/source/zetajs.js',
+    'zetajs/source/zeta.js',
     'zetajs/test/smoketest.js',
     'zetajs/examples/simple.js',
     'zetajs/examples/TableSample.js'];
 ```
-(or whatever the paths where you serve them, relative to `qt_soffice.html`; `zetajs.js` always needs to come first), and to build LOWA with an `EMSCRIPTEN_EXTRA_SOFFICE_PRE_JS=/path/to/include.js` configuration option (e.g., as a line in `autogen.input`), with `/path/to` adapted accordingly.  (The `test/smoketest.js` code requires a LibreOffice configured with `--enable-dbgutil` to have the `org.libreoffice.embindtest` UNOIDL entities available.)
+(or whatever the paths where you serve them, relative to `qt_soffice.html`; `zeta.js` always needs to come first), and to build LOWA with an `EMSCRIPTEN_EXTRA_SOFFICE_PRE_JS=/path/to/include.js` configuration option (e.g., as a line in `autogen.input`), with `/path/to` adapted accordingly.  (The `test/smoketest.js` code requires a LibreOffice configured with `--enable-dbgutil` to have the `org.libreoffice.embindtest` UNOIDL entities available.)

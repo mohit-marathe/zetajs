@@ -6,7 +6,7 @@ let thrPort;   // zetajs thread communication
 let tbDataJs;  // toolbar dataset passed from vue.js for JS
 
 const canvas = document.getElementById('qtcanvas');
-var Module = {canvas, uno_scripts: ['./zetajs.js', './standalone.js']};
+var Module = {canvas, uno_scripts: ['./zeta.js', './standalone.js']};
 
 
 function passTbDataToJs(pTbDataJs) {
