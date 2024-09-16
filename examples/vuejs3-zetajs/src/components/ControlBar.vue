@@ -38,7 +38,7 @@ export default {
     },
   },
   init_control_bar: function() {
-    passTbDataToJs(tbDataForJs);
+    initJS(tbDataForJs);
   },
 };
 </script>

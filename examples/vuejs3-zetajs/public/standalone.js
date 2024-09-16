@@ -1,1 +1,0 @@
-../../standalone/standalone.js

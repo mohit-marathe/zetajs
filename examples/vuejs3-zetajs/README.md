@@ -1,7 +1,7 @@
 # Use with LOWA
 
 Use with LOWA build from commit:  
-https://git.libreoffice.org/core/+/c179bf9ae8d0d27d78b72c026256a56b5458d973^!  
+https://git.libreoffice.org/core/+/da75e4750ec0d85aff72d9b7bf47289915488ab2^!
 See .gitignore section "USE FROM LOWA BUILD" for which files to use from LOWA build.
 
 For Vue.js-3 you'll need nodejs.  

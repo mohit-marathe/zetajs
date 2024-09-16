@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: MIT */
+
 @import './base.css';
 
 #app {
@@ -23,13 +25,15 @@ a,
 
 @media (min-width: 1024px) {
   body {
-    display: flex;
-    place-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* start: leave free space at the bottom (don't maximize over the whole height) */
+    align-items: start;
   }
 
   #app {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    padding: 0.3rem 0.6rem;  /* border: top left */
   }
 }

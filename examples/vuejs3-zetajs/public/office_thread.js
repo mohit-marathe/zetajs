@@ -1,0 +1,135 @@
+/* -*- Mode: JS; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4; fill-column: 100 -*- */
+// SPDX-License-Identifier: MIT
+
+// Debugging note:
+// Switch the web worker in the browsers debug tab to debug this code.
+// It's the "em-pthread" web worker with the most memory usage, where "zetajs" is defined.
+
+'use strict';
+
+
+// global variables: zetajs environment
+let zetajs, css;
+
+// global variables: demo specific
+let context, desktop, doc, ctrl, urls;
+
+let ping_line = 1;
+let xComponent, charLocale, formatNumber, formatText, activeSheet, cell;  // for debugging
+
+
+function demo() {
+    context = zetajs.getUnoComponentContext();
+
+    // Turn off toolbars:
+    const config = css.configuration.ReadWriteAccess.create(context, 'en-US')
+    const uielems = zetajs.fromAny(
+        config.getByHierarchicalName(
+            '/org.openoffice.Office.UI.CalcWindowState/UIElements/States'));
+    for (const i of uielems.getElementNames()) {
+        const uielem = zetajs.fromAny(uielems.getByName(i));
+        if (zetajs.fromAny(uielem.getByName('Visible'))) {
+            uielem.setPropertyValue('Visible', false);
+        }
+    }
+    config.commitChanges();
+
+    desktop = css.frame.Desktop.create(context);
+    doc = desktop.loadComponentFromURL('file:///tmp/calc_ping_example.ods', '_default', 0, []);
+    ctrl = doc.getCurrentController();
+    xComponent = ctrl.getModel();
+    charLocale = xComponent.getPropertyValue('CharLocale').val;
+    formatNumber = xComponent.getNumberFormats().
+        queryKey('0', charLocale, false);
+    formatText = xComponent.getNumberFormats().
+        queryKey('@', charLocale, false);
+
+    const topwin = css.awt.Toolkit.create(context).getActiveTopWindow();
+    topwin.FullScreen = true;
+
+    // Set window to the size of the canvas. Doesn't always work correctly automatically.
+    topwin.setPosSize(0, 0, 1000, 600, 15);
+    // See here for the "15" flag:
+    // https://api.libreoffice.org/docs/idl/ref/namespacecom_1_1sun_1_1star_1_1awt_1_1PosSize.html
+    topwin.setMenuBar(null);
+
+    // Turn off sidebar:
+    dispatch('.uno:Sidebar');
+    // Turn off statusbar:
+    ctrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
+
+    urls = {};
+    button('bold', '.uno:Bold');
+    button('italic', '.uno:Italic');
+    button('underline', '.uno:Underline');
+
+    zetajs.mainPort.onmessage = function (e) {
+        switch (e.data.cmd) {
+        case 'toggle':
+            dispatch(urls[e.data.id]);
+            break;
+        case 'ping_result':
+            try {
+                activeSheet = ctrl.getActiveSheet();
+
+                const url = e.data.id['url'];
+                cell = activeSheet.getCellByPosition(0, ping_line);
+                cell.setPropertyValue('NumberFormat', formatText);  // optional
+                cell.setString((new URL(url)).hostname);
+
+                cell = activeSheet.getCellByPosition(1, ping_line);
+                let ping_value = String(e.data.id['data']);
+                if (!isNaN(ping_value)) {
+                  cell.setPropertyValue('NumberFormat', formatNumber);  // optional
+                  cell.setValue(parseFloat(ping_value));
+                } else {
+                  // in case e.data.id['data'] contains an error message
+                  cell.setPropertyValue('NumberFormat', formatText);  // optional
+                  cell.setString(ping_value);
+                }
+
+                ping_line++;
+            } catch(e) { console.error(e); }
+            break;
+        default:
+            throw Error('Unknonwn message command ' + e.data.cmd);
+        }
+    }
+}
+
+function button(id, url) {
+    urls[id] = url;
+    const urlObj = transformUrl(url);
+    const listener = zetajs.unoObject([css.frame.XStatusListener], {
+        disposing: function(source) {},
+        statusChanged: function(state) {
+            zetajs.mainPort.postMessage({cmd: 'state', id, state: zetajs.fromAny(state.State)});
+        }
+    });
+    queryDispatch(urlObj).addStatusListener(listener, urlObj);
+    zetajs.mainPort.postMessage({cmd: 'enable', id});
+}
+
+function transformUrl(url) {
+    const ioparam = {val: new css.util.URL({Complete: url})};
+    css.util.URLTransformer.create(context).parseStrict(ioparam);
+    return ioparam.val;
+}
+
+function queryDispatch(urlObj) {
+    return ctrl.queryDispatch(urlObj, '_self', 0);
+}
+
+function dispatch(url) {
+    const urlObj = transformUrl(url);
+    queryDispatch(urlObj).dispatch(urlObj, []);
+}
+
+Module.zetajs.then(function(pZetajs) {
+    // initializing zetajs environment
+    zetajs = pZetajs;
+    css = zetajs.uno.com.sun.star;
+    demo();  // launching demo
+});
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
