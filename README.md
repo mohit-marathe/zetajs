@@ -1,4 +1,4 @@
-# zetajs: Access ZetaOffice in the Brwoser from JavaScript via UNO
+# zetajs: Access ZetaOffice in the Browser from JavaScript via UNO
 
 The `zeta.js` library provides the facilities to run an instance of ZetaOffice integrated in your
 web site, allowing you to control it with JavaScript code via the LibreOffice
@@ -8,7 +8,7 @@ Use cases range from an in-browser office suite that looks and feels just like i
 counterpart, to fine-tuned custom text editing and spreadsheet capabilites embedded in your web
 site, to a headless zetajs instance that does document conversion in the background.
 
-For a detailed description of zetajs, see the [Starting Points](docs/start.html) documentation.
+For a detailed description of zetajs, see the [Starting Points](docs/start.md) documentation.
 
 (Technically, `zeta.js` provides a wrapper on top of the
 [Embind-based](https://blog.allotropia.de/2024/04/30/libreoffice-javascripted/) JavaScript scripting
