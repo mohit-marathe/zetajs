@@ -1,32 +1,20 @@
-# Nice LOWA Access from JavaScript via UNO
+# zetajs: Access ZetaOffice in the Brwoser from JavaScript via UNO
 
-`source/zeta.js` provides a wrapper on top of the
-[Embind-based](https://blog.allotropia.de/2024/04/30/libreoffice-javascripted/) JS scripting
-capabilities for LOWA.  It aims to provide a nicer, more idiomatic JS experience compared to the
-Embind-based approach.  The starting point is the `Module.zetajs` `Promise` that provides the
-`zetajs` facilities.
+The `zeta.js` library provides the facilities to run an instance of ZetaOffice integrated in your
+web site, allowing you to control it with JavaScript code via the LibreOffice
+[UNO](https://wiki.documentfoundation.org/Documentation/DevGuide) technology.
 
-Compared to the underlying Embind layer, UNO objects are represented by proxying JS objects that
-internally uses UNO's `css.script.Invocation` service to directly make available all the UNO
-interfaces implemented by the given UNO object.  There is no more need for `query` calls to obtain a
-reference to specific UNO interfaces.
+Use cases range from an in-browser office suite that looks and feels just like its desktop
+counterpart, to fine-tuned custom text editing and spreadsheet capabilites embedded in your web
+site, to a headless zetajs instance that does document conversion in the background.
 
-Also, values of certain UNO types map to more idiomatic JS values now:  UNO sequences map to JS
-arrays, and UNO `ANY` values map to JS `zetajs.Any` objects.  There is no more need to call
-`.delete()` on such values.  Similarly, out and in-out parameters can be passed via any plain JS
-objects with a `val` property, instead of requiring the special `Module.uno_InOutParam_...` objects
-(which had to be `.delete()`'ed).  And UNO `BOOLEAN` more consistently maps to JS `Boolean` now,
-avoiding mappings to `0`/`1`.
+For a detailed description of zetajs, see the [Starting Points](docs/start.html) documentation.
 
-`examples/simple.js` shows how this leads to shorter and more idiomatic code compared to the
-Embind-based example code in the [core repo's](https://git.libreoffice.org/core)
-`static/README.wasm.md` file.
-
-When a UNO interface method takes a parameter of a specific non-`ANY` UNO type, the conversion
-between these convenient JS argument values and the underlying Embind values works well.  However,
-when such a method parameter is of generic `ANY` type, the conversion code needs to guess an
-appropriate UNO type based solely on the given JS argument value, which does not work well in all
-cases.  But client code can always explicitly provide a JS `zetajs.Any` object.
+(Technically, `zeta.js` provides a wrapper on top of the
+[Embind-based](https://blog.allotropia.de/2024/04/30/libreoffice-javascripted/) JavaScript scripting
+capabilities for LibreOffice.  But it aims to provide a nicer, more idiomatic JavaScript experience,
+and completely hides the underlying machinery.  In the future, it may even move away from that
+underyling Embind layer, in a backward-compatible way.)
 
 ## Examples and test code
 
