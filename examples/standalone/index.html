@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Vendor CSS Files -->
+    <style>
+      canvas {height: 100%; width: 100%;}
+    </style>
+    <!-- Vendor JS Files -->
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h1 class="mt-5">Writer Document canvas</h1>
+          <p class="lead">An example of a stripped-down, standalone Writer document canvas without any surrounding menubars, toolbars, side panels, etc.</p>
+          <div class="btn-group" role="group" aria-label="Text formatting">
+            <input type="checkbox" class="btn-check" id="bold" autocomplete="off" >
+            <label class="btn btn-outline-primary" for="bold">Bold</label>
+
+            <input type="checkbox" class="btn-check" id="italic" autocomplete="off" >
+            <label class="btn btn-outline-primary" for="italic">Italic</label>
+
+            <input type="checkbox" class="btn-check" id="underline" autocomplete="off" >
+            <label class="btn btn-outline-primary" for="underline">Underline</label>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-1">
+        <div class="col">
+          <canvas
+            id="qtcanvas" contenteditable="true"
+            oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()">
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      const canvas = document.getElementById('qtcanvas');
+      var Module = {canvas, uno_scripts: ['./assets/vendor/zetajs/zeta.js', './index.js']};
+    </script>
+    <script src="https://zetaoffice.b-cdn.net/lowa-25.2.0.0.alpha0%2B-5f0f69ba9-patched-br/soffice.js" type="text/javascript" crossorigin=""></script>
+    <script type="text/javascript">
+      Module.locateFile = function(path, prefix) { return (prefix || 'https://zetaoffice.b-cdn.net/lowa-25.2.0.0.alpha0%2B-5f0f69ba9-patched-br/') + path; }
+      Module.uno_main.then(function(port) {
+          const elements = {};
+          function button(id) {
+              const element = document.getElementById(id);
+              element.onchange = function() {
+                  port.postMessage({cmd: 'toggle', id});
+                  // Give focus to the LO canvas to avoid issues with
+                  // <https://bugs.documentfoundation.org/show_bug.cgi?id=162291> "Setting Bold is
+                  // undone when clicking into non-empty document" when the user would need to click
+                  // into the canvas to give back focus to it:
+                  canvas.focus();
+              }
+              elements[id] = element;
+          };
+          button('bold');
+          button('italic');
+          button('underline');
+          port.onmessage = function(e) {
+              switch (e.data.cmd) {
+              case 'enable':
+                  elements[e.data.id].disabled = false;
+                  break;
+              case 'state':
+                  elements[e.data.id].checked = e.data.state;
+                  break;
+              default:
+                  throw Error('Unknonwn message command ' + e.data.cmd);
+              }
+          };
+      });
+    </script>
+  </body>
+</html>
