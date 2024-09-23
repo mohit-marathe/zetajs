@@ -1,0 +1,29 @@
+{
+  "name": "zetajs",
+  "version": "1.0.0",
+  "description": "Access ZetaOffice in the Browser from JavaScript via UNO",
+  "main": "source/zeta.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allotropia/zetajs.git"
+  },
+  "keywords": [
+    "libreoffice",
+    "wasm",
+    "lowa"
+  ],
+  "author": "allotropia software GmbH",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/allotropia/zetajs/issues"
+  },
+  "homepage": "https://github.com/allotropia/zetajs#readme"
+}
