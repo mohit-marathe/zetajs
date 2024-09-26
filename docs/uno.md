@@ -34,6 +34,6 @@ The mapping between [UNO types](http://www.openoffice.org/udk/common/man/typesys
 
 - UNO sequence types map to JavaScript Arrays with corresponding element value constraints, up to the JavaScript length limit of 2<sup>32</sup>&minus;1 elements.
 
-- UNO sruct and exception types map to opaque JavaScript objects, where each member with name <var>N</var> maps to a property with property name <var>N</var> and with corresponding value constraints.  See the documentation of the `zetajs.uno` dictionary at [Starting Points: Using zetajs](start.html#using-zetajs) for corresponding constructor functions.
+- UNO struct and exception types map to opaque JavaScript objects, where each member with name <var>N</var> maps to a property with property name <var>N</var> and with corresponding value constraints.  See the documentation of the `zetajs.uno` dictionary at [Starting Points: Using zetajs](start.html#using-zetajs) for corresponding constructor functions.
 
 - UNO interface types map to the JavaScript Null type for null references, and to opaque JavaScript objects for non-null references.  (A zetajs representation referencing a given UNO object has direct access to all the UNO interface methods and attribute getters and setters implemented by that object.  Thus, such zetajs representations are not tied to specific UNO interface types.)

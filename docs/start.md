@@ -16,7 +16,7 @@ In each of those build configurations, `soffice.js` expects to find the global [
 
 - For the plain and `--enable-emscripten-proxy-posix-sockets` builds, `Module.canvas` must reference the HTML `canvas` element that LOWA shall interact with.  The ID of that element must be `qtcanvas`.
 
-- For the `--enable-emscripten-proxy-posix-sockets` build, `Module.uno_websocket_to_posix_socket_url` must be a string specifing an absolute `ws` or `wss` URL at which the proxy server can be reached.
+- For the `--enable-emscripten-proxy-posix-sockets` build, `Module.uno_websocket_to_posix_socket_url` must be a string specifying an absolute `ws` or `wss` URL at which the proxy server can be reached.
 
 ## Using zetajs
 
@@ -74,7 +74,7 @@ That `zetajs` object has certain properties:
 
 - `zetajs.Any` is a constructor function for representations of values of UNO type `ANY`.  It takes two arguments, the first being a zetajs representation of a value of UNO type `TYPE`, and the second being a zetajs representation of a value of the given UNO type.
 
-- `zetajs.fromAny` is a function that maps a zetajs respresentation of a value of UNO type `ANY` to a zetajs representation of its contained UNO value.
+- `zetajs.fromAny` is a function that maps a zetajs representation of a value of UNO type `ANY` to a zetajs representation of its contained UNO value.
 
 - `zetajs.sameUnoObject` is a function that checks whether two zetajs representations of values of arbitrary UNO interface types reference the same UNO object (or are both null references).  It returns a value of JavaScript Boolean type.
 
@@ -82,19 +82,19 @@ That `zetajs` object has certain properties:
 
 - `zetajs.throwUnoException` is a function that takes a zetajs representation of a value of a UNO exception type and throws that UNO exception.  (UNO exceptions cannot be thrown directly from a JavaScript `throw` expression.  You always need to use `zetajs.throwUnoException` to throw UNO exceptions.)
 
-- `zetajs.catchUnoException` is a function that is typically used in a JavaScript `catch` block.  It takes an arbitrary JavaScript value (i.e.., the `e` in a JavaScript `catch (e)` block).  If the given value is not a zetajs representation of a value of a UNO exception type, it is rethrown.  Otherwise, the given zetajs representation is returned.  (The given `e` in a JavaScript `catch (e)` block would not directly denote the zetajs representation of the given UNO exception.  You always need to use `zetajs.catchUnoException` to catch UNO exceptions.)
+- `zetajs.catchUnoException` is a function that is typically used in a JavaScript `catch` block.  It takes an arbitrary JavaScript value (i.e.., the `e` in a JavaScript `catch (e)` block).  If the given value is not a zetajs representation of a value of a UNO exception type, it is re-thrown.  Otherwise, the given zetajs representation is returned.  (The given `e` in a JavaScript `catch (e)` block would not directly denote the zetajs representation of the given UNO exception.  You always need to use `zetajs.catchUnoException` to catch UNO exceptions.)
 
 - `zetajs.uno` is a hierarchical dictionary of known UNOIDL entities (where `zetajs.uno` itself is a JavaScript object representing the global UNOIDL namespace):
 
     - A UNO enum type is represented by a JavaScript object whose properties are zetajs representations of the enum type's members.
 
-    - A UNO struct type is represented by a constructor function that constructs new instances of the given struct type.  For a plain struct type, the function takes a single argument, a JavaScript object whose properties are used to initialize the members of the UNO struct value.  (Any member for which the given JavaScript object has no corresponding property is initialized to its default value.)  For a polymorphic struct type template, the functiont takes as an additional first argument an array of UNO type arguments (given as zetajs representations of value of UNO type `TYPE`) to instantiate the template with.  In both cases, the function returns a zetajs representation of the newly created UNO struct value.
+    - A UNO struct type is represented by a constructor function that constructs new instances of the given struct type.  For a plain struct type, the function takes a single argument, a JavaScript object whose properties are used to initialize the members of the UNO struct value.  (Any member for which the given JavaScript object has no corresponding property is initialized to its default value.)  For a polymorphic struct type template, the function takes as an additional first argument an array of UNO type arguments (given as zetajs representations of value of UNO type `TYPE`) to instantiate the template with.  In both cases, the function returns a zetajs representation of the newly created UNO struct value.
 
     - A UNO exception type is represented by a constructor function that constructs new instances of the given exception type.  The function takes a single argument, a JavaScript object whose properties are used to initialize the members of the UNO exception value.  (Any member for which the given JavaScript object has no corresponding property is initialized to its default value.)  The function returns a zetajs representation of the newly created UNO exception value.
 
     - A UNOIDL namespace is represented by a JavaScript object whose properties recursively represent members of the namespace.
 
-    - A UNOIDL interface-based singleton is represented by a function that takes as a signle argument a zetajs representation of a value of UNO interface type [`com.sun.star.uno.XComponentContext`](https://api.libreoffice.org/docs/idl/ref/interfacecom_1_1sun_1_1star_1_1uno_1_1XComponentContext.html) and returns a zetajs representation referencing that singleton.
+    - A UNOIDL interface-based singleton is represented by a function that takes as a single argument a zetajs representation of a value of UNO interface type [`com.sun.star.uno.XComponentContext`](https://api.libreoffice.org/docs/idl/ref/interfacecom_1_1sun_1_1star_1_1uno_1_1XComponentContext.html) and returns a zetajs representation referencing that singleton.
 
     - A UNOIDL single-interface-based service is represented by a JavaScript object whose properties are functions corresponding to the service's constructors.  Each of those functions takes as an additional first argument a zetajs representation of a value of UNO interface type [`com.sun.star.uno.XComponentContext`](https://api.libreoffice.org/docs/idl/ref/interfacecom_1_1sun_1_1star_1_1uno_1_1XComponentContext.html).
 
@@ -114,4 +114,4 @@ As JS code using zetajs is not run on the browser's main thread, it cannot direc
 
 In the browser's main thread, `Module.uno_main` is a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves to one of the two ports of the channel.
 
-In the JS code using zetajs, the other port of the cannel is available as `zetajs.mainPort`.
+In the JS code using zetajs, the other port of the channel is available as `zetajs.mainPort`.
