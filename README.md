@@ -16,18 +16,33 @@ capabilities for LibreOffice.  But it aims to provide a nicer, more idiomatic Ja
 and completely hides the underlying machinery.  In the future, it may even move away from that
 underyling Embind layer, in a backward-compatible way.)
 
+## Demo
+
+To see a demo of zetajs in use, visit [zetaoffice.org/demo](https://zetaoffice.org/demo.html).
+
 ## Examples and test code
 
-You'll need a LOWA (LibreOffice WASM) build. There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot.
+Check out the examples in the [examples](https://github.com/allotropia/zetajs/tree/main/examples) folder. We recommend to start with the [standalone](https://github.com/allotropia/zetajs/tree/main/examples/standalone) example.
 
-Examples in the sub-folder of `examples/` have own instructions how to run.
+Those examples are configured to run without requiring an own LibreOffice WASM (LOWA) build. They make use of the ZetaOffice CDN.
+
+## Using ZetaOffice
+
+Visit [zetaoffice.org](https://zetaoffice.org) to learn more about ZetaOffice, its CDN and how to host ZetaOffice yourself.
+
+Using the official versions from [zetaoffice.org](https://zetaoffice.org) is the recommended way for most users. Only read on if you intend to build or debug LOWA itself.
+
+## Using with an own WASM build
+
+You'll need an own [LOWA build](https://git.libreoffice.org/core/+/refs/heads/master/static/README.wasm.md). There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot.
+
 The single files directly in the `examples/` folder may be run according to one of the following descriptions.
 
-If you're not using emrun as webserver, you'll need to set two headers. Here are the needed config lines for Apache:
+If you're not using emrun as webserver, you'll need to set two HTTP headers:
 
 ```
-Header add Cross-Origin-Opener-Policy "same-origin"
-Header add Cross-Origin-Embedder-Policy "require-corp"
+Cross-Origin-Opener-Policy "same-origin"
+Cross-Origin-Embedder-Policy "require-corp"
 ```
 
 ### Via uno_scripts in qt_soffice.html
