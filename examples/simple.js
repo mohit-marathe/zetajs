@@ -28,8 +28,7 @@ Module.zetajs.then(function(zetajs) {
         const xModel = getTextDocument();
         const xText = xModel.getText();
         const xParaEnumeration = xText.createEnumeration();
-        while (xParaEnumeration.hasMoreElements()) {
-            const next = xParaEnumeration.nextElement();
+        for (const next of xParaEnumeration) {
             const xParagraph = zetajs.fromAny(next);
             const color = Math.floor(Math.random() * 0xFFFFFF);
             xParagraph.setPropertyValue("CharColor", color);

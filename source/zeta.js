@@ -549,6 +549,13 @@ Module.zetajs = new Promise(function (resolve, reject) {
                         }
                         itd.delete();
                         mems.delete();
+                        if (iname === 'com.sun.star.container.XEnumeration') {
+                            prox[Symbol.iterator] = function*() {
+                                while (prox.hasMoreElements()) {
+                                    yield prox.nextElement();
+                                }
+                            }
+                        }
                     }
                 };
                 const tdm = getTypeDescriptionManager();
