@@ -32,6 +32,72 @@ Visit [zetaoffice.org](https://zetaoffice.org) to learn more about ZetaOffice, i
 
 Using the official versions from [zetaoffice.org](https://zetaoffice.org) is the recommended way for most users. Only read on if you intend to build or debug LOWA itself.
 
+## Why zetajs
+
+See how zetajs makes scripting LibreOffice WASM easier:
+
+### 1. Load a document
+
+Without zetajs:
+```javascript
+const css = Module.uno.com.sun.star;
+const desktop = css.frame.Desktop.create(Module.getUnoComponentContext());
+let xModel = Module.getCurrentModelFromViewSh();
+if (xModel === null || !css.text.XTextDocument.query(xModel)) {
+    const args = new Module.uno_Sequence_com$sun$star$beans$PropertyValue(
+        0, Module.uno_Sequence.FromSize);
+    xModel = css.frame.XComponentLoader.query(desktop).loadComponentFromURL(
+        'file:///android/default-document/example.odt', '_default', 0, args);
+    args.delete();
+});
+```
+
+With zetajs:
+```javascript
+const css = zetajs.uno.com.sun.star;
+const desktop = css.frame.Desktop.create(zetajs.getUnoComponentContext());
+let xModel = desktop.getCurrentFrame().getController().getModel();
+if (xModel === null
+    || !zetajs.fromAny(
+        xModel.queryInterface(zetajs.type.interface(css.text.XTextDocument))))
+{
+    xModel = desktop.loadComponentFromURL(
+        'file:///android/default-document/example.odt', '_default', 0, []);
+}
+```
+
+### 2. Change each paragraph in Writer into a random color
+
+Without zetajs:
+```javascript
+const xTextDocument = css.text.XTextDocument.query(xModel);
+const xText = xTextDocument.getText();
+const xEnumAccess = css.container.XEnumerationAccess.query(xText);
+const xParaEnumeration = xEnumAccess.createEnumeration();
+while (xParaEnumeration.hasMoreElements()) {
+    const next = xParaEnumeration.nextElement();
+    const xParagraph = css.text.XTextRange.query(next.get());
+    const xParaProps = css.beans.XPropertySet.query(xParagraph);
+    const color = new Module.uno_Any(
+        Module.uno_Type.Long(), Math.floor(Math.random() * 0xFFFFFF));
+    xParaProps.setPropertyValue("CharColor", color);
+    next.delete();
+    color.delete();
+}
+```
+
+With zetajs:
+```javascript
+const xText = xModel.getText();
+const xParaEnumeration = xText.createEnumeration();
+while (xParaEnumeration.hasMoreElements()) {
+    const next = xParaEnumeration.nextElement();
+    const xParagraph = zetajs.fromAny(next);
+    const color = Math.floor(Math.random() * 0xFFFFFF);
+    xParagraph.setPropertyValue("CharColor", color);
+}
+```
+
 ## Using with an own WASM build
 
 You'll need an own [LOWA build](https://git.libreoffice.org/core/+/refs/heads/master/static/README.wasm.md). There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot.
