@@ -14,7 +14,7 @@ let zetajs, css;
 // global variables: demo specific
 let context, desktop, doc, ctrl, urls;
 
-let ping_line = 1;
+let ping_line;
 let xComponent, charLocale, formatNumber, formatText, activeSheet, cell;  // for debugging
 
 
@@ -46,11 +46,6 @@ function demo() {
 
     const topwin = css.awt.Toolkit.create(context).getActiveTopWindow();
     topwin.FullScreen = true;
-
-    // Set window to the size of the canvas. Doesn't always work correctly automatically.
-    topwin.setPosSize(0, 0, 1000, 600, 15);
-    // See here for the "15" flag:
-    // https://api.libreoffice.org/docs/idl/ref/namespacecom_1_1sun_1_1star_1_1awt_1_1PosSize.html
     topwin.setMenuBar(null);
 
     // Turn off sidebar:
@@ -69,32 +64,39 @@ function demo() {
             dispatch(urls[e.data.id]);
             break;
         case 'ping_result':
-            try {
-                activeSheet = ctrl.getActiveSheet();
+            activeSheet = ctrl.getActiveSheet();
+            ping_line = findEmptyRowInCol1(activeSheet);
 
-                const url = e.data.id['url'];
-                cell = activeSheet.getCellByPosition(0, ping_line);
-                cell.setPropertyValue('NumberFormat', formatText);  // optional
-                cell.setString((new URL(url)).hostname);
+            const url = e.data.id['url'];
+            cell = activeSheet.getCellByPosition(0, ping_line);
+            cell.setPropertyValue('NumberFormat', formatText);  // optional
+            cell.setString((new URL(url)).hostname);
 
-                cell = activeSheet.getCellByPosition(1, ping_line);
-                let ping_value = String(e.data.id['data']);
-                if (!isNaN(ping_value)) {
-                  cell.setPropertyValue('NumberFormat', formatNumber);  // optional
-                  cell.setValue(parseFloat(ping_value));
-                } else {
-                  // in case e.data.id['data'] contains an error message
-                  cell.setPropertyValue('NumberFormat', formatText);  // optional
-                  cell.setString(ping_value);
-                }
-
-                ping_line++;
-            } catch(e) { console.error(e); }
+            cell = activeSheet.getCellByPosition(1, ping_line);
+            let ping_value = String(e.data.id['data']);
+            if (!isNaN(ping_value)) {
+              cell.setPropertyValue('NumberFormat', formatNumber);  // optional
+              cell.setValue(parseFloat(ping_value));
+            } else {
+              // in case e.data.id['data'] contains an error message
+              cell.setPropertyValue('NumberFormat', formatText);  // optional
+              cell.setString(ping_value);
+            }
             break;
         default:
             throw Error('Unknonwn message command ' + e.data.cmd);
         }
     }
+}
+
+function findEmptyRowInCol1(activeSheet) {
+    let str;
+    let line = 0;
+    while (str != "") {
+        line++;
+        str = activeSheet.getCellByPosition(0, line).getString();
+    }
+    return line;
 }
 
 function button(id, url) {

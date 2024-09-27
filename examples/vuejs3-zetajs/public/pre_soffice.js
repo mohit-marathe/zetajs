@@ -17,7 +17,7 @@ const pingSection = document.getElementById("ping_section");
 const pingTarget = document.getElementById("ping_target");
 
 
-function initJS(pTbDataJs) {
+function jsPassCtrlBar(pTbDataJs) {
   tbDataJs = pTbDataJs;
   console.log('PLUS: assigned tbDataJs');
 }
@@ -115,6 +115,9 @@ soffice_js.onload = function() {
       calc_ping_example_ods = aryBuf;
       FS.writeFile('/tmp/calc_ping_example.ods', new Uint8Array(calc_ping_example_ods));
     });
+
+    // Trigger resize of the embedded window to match the canvas size.
+    window.dispatchEvent(new Event('resize'));
 
     pingInst = new PingModule();
     setTimeout(function() {

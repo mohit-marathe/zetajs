@@ -38,7 +38,7 @@ export default {
     },
   },
   init_control_bar: function() {
-    initJS(tbDataForJs);
+    jsPassCtrlBar(tbDataForJs);
   },
 };
 </script>
