@@ -734,7 +734,7 @@ Module.zetajs.then(function(zetajs) {
                     zetajs.type.interface(zetajs.uno.org.libreoffice.embindtest.XAttributes))),
             obj));
     test.passJob(obj);
-    test.passJobExecutor(obj);
+    test.passJobExecutor(obj, false);
     test.passInterface(obj);
     obj.trigger('from JS');
     console.assert(obj.LongAttribute === -123456);
