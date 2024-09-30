@@ -43,7 +43,7 @@ function pingResult(url, err, data) {
   dbgPingData = {data, err};
   const hostname = (new URL(url)).hostname;
   let output = data;
-  // In /favicon.ico can't be loaded the result still represents the response time.
+  // If /favicon.ico can't be loaded the result still represents the response time.
   if (err) output = hostname + ": " + output + " " + err;
   console.log(output);
   if (urls_ary_i === 0) pingSection.innerHTML = "";
@@ -51,7 +51,7 @@ function pingResult(url, err, data) {
   thrPort.postMessage({cmd: 'ping_result', id:{url, data} });
 }
 
-var pingInst;
+let pingInst;
 const urls_ary = ["https://documentfoundation.org/", "https://ip4.me/", "https://allotropia.de/"];
 let urls_ary_i = 0;
 function pingExamples(err, data) {
@@ -117,10 +117,16 @@ soffice_js.onload = function() {
     });
 
     // Trigger resize of the embedded window to match the canvas size.
+    // May somewhen be obsoleted by:
+    //   https://gerrit.libreoffice.org/c/core/+/174040
     window.dispatchEvent(new Event('resize'));
 
     pingInst = new PingModule();
     setTimeout(function() {
+      // Trigger resize of the embedded window to match the canvas size.
+      // May somewhen be obsoleted by:
+      //   https://gerrit.libreoffice.org/c/core/+/174040
+      window.dispatchEvent(new Event('resize'));
       // Using Ping callback interface.
       // 'Cross-Origin-Embedder-Policy': Does NOT work with 'require-corp'.
       //   But you may use 'credentialless'

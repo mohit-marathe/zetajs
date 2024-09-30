@@ -58,13 +58,13 @@ function demo() {
     button('italic', '.uno:Italic');
     button('underline', '.uno:Underline');
 
+    activeSheet = ctrl.getActiveSheet();
     zetajs.mainPort.onmessage = function (e) {
         switch (e.data.cmd) {
         case 'toggle':
             dispatch(urls[e.data.id]);
             break;
         case 'ping_result':
-            activeSheet = ctrl.getActiveSheet();
             ping_line = findEmptyRowInCol1(activeSheet);
 
             const url = e.data.id['url'];
