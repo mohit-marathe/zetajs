@@ -370,8 +370,7 @@ Module.zetajs = new Promise(function (resolve, reject) {
         };
         function translateFromAny(any, type) {
             if (type.getTypeClass() === Module.uno.com.sun.star.uno.TypeClass.ANY) {
-                const ty = gcWrap(any.getType());
-                return new Any(ty, translateFromEmbind(any.get(), ty, true));
+                return translateFromEmbind(any, type, false);
             } else {
                 const td = any.getType();
                 const val = translateFromEmbind(any.get(), td, true);
