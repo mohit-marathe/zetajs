@@ -839,12 +839,19 @@ Module.zetajs = new Promise(function (resolve, reject) {
             case 'string':
                 return gcWrap(Module.uno_Type.String());
             case 'object':
-                if (val === null) {
+                if (val === null || Object.hasOwn(val, getProxyTarget)) {
                     return gcWrap(Module.uno_Type.Interface('com.sun.star.uno.XInterface'));
                 } else if (val instanceof Module.uno_Type) {
                     return gcWrap(Module.uno_Type.Type());
                 } else if (val instanceof Any) {
                     return val.type;
+                } else if (val instanceof Array) {
+                    const t = Module.uno_Type.Any();
+                    try {
+                        return gcWrap(Module.uno_Type.Sequence(t));
+                    } finally {
+                        t.delete();
+                    }
                 } else {
                     const tag = val[Module.unoTagSymbol];
                     if (tag !== undefined) {
