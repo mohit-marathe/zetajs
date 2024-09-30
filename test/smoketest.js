@@ -668,11 +668,12 @@ Module.zetajs.then(function(zetajs) {
         const exc = zetajs.catchUnoException(e);
         console.assert(zetajs.getAnyType(exc) == 'com.sun.star.lang.WrappedTargetException');
         console.assert(zetajs.fromAny(exc).Message.startsWith('wrapped'));
-        console.assert(zetajs.sameUnoObject(exc.val.Context, test));
+        console.assert(zetajs.sameUnoObject(zetajs.fromAny(exc).Context, test));
         console.assert(
             zetajs.getAnyType(zetajs.fromAny(exc).TargetException) ==
                 'com.sun.star.uno.RuntimeException');
-        console.assert(zetajs.fromAny(exc).TargetException.val.Message.startsWith('test'));
+        console.assert(
+            zetajs.fromAny(zetajs.fromAny(exc).TargetException).Message.startsWith('test'));
         console.assert(
             zetajs.sameUnoObject(
                 zetajs.fromAny(zetajs.fromAny(exc).TargetException).Context, test));

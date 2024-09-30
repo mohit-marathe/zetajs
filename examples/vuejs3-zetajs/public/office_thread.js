@@ -38,7 +38,7 @@ function demo() {
     doc = desktop.loadComponentFromURL('file:///tmp/calc_ping_example.ods', '_default', 0, []);
     ctrl = doc.getCurrentController();
     xComponent = ctrl.getModel();
-    charLocale = xComponent.getPropertyValue('CharLocale').val;
+    charLocale = zetajs.fromAny(xComponent.getPropertyValue('CharLocale'));
     formatNumber = xComponent.getNumberFormats().
         queryKey('0', charLocale, false);
     formatText = xComponent.getNumberFormats().

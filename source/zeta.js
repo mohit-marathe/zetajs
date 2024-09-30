@@ -390,7 +390,7 @@ Module.zetajs = new Promise(function (resolve, reject) {
                             if (getAnyType(exc) ==
                                 'com.sun.star.reflection.InvocationTargetException')
                             {
-                                throwUnoException(fromAny(exc).TargetException.val);
+                                throwUnoException(fromAny(fromAny(exc).TargetException));
                             } else {
                                 throwUnoException(fromAny(exc));
                             }
