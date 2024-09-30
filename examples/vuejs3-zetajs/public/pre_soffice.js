@@ -92,7 +92,7 @@ let calc_ping_example_ods;
 
 
 const soffice_js = document.createElement("script");
-soffice_js.src = "/soffice.js";
+soffice_js.src = "./soffice.js";
 // "onload" runs after the loaded script has run.
 soffice_js.onload = function() {
   console.log('PLUS: Configuring Module');

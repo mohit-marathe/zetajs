@@ -8,7 +8,7 @@
   export default {
     mounted() {
       const pre_soffice_js = document.createElement("script");
-      pre_soffice_js.src = "/pre_soffice.js";
+      pre_soffice_js.src = "./pre_soffice.js";
       pre_soffice_js.onload = function() {
         PingModule = Ping;  // pass Ping module to plain JS
         ControlBar.init_control_bar();
