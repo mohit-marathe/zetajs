@@ -84,7 +84,7 @@ That `zetajs` object has certain properties:
 
 - `zetajs.throwUnoException` is a function that takes a zetajs representation of a value of a UNO exception type and throws that UNO exception.  (UNO exceptions cannot be thrown directly from a JavaScript `throw` expression.  You always need to use `zetajs.throwUnoException` to throw UNO exceptions.)
 
-- `zetajs.catchUnoException` is a function that is typically used in a JavaScript `catch` block.  It takes an arbitrary JavaScript value (i.e.., the `e` in a JavaScript `catch (e)` block).  If the given value is not a zetajs representation of a value of a UNO exception type, it is re-thrown.  Otherwise, the given zetajs representation is returned.  (The given `e` in a JavaScript `catch (e)` block would not directly denote the zetajs representation of the given UNO exception.  You always need to use `zetajs.catchUnoException` to catch UNO exceptions.)
+- `zetajs.catchUnoException` is a function that is typically used in a JavaScript `catch` block.  It takes an arbitrary JavaScript value (i.e.., the `e` in a JavaScript `catch (e)` block).  If the given value is not a zetajs representation of a value of a UNO exception type, it is re-thrown.  Otherwise, a zetajs representation of a UNO value of type `ANY` containing the given UNO exception is returned.  (The given `e` in a JavaScript `catch (e)` block would not directly denote the zetajs representation of the given UNO exception.  You always need to use `zetajs.catchUnoException` to catch UNO exceptions.)
 
 - `zetajs.uno` is a hierarchical dictionary of known UNOIDL entities (where `zetajs.uno` itself is a JavaScript object representing the global UNOIDL namespace):
 
