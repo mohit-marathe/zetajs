@@ -74,6 +74,8 @@ That `zetajs` object has certain properties:
 
 - `zetajs.Any` is a constructor function for representations of values of UNO type `ANY`.  It takes two arguments, the first being a zetajs representation of a value of UNO type `TYPE`, and the second being a zetajs representation of a value of the given UNO type.
 
+- `zetajs.getAnyType` is a function that maps a zetajs representation of a value of UNO type `ANY` to a zetajs representation of the type of the contained UNO value.
+
 - `zetajs.fromAny` is a function that maps a zetajs representation of a value of UNO type `ANY` to a zetajs representation of its contained UNO value.
 
 - `zetajs.sameUnoObject` is a function that checks whether two zetajs representations of values of arbitrary UNO interface types reference the same UNO object (or are both null references).  It returns a value of JavaScript Boolean type.

@@ -29,7 +29,7 @@ Module.zetajs.then(function(zetajs) {
                 zetajs.mainPort.postMessage({cmd: 'converted', name: e.data.name, from, to});
             } catch (e) {
                 const exc = zetajs.catchUnoException(e);
-                console.log('TODO', exc.type, zetajs.fromAny(exc).Message);
+                console.log('TODO', zetajs.getAnyType(exc), zetajs.fromAny(exc).Message);
             }
             break;
         default:

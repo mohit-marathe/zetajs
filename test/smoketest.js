@@ -654,7 +654,7 @@ Module.zetajs.then(function(zetajs) {
         console.assert(false);
     } catch (e) {
         const exc = zetajs.catchUnoException(e);
-        console.assert(exc.type == 'com.sun.star.uno.RuntimeException');
+        console.assert(zetajs.getAnyType(exc) == 'com.sun.star.uno.RuntimeException');
         console.assert(zetajs.fromAny(exc).Message.startsWith('test'));
     }
     try {
@@ -666,11 +666,12 @@ Module.zetajs.then(function(zetajs) {
         console.assert(false);
     } catch (e) {
         const exc = zetajs.catchUnoException(e);
-        console.assert(exc.type == 'com.sun.star.lang.WrappedTargetException');
+        console.assert(zetajs.getAnyType(exc) == 'com.sun.star.lang.WrappedTargetException');
         console.assert(zetajs.fromAny(exc).Message.startsWith('wrapped'));
         console.assert(zetajs.sameUnoObject(exc.val.Context, test));
         console.assert(
-            zetajs.fromAny(exc).TargetException.type == 'com.sun.star.uno.RuntimeException');
+            zetajs.getAnyType(zetajs.fromAny(exc).TargetException) ==
+                'com.sun.star.uno.RuntimeException');
         console.assert(zetajs.fromAny(exc).TargetException.val.Message.startsWith('test'));
         console.assert(
             zetajs.sameUnoObject(

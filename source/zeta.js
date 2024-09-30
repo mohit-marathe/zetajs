@@ -202,85 +202,18 @@ Module.zetajs = new Promise(function (resolve, reject) {
                 } else {
                     let fromType;
                     let val;
-                    const toDelete = [];
                     if (type.getTypeClass() === Module.uno.com.sun.star.uno.TypeClass.ANY) {
-                        switch (typeof obj) {
-                        case 'undefined':
-                            fromType = Module.uno_Type.Void();
-                            toDelete.push(fromType);
-                            val = obj;
-                            break;
-                        case 'boolean':
-                            fromType = Module.uno_Type.Boolean();
-                            toDelete.push(fromType);
-                            val = obj;
-                            break;
-                        case 'number':
-                            fromType
-                                = Number.isInteger(obj) && obj >= -0x80000000 && obj < 0x80000000
-                                ? Module.uno_Type.Long()
-                                : Number.isInteger(obj) && obj >= 0 && obj < 0x100000000
-                                ? Module.uno_Type.UnsignedLong()
-                                : Module.uno_Type.Double();
-                            toDelete.push(fromType);
-                            val = obj;
-                            break;
-                        case 'bigint':
-                            fromType = obj < 0x8000000000000000n
-                                ? Module.uno_Type.Hyper() : Module.uno_Type.UnsignedHyper();
-                            toDelete.push(fromType);
-                            val = obj;
-                            break;
-                        case 'string':
-                            fromType = Module.uno_Type.String();
-                            toDelete.push(fromType);
-                            val = obj;
-                            break;
-                        case 'object':
-                            if (obj === null) {
-                                fromType = Module.uno_Type.Interface('com.sun.star.uno.XInterface');
-                                toDelete.push(fromType);
-                                val = obj;
-                                break;
-                            } else if (obj instanceof Module.uno_Type) {
-                                fromType = Module.uno_Type.Type();
-                                toDelete.push(fromType);
-                                val = obj;
-                                break;
-                            } else if (obj instanceof Any) {
-                                fromType = obj.type;
-                                val = translateToEmbind(obj.val, obj.type, toDelete);
-                                break;
-                            } else {
-                                const tag = obj[Module.unoTagSymbol];
-                                if (tag !== undefined) {
-                                    if (tag.kind === 'enumerator') {
-                                        fromType = Module.uno_Type.Enum(tag.type);
-                                        toDelete.push(fromType);
-                                        val = obj;
-                                        break;
-                                    } else if (tag.kind === 'struct-instance') {
-                                        fromType = Module.uno_Type.Struct(tag.type);
-                                        toDelete.push(fromType);
-                                        val = translateToEmbind(obj, fromType, toDelete);
-                                        break;
-                                    } else if (tag.kind === 'exception-instance') {
-                                        fromType = Module.uno_Type.Exception(tag.type);
-                                        toDelete.push(fromType);
-                                        val = translateToEmbind(obj, fromType, toDelete);
-                                        break;
-                                    }
-                                }
-                            }
-                            // fallthrough
-                        default:
+                        fromType = getAnyType(obj);
+                        if (fromType === undefined) {
                             throw new Error('bad UNO method call argument ' + obj);
                         }
+                        val = fromAny(obj);
                     } else {
                         fromType = type;
-                        val = translateToEmbind(obj, type, toDelete);
+                        val = obj;
                     }
-                    any = new Module.uno_Any(fromType, val);
+                    const toDelete = [];
+                    any = new Module.uno_Any(fromType, translateToEmbind(val, fromType, toDelete));
                     owning = true;
                     toDelete.forEach((val) => val.delete());
                 }
@@ -454,10 +387,12 @@ Module.zetajs = new Promise(function (resolve, reject) {
                             outparamindex_out.delete();
                             outparam_out.delete();
                             const exc = catchUnoException(e);
-                            if (exc.type == 'com.sun.star.reflection.InvocationTargetException') {
-                                throwUnoException(exc.val.TargetException.val);
+                            if (getAnyType(exc) ==
+                                'com.sun.star.reflection.InvocationTargetException')
+                            {
+                                throwUnoException(fromAny(exc).TargetException.val);
                             } else {
-                                throwUnoException(exc.val);
+                                throwUnoException(fromAny(exc));
                             }
                         } finally {
                             deleteArgs.forEach((arg) => arg.delete());
@@ -869,6 +804,50 @@ Module.zetajs = new Promise(function (resolve, reject) {
             this.type = type;
             this.val = val;
         };
+        function getAnyType(val) {
+            switch (typeof val) {
+            case 'undefined':
+                return gcWrap(Module.uno_Type.Void());
+            case 'boolean':
+                return gcWrap(Module.uno_Type.Boolean());
+            case 'number':
+                return gcWrap(
+                    Number.isInteger(val) && val >= -0x80000000 && val < 0x80000000
+                        ? Module.uno_Type.Long()
+                        : Number.isInteger(val) && val >= 0 && val < 0x100000000
+                        ? Module.uno_Type.UnsignedLong()
+                        : Module.uno_Type.Double());
+            case 'bigint':
+                return gcWrap(
+                    val < 0x8000000000000000n
+                        ? Module.uno_Type.Hyper() : Module.uno_Type.UnsignedHyper());
+            case 'string':
+                return gcWrap(Module.uno_Type.String());
+            case 'object':
+                if (val === null) {
+                    return gcWrap(Module.uno_Type.Interface('com.sun.star.uno.XInterface'));
+                } else if (val instanceof Module.uno_Type) {
+                    return gcWrap(Module.uno_Type.Type());
+                } else if (val instanceof Any) {
+                    return val.type;
+                } else {
+                    const tag = val[Module.unoTagSymbol];
+                    if (tag !== undefined) {
+                        if (tag.kind === 'enumerator') {
+                            return gcWrap(Module.uno_Type.Enum(tag.type));
+                        } else if (tag.kind === 'struct-instance') {
+                            return gcWrap(Module.uno_Type.Struct(tag.type));
+                        } else if (tag.kind === 'exception-instance') {
+                            return gcWrap(Module.uno_Type.Exception(tag.type));
+                        }
+                    }
+                }
+                // fallthrough
+            default:
+                return undefined;
+            }
+        };
+        function fromAny(val) { return val instanceof Any ? val.val : val; };
         function throwUnoException(exception) {
             const type = gcWrap(Module.uno_Type.Exception(exception[Module.unoTagSymbol].type));
             const toDelete = [];
@@ -947,7 +926,8 @@ Module.zetajs = new Promise(function (resolve, reject) {
                 }
             },
             Any,
-            fromAny: function(val) { return val instanceof Any ? val.val : val; },
+            getAnyType,
+            fromAny,
             sameUnoObject: function(obj1, obj2) {
                 const type = Module.uno_Type.Interface('com.sun.star.uno.XInterface');
                 const toDelete = [];
