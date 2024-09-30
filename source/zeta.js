@@ -528,8 +528,9 @@ Module.zetajs = new Promise(function (resolve, reject) {
         function singleton(name) {
             return function(context) {
                 const any = context.getValueByName('/singletons/' + name);
-                if (any.type.getTypeClass() !== Module.uno.com.sun.star.uno.TypeClass.INTERFACE
-                    || any.val === null)
+                if (getAnyType(any).getTypeClass() !==
+                        Module.uno.com.sun.star.uno.TypeClass.INTERFACE
+                    || fromAny(any) === null)
                 {
                     throwUnoException(
                         new uno.com.sun.star.uno.DeploymentException(
