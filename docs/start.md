@@ -108,7 +108,7 @@ That `zetajs` object has certain properties:
 
 - `zetajs.mainPort` is used for [communication between threads](#communication-between-threads).
 
-See [The zetajs UNO Mapping](uno.html) for further documentation of the mapping between zetajs and UNO.
+See [The zetajs UNO Mapping](uno.html) for further documentation of the mapping between zetajs and UNO.  Whenever a value of UNO type `ANY` is returned from zetajs, the unwrapped representation will be used where appropriate (e.g., a UNO value of type `ANY` containing a value `1` of UNO type `LONG` will be returned directly as the JavaScript number `1`, not as a JavaScript object with `type` and `val` properties).
 
 ## Communication Between Threads
 

@@ -231,13 +231,27 @@ Module.zetajs = new Promise(function (resolve, reject) {
             case Module.uno.com.sun.star.uno.TypeClass.ANY:
                 {
                     const ty = gcWrap(val.getType());
+                    let v;
                     try {
-                        return new Any(ty, translateFromEmbind(val.get(), ty, cleanUpVal));
+                        v = translateFromEmbind(val.get(), ty, cleanUpVal);
                     } finally {
                         if (cleanUpVal) {
                             val.delete();
                         }
                     }
+                    switch (ty.getTypeClass()) {
+                    case Module.uno.com.sun.star.uno.TypeClass.VOID:
+                    case Module.uno.com.sun.star.uno.TypeClass.BOOLEAN:
+                    case Module.uno.com.sun.star.uno.TypeClass.LONG:
+                    case Module.uno.com.sun.star.uno.TypeClass.HYPER:
+                    case Module.uno.com.sun.star.uno.TypeClass.STRING:
+                    case Module.uno.com.sun.star.uno.TypeClass.TYPE:
+                    case Module.uno.com.sun.star.uno.TypeClass.ENUM:
+                    case Module.uno.com.sun.star.uno.TypeClass.STRUCT:
+                    case Module.uno.com.sun.star.uno.TypeClass.EXCEPTION:
+                        return v;
+                    }
+                    return new Any(ty, v);
                 }
             case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
                 {
@@ -390,9 +404,9 @@ Module.zetajs = new Promise(function (resolve, reject) {
                             if (getAnyType(exc) ==
                                 'com.sun.star.reflection.InvocationTargetException')
                             {
-                                throwUnoException(fromAny(fromAny(exc).TargetException));
+                                throwUnoException(exc.TargetException);
                             } else {
-                                throwUnoException(fromAny(exc));
+                                throwUnoException(exc);
                             }
                         } finally {
                             deleteArgs.forEach((arg) => arg.delete());

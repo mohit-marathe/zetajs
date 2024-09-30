@@ -30,7 +30,13 @@ The mapping between [UNO types](http://www.openoffice.org/udk/common/man/typesys
 
 - UNO `TYPE` maps to opaque JavaScript objects, see the documentation of `zetajs.type` at [Starting Points: Using zetajs](start.html#using-zetajs).
 
-- UNO `ANY` maps to opaque JavaScript objects that have a `type` property (containing a zetajs representation of a value of UNO type `TYPE`) and a `val` property (containing a zetajs representation of a value of the given UNO type).  See the documentation of `zetajs.Any` and `zetajs.fromAny` at [Starting Points: Using zetajs](start.html#using-zetajs).
+- UNO `ANY` maps to the combined set of wrapped and unwrapped representations:
+
+    - Any value of UNO type `ANY` can map to a wrapped representation, which is an opaque JavaScript object that has a `type` property (containing a zetajs representation of a value of UNO type `TYPE`) and a `val` property (containing a zetajs representation of a value of the given UNO type).
+
+    - A value of UNO type `ANY` where the contained UNO value is of any of the UNO types `VOID`, `BOOLEAN`, `LONG`, `HYPER`, `STRING`, `TYPE`, a UNO enum type, a UNO struct type, or a UNO exception type, can also be mapped to an unwrapped representation, which directly maps to the JavaScript representation of the contained UNO value.
+
+    See the documentation of `zetajs.Any` and `zetajs.fromAny` at [Starting Points: Using zetajs](start.html#using-zetajs).
 
 - UNO sequence types map to JavaScript Arrays with corresponding element value constraints, up to the JavaScript length limit of 2<sup>32</sup>&minus;1 elements.
 
