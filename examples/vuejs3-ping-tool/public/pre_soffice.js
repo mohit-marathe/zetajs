@@ -3,6 +3,12 @@
 
 'use strict';
 
+// IMPORTANT:
+// Set base URL to the soffice.* files.
+// Use an empty string if those files are in the same directory.
+const soffice_base_url = '';
+
+
 let thrPort;     // zetajs thread communication
 let tbDataJs;    // toolbar dataset passed from vue.js for plain JS
 let PingModule;  // Ping module passed from vue.js for plain JS
@@ -10,7 +16,16 @@ let PingModule;  // Ping module passed from vue.js for plain JS
 const canvas = document.getElementById('qtcanvas');
 // Debugging note:
 // Switch the web worker in the browsers debug tab to debug code inside uno_scripts.
-var Module = {canvas, uno_scripts: ['./zeta.js', './office_thread.js']};
+var Module = {
+  canvas,
+  uno_scripts: ['./zeta.js', './office_thread.js'],
+  locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
+};
+if (soffice_base_url !== '') {
+  // Must not be set when soffice.js is in the same directory.
+  Module.mainScriptUrlOrBlob = new Blob(
+    ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
+}
 
 
 const pingSection = document.getElementById("ping_section");
@@ -76,7 +91,6 @@ function btnPing() {
     pingResult(url, err, data);
   });
 }
-
 pingTarget.addEventListener ("keyup", (evt) => {
   if(evt.key === 'Enter') {
     btnPing();
@@ -92,7 +106,7 @@ let calc_ping_example_ods;
 
 
 const soffice_js = document.createElement("script");
-soffice_js.src = "./soffice.js";
+soffice_js.src = soffice_base_url + "soffice.js";
 // "onload" runs after the loaded script has run.
 soffice_js.onload = function() {
   console.log('PLUS: Configuring Module');
