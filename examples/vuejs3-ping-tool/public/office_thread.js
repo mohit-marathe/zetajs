@@ -12,9 +12,8 @@
 let zetajs, css;
 
 // global variables: demo specific
-let context, desktop, doc, ctrl, urls;
+let context, desktop, doc, ctrl, urls, ping_line;
 
-let ping_line;
 let xComponent, charLocale, formatNumber, formatText, activeSheet, cell;  // for debugging
 
 
@@ -65,7 +64,11 @@ function demo() {
             dispatch(urls[e.data.id]);
             break;
         case 'ping_result':
-            ping_line = findEmptyRowInCol1(activeSheet);
+            if (ping_line === undefined) {
+                ping_line = 1;  // overwrite example.org
+            } else {
+                ping_line = findEmptyRowInCol1(activeSheet);
+            }
 
             const url = e.data.id['url'];
             cell = activeSheet.getCellByPosition(0, ping_line);
