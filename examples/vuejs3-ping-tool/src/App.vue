@@ -20,7 +20,7 @@
 
 <template>
   <div id="app">
-    <table style="width:1400px; border-spacing: 10px;">
+    <table style="width:1150px; border-spacing: 10px;">
       <tr>
         <td>
           <div><h1>ZetaJS Calc Demo</h1></div>
@@ -32,9 +32,9 @@
           <canvas
             id="qtcanvas" contenteditable="true"
             oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
-            width="1000px" height="600px"/>
+            width="900px" height="450px"/>
         </td>
-        <td style="vertical-align: top; width:400px">
+        <td style="vertical-align: top; width:250px">
           <div>
             <button onclick="btnPing()">Ping</button>&nbsp; 
               <input type="text" id="ping_target" name="ping_target" value="https://zetaoffice.org/">
