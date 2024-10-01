@@ -10,9 +10,7 @@ And either you also install npm system wide or you use:
 https://packages.debian.org/bookworm/nodejs  
 https://packages.debian.org/bookworm/nodeenv
 
-# vuejs3-zetajs
-
-This template should help get you started developing with Vue 3 in Vite.
+# vuejs3
 
 ## Customize configuration
 
