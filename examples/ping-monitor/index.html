@@ -13,8 +13,8 @@
   <body>
     <div><h1>ZetaJS Ping Monitor Demo</h1></div><br>
     <div>
-      <button onclick="btnPing()">Ping</button>&nbsp; 
-        <input type="text" id="ping_target" name="ping_target" value="https://zetaoffice.org/">
+      <button onclick="btnPing()">Ping</button>&nbsp;
+        <input type="text" id="ping_target" name="ping_target" value="https://zetaoffice.net/">
     </div><br>
     <div>
       <canvas id="qtcanvas" width="1150px" height="500px" class="disable-mouse-input"/>
@@ -82,17 +82,17 @@
             console.log('PLUS: Configuring Module');
             Module.uno_main.then(function(pThrPort) {
                 thrPort = pThrPort;
-            
+
                 load_ping_monitor_ods().then(function(aryBuf) {
                     ping_monitor_ods = aryBuf;
                     FS.writeFile('/tmp/ping_monitor.ods', new Uint8Array(ping_monitor_ods));
                 });
-            
+
                 // Trigger resize of the embedded window to match the canvas size.
                 //window.dispatchEvent(new Event('resize'));  // TODO: see topwin.setPosSize workaround
                 // May somewhen be obsoleted by:
                 //   https://gerrit.libreoffice.org/c/core/+/174040
-            
+
                 setTimeout(function() {
                     //window.dispatchEvent(new Event('resize'));  // TODO: see topwin.setPosSize workaround
                     // Using Ping callback interface.

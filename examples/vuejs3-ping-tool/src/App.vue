@@ -36,8 +36,8 @@
         </td>
         <td style="vertical-align: top; width:250px">
           <div>
-            <button onclick="btnPing()">Ping</button>&nbsp; 
-              <input type="text" id="ping_target" name="ping_target" value="https://zetaoffice.org/">
+            <button onclick="btnPing()">Ping</button>&nbsp;
+              <input type="text" id="ping_target" name="ping_target" value="https://zetaoffice.net/">
           </div>
           <div>
             <span id="ping_section">Loading ping tool...</span>

@@ -18,7 +18,7 @@ underyling Embind layer, in a backward-compatible way.)
 
 ## Demo
 
-To see a demo of zetajs in use, visit [zetaoffice.org/demo](https://zetaoffice.org/demo.html).
+To see a demo of zetajs in use, visit [zetaoffice.net/demo](https://zetaoffice.net/demo.html).
 
 ## Examples and test code
 
@@ -28,9 +28,9 @@ Those examples are configured to run without requiring an own LibreOffice WASM (
 
 ## Using ZetaOffice
 
-Visit [zetaoffice.org](https://zetaoffice.org) to learn more about ZetaOffice, its CDN and how to host ZetaOffice yourself.
+Visit [zetaoffice.net](https://zetaoffice.net) to learn more about ZetaOffice, its CDN and how to host ZetaOffice yourself.
 
-Using the official versions from [zetaoffice.org](https://zetaoffice.org) is the recommended way for most users. Only read on if you intend to build or debug LOWA itself.
+Using the official versions from [zetaoffice.net](https://zetaoffice.net) is the recommended way for most users. Only read on if you intend to build or debug LOWA itself.
 
 ## Why zetajs
 
