@@ -10,6 +10,7 @@ source := \
     ../../source/zeta.js \
     office_thread.js \
     ping.js \
+    ping_monitor.ods \
     index.html
 
 define target
