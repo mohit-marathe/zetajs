@@ -9,6 +9,7 @@ source := \
     $(LOWAINSTDIR)soffice.worker.js \
     ../../source/zeta.js \
     office_thread.js \
+    ping.js \
     index.html
 
 define target
