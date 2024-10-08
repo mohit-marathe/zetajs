@@ -30,9 +30,33 @@ function demo() {
           .loadComponentFromURL('private:factory/swriter', '_default', 0, [])
           .getCurrentController();
 
-    const topwin = css.awt.Toolkit.create(context).getActiveTopWindow();
-    topwin.FullScreen = true;
-    topwin.setMenuBar(null);
+    // css.awt.XExtendedToolkit::getActiveTopWindow only becomes non-null asynchronously, so wait
+    // for it if necessary:
+    let topwin;
+    const toolkit = css.awt.Toolkit.create(context);
+    function setUpTopWindow() {
+        topwin = toolkit.getActiveTopWindow();
+        if (topwin) {
+            topwin.FullScreen = true;
+            topwin.setMenuBar(null);
+        }
+    }
+    toolkit.addTopWindowListener(
+        zetajs.unoObject([css.awt.XTopWindowListener], {
+            disposing(Source) {},
+            windowOpened(e) {},
+            windowClosing(e) {},
+            windowClosed(e) {},
+            windowMinimized(e) {},
+            windowNormalized(e) {},
+            windowActivated(e) {
+                if (!topwin) {
+                    setUpTopWindow();
+                }
+            },
+            windowDeactivated(e) {},
+        }));
+    setUpTopWindow();
 
     // Turn off sidebar:
     dispatch('.uno:Sidebar');
