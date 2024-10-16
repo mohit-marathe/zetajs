@@ -14,6 +14,10 @@ let tbDataJs;    // toolbar dataset passed from vue.js for plain JS
 let PingModule;  // Ping module passed from vue.js for plain JS
 
 const canvas = document.getElementById('qtcanvas');
+const pingSection = document.getElementById("ping_section");
+const pingTarget = document.getElementById("ping_target");
+
+
 // Debugging note:
 // Switch the web worker in the browsers debug tab to debug code inside uno_scripts.
 var Module = {
@@ -26,10 +30,6 @@ if (soffice_base_url !== '') {
   Module.mainScriptUrlOrBlob = new Blob(
     ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
 }
-
-
-const pingSection = document.getElementById("ping_section");
-const pingTarget = document.getElementById("ping_target");
 
 
 function jsPassCtrlBar(pTbDataJs) {

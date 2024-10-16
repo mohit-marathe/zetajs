@@ -67,9 +67,9 @@ function demo() {
     formatText = xComponent.getNumberFormats().
         queryKey('@', charLocale, false);
 
-    // Turn off sidebar:
+    // Turn off UI elements:
     dispatch('.uno:Sidebar');
-    // Turn off statusbar:
+    dispatch('.uno:InputLineVisible');  // FormulaBar at the top
     ctrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
     // topwin.setMenuBar(null) has race conditions on fast networks like localhost.
     ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");

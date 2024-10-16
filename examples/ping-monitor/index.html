@@ -33,9 +33,12 @@
         // Use an empty string if those files are in the same directory.
         const soffice_base_url = '';
 
+        const canvas = document.getElementById('qtcanvas');
+        const pingTarget = document.getElementById('ping_target');
+
 
         var Module = {
-            canvas: document.getElementById('qtcanvas'),
+            canvas,
             uno_scripts: ['./zeta.js', './office_thread.js'],
             locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
         };
@@ -46,7 +49,6 @@
         }
 
         let thrPort;     // zetajs thread communication
-        const pingTarget = document.getElementById("ping_target");
         const pingInst = new Ping();
         let url = pingTarget.value;
 
@@ -86,8 +88,9 @@
                   switch (e.data.cmd) {
                   case 'ready':
                     // Using Ping callback interface.
-                    // 'Cross-Origin-Embedder-Policy': Does NOT work with 'require-corp'.
-                    //   But you may use 'credentialless'
+                    // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
+                    //   acutally having CORP on foreign origins.
+                    //   Also 'credentialless' isn't supported by Safari-18 as of 2024-09.
                     pingInst.ping(pingTarget, function() {
                         // Continue after first ping, which is often exceptionally slow.
                         setInterval(function() {
