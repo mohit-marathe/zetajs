@@ -8,6 +8,18 @@
             cursor: not-allowed;
             pointer-events: none;
         }
+        .spinner {
+          border: 16px solid #1F2937; /* ZetaOffice brand color */
+          border-top: 16px solid #059669; /* ZetaOffice brand color */
+          border-radius: 50%;
+          width: 120px;
+          height: 120px;
+          animation: spin 2s linear 30; /* 60 seconds */
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
     </style>
   </head>
   <body>
@@ -17,6 +29,10 @@
         <input type="text" id="ping_target" name="ping_target" value="https://zetaoffice.net/">
     </div><br>
     <div>
+      <div id="loadingInfo">
+        <div class="spinner"></div><br>
+        <h2>ZetaOffice is loading...</h2>
+      </div>
       <canvas id="qtcanvas" width="1150px" height="500px" class="disable-mouse-input"/>
       <!--
         In this demo the canvas content isn't editable.
@@ -35,6 +51,7 @@
 
         const canvas = document.getElementById('qtcanvas');
         const pingTarget = document.getElementById('ping_target');
+        const loadingInfo = document.getElementById('loadingInfo');
 
 
         var Module = {
@@ -87,6 +104,7 @@
                 thrPort.onmessage = function(e) {
                   switch (e.data.cmd) {
                   case 'ready':
+                    loadingInfo.style.display = 'none';
                     // Using Ping callback interface.
                     // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
                     //   acutally having CORP on foreign origins.

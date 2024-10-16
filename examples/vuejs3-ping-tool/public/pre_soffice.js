@@ -13,6 +13,7 @@ let thrPort;     // zetajs thread communication
 let tbDataJs;    // toolbar dataset passed from vue.js for plain JS
 let PingModule;  // Ping module passed from vue.js for plain JS
 
+const loadingInfo = document.getElementById('loadingInfo');
 const canvas = document.getElementById('qtcanvas');
 const pingSection = document.getElementById("ping_section");
 const pingTarget = document.getElementById("ping_target");
@@ -125,6 +126,7 @@ soffice_js.onload = function() {
         setToolbarActive(e.data.id, e.data.state);
         break;
       case 'ready':
+        loadingInfo.style.display = 'none';
         // Trigger resize of the embedded window to match the canvas size.
         // May somewhen be obsoleted by:
         //   https://gerrit.libreoffice.org/c/core/+/174040

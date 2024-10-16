@@ -102,8 +102,6 @@ function topwin() {
 }
 
 function hideScrollbars() {
-    // Workaround to hide scrollbars and sheet tabs:
-    // Move them behind the lower and right edges of the canvas.
     topwin().setPosSize(0, 0, 1300+12, 600+40, 15);
     //topwin().setPosSize(-40, 0, 1300+52, 600+40, 15);  // with "Formula Bar" and "RowColumnHeaders"
 }

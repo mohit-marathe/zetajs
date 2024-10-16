@@ -37,3 +37,8 @@ a,
     padding: 0.3rem 0.6rem;  /* border: top left */
   }
 }
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
