@@ -82,19 +82,9 @@
             console.log('PLUS: Configuring Module');
             Module.uno_main.then(function(pThrPort) {
                 thrPort = pThrPort;
-
-                load_ping_monitor_ods().then(function(aryBuf) {
-                    ping_monitor_ods = aryBuf;
-                    FS.writeFile('/tmp/ping_monitor.ods', new Uint8Array(ping_monitor_ods));
-                });
-
-                // Trigger resize of the embedded window to match the canvas size.
-                //window.dispatchEvent(new Event('resize'));  // TODO: see topwin.setPosSize workaround
-                // May somewhen be obsoleted by:
-                //   https://gerrit.libreoffice.org/c/core/+/174040
-
-                setTimeout(function() {
-                    //window.dispatchEvent(new Event('resize'));  // TODO: see topwin.setPosSize workaround
+                thrPort.onmessage = function(e) {
+                  switch (e.data.cmd) {
+                  case 'ready':
                     // Using Ping callback interface.
                     // 'Cross-Origin-Embedder-Policy': Does NOT work with 'require-corp'.
                     //   But you may use 'credentialless'
@@ -104,7 +94,21 @@
                             doPing();
                         }, 1000);  // milliseconds
                     });
-                }, 10000);  // milliseconds
+                    break;
+                  default:
+                    throw Error('Unknown message command ' + e.data.cmd);
+                  }
+                };
+
+                load_ping_monitor_ods().then(function(aryBuf) {
+                    ping_monitor_ods = aryBuf;
+                    FS.writeFile('/tmp/ping_monitor.ods', new Uint8Array(ping_monitor_ods));
+                });
+
+                window.addEventListener("resize", (event) => {
+                    // Else scrollbars may reappear on resize events.
+                    thrPort.postMessage({cmd: 'hide_scrollbars'});
+                });
             });
         };
         // Hint: The global objects "canvas" and "Module" must exist before the next line.

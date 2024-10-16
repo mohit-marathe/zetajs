@@ -84,8 +84,6 @@ function pingExamples(err, data) {
 
 function btnPing() {
   // Using Ping callback interface.
-  // 'Cross-Origin-Embedder-Policy': Does NOT work with 'require-corp'.
-  //   But you may use 'credentialless'
   const url = pingTarget.value;
   pingInst.ping(url, function(err, data) {
     pingResult(url, err, data);
@@ -111,6 +109,12 @@ soffice_js.src = soffice_base_url + "soffice.js";
 soffice_js.onload = function() {
   console.log('PLUS: Configuring Module');
   Module.uno_main.then(function(pThrPort) {
+    // Should run after App.vue has set PingModule but before demo().
+    // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
+    //   acutally having CORP on foreign origins.
+    //   Also 'credentialless' isn't supported by Safari-18 as of 2024-09.
+    pingInst = new PingModule();
+
     thrPort = pThrPort;
     thrPort.onmessage = function(e) {
       switch (e.data.cmd) {
@@ -119,6 +123,21 @@ soffice_js.onload = function() {
         break;
       case 'state':
         setToolbarActive(e.data.id, e.data.state);
+        break;
+      case 'ready':
+        // Trigger resize of the embedded window to match the canvas size.
+        // May somewhen be obsoleted by:
+        //   https://gerrit.libreoffice.org/c/core/+/174040
+        window.dispatchEvent(new Event('resize'));
+        // Using Ping callback interface.
+        pingInst.ping(urls_ary[urls_ary_i], function() {
+          setTimeout(function() {  // small delay to make the demo more interesting
+            // Continue after first ping, which is often exceptionally slow.
+            pingInst.ping(urls_ary[urls_ary_i], function(err, data) {
+              pingExamples(err, data);
+            });
+          }, 1000);  // milliseconds
+        });
         break;
       default:
         throw Error('Unknown message command ' + e.data.cmd);
@@ -129,28 +148,6 @@ soffice_js.onload = function() {
       calc_ping_example_ods = aryBuf;
       FS.writeFile('/tmp/calc_ping_example.ods', new Uint8Array(calc_ping_example_ods));
     });
-
-    // Trigger resize of the embedded window to match the canvas size.
-    // May somewhen be obsoleted by:
-    //   https://gerrit.libreoffice.org/c/core/+/174040
-    window.dispatchEvent(new Event('resize'));
-
-    pingInst = new PingModule();
-    setTimeout(function() {
-      // Trigger resize of the embedded window to match the canvas size.
-      // May somewhen be obsoleted by:
-      //   https://gerrit.libreoffice.org/c/core/+/174040
-      window.dispatchEvent(new Event('resize'));
-      // Using Ping callback interface.
-      // 'Cross-Origin-Embedder-Policy': Does NOT work with 'require-corp'.
-      //   But you may use 'credentialless'
-      pingInst.ping(urls_ary[urls_ary_i], function() {
-        // Continue after first ping, which is often exceptionally slow.
-        pingInst.ping(urls_ary[urls_ary_i], function(err, data) {
-          pingExamples(err, data);
-        });
-      });
-    }, 10000);  // milliseconds
   });
 };
 // Hint: The global objects "canvas" and "Module" must exist before the next line.

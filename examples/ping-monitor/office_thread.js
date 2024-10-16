@@ -13,10 +13,10 @@ let zetajs, css;
 
 // global variables: demo specific
 const max_values = 20;
-let context, desktop, doc, ctrl, oldUrl;
+let context, desktop, toolkit, ready, topwinVar, doc, ctrl, oldUrl;
 
 // for debugging
-let xComponent, charLocale, formatNumber, formatText, topwin, activeSheet, cellRange, dataAry;
+let xComponent, charLocale, formatNumber, formatText, activeSheet, cellRange, dataAry;
 
 
 function demo() {
@@ -35,22 +35,11 @@ function demo() {
     }
     config.commitChanges();
 
-    desktop = css.frame.Desktop.create(context);
-    doc = desktop.loadComponentFromURL('file:///tmp/ping_monitor.ods', '_default', 0, []);
-    ctrl = doc.getCurrentController();
-
+    toolkit = css.awt.Toolkit.create(context);
     // css.awt.XExtendedToolkit::getActiveTopWindow only becomes non-null asynchronously, so wait
-    // for it if necessary:
-    const toolkit = css.awt.Toolkit.create(context);
-    function setUpTopWindow() {
-        topwin = toolkit.getActiveTopWindow();
-        if (topwin) {
-            topwin.FullScreen = true;
-            topwin.setMenuBar(null);
-            topwin.setPosSize(0, 0, 1300+12, 600+40, 15);
-            //topwin.setPosSize(-40, 0, 1300+52, 600+40, 15);  // with "Formula Bar" and "RowColumnHeaders"
-        }
-    }
+    // for it if necessary.
+    // addTopWindowListener only works as intended when the following loadComponentFromURL sets
+    // '_default' as target and no other document is already open.
     toolkit.addTopWindowListener(
         zetajs.unoObject([css.awt.XTopWindowListener], {
             disposing(Source) {},
@@ -60,26 +49,36 @@ function demo() {
             windowMinimized(e) {},
             windowNormalized(e) {},
             windowActivated(e) {
-                if (!topwin) {
-                    setUpTopWindow();
+                topwin().FullScreen = true;
+                hideScrollbars();
+                if (!ready) {
+                    ready = true;
+                    zetajs.mainPort.postMessage({cmd: 'ready'});
                 }
             },
             windowDeactivated(e) {},
         }));
-    setUpTopWindow();
+
+    desktop = css.frame.Desktop.create(context);
+    doc = desktop.loadComponentFromURL('file:///tmp/ping_monitor.ods', '_default', 0, []);
+    ctrl = doc.getCurrentController();
 
     // Turn off UI elements:
     dispatch('.uno:Sidebar');
     dispatch('.uno:InputLineVisible');  // FormulaBar at the top
     dispatch('.uno:ViewRowColumnHeaders');
     ctrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
+    // topwin.setMenuBar(null) has race conditions on fast networks like localhost.
+    ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
 
     activeSheet = ctrl.getActiveSheet();
     cellRange = activeSheet.getCellRangeByPosition(0, 1, 0, max_values+1);
     dataAry = cellRange.getDataArray();  // 2 dimensional array
     zetajs.mainPort.onmessage = function (e) {
-        //topwin.setPosSize(-40, 0, 1300+52, 600+40, 15);  // with "Formula Bar" and "RowColumnHeaders"
         switch (e.data.cmd) {
+        case 'hide_scrollbars':
+            hideScrollbars();
+            break;
         case 'ping_result':
             const newUrl = e.data.url;
             if (newUrl == oldUrl) {
@@ -95,6 +94,18 @@ function demo() {
             throw Error('Unknonwn message command ' + e.data.cmd);
         }
     }
+}
+
+function topwin() {
+    if (!topwinVar) topwinVar = toolkit.getActiveTopWindow();
+    return topwinVar;
+}
+
+function hideScrollbars() {
+    // Workaround to hide scrollbars and sheet tabs:
+    // Move them behind the lower and right edges of the canvas.
+    topwin().setPosSize(0, 0, 1300+12, 600+40, 15);
+    //topwin().setPosSize(-40, 0, 1300+52, 600+40, 15);  // with "Formula Bar" and "RowColumnHeaders"
 }
 
 function moveRows(ary) {
