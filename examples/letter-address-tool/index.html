@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: MIT -->
+<html>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="w3.css">
+  <title>ZetaJS Deta: Letter Address Tool</title>
+  <head>
+    <style>
+        .disable-mouse-input {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .spinner {
+          border: 16px solid #1F2937; /* ZetaOffice brand color */
+          border-top: 16px solid #059669; /* ZetaOffice brand color */
+          border-radius: 50%;
+          width: 120px;
+          height: 120px;
+          animation: spin 2s linear 30; /* 60 seconds */
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+    </style>
+  </head>
+  <body class="w3-margin-left">
+    <table style="width:1150px; border-spacing: 10px;">
+      <tr>
+        <td>
+          <h1>ZetaJS Demo: Letter Address Tool</h1>
+          <div>
+            <p style="font-family:monospace"><button id="btnBold" onclick="formatBtn(this)" disabled><b>B</b></button> <button id="btnItalic" onclick="formatBtn(this)" disabled><i>I</i></button> <button id="btnUnderline" onclick="formatBtn(this)" disabled><u>U</u></button></p>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div id="loadingInfo">
+            <div class="spinner"></div><br>
+            <h2>ZetaOffice is loading...</h2>
+          </div>
+          <canvas
+            id="qtcanvas" contenteditable="true"
+            oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
+            width="850px" height="450px"/>
+        </td>
+        <td style="vertical-align: top; width:250px">
+          <div class="w3-margin-bottom">
+            Download: <button id="btnOdt" onclick="btnDownloadFunc(this)" disabled>ODT</button> <button id="btnPdf" onclick="btnDownloadFunc(this)" disabled>PDF</button>
+          </div>
+          <div class="w3-margin-bottom">
+            <button id="btnInsert" onclick="btnInsertFunc()" disabled>Insert Address</button> <button id="btnReload" onclick="btnReloadFunc()" disabled>Reload file</button>
+          </div>
+          <div>
+            <select id="addr_name" name="addr_name" Size="19" style="width: 100%;" autofocus></select>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <script type="text/javascript">
+        'use strict';
+
+        // IMPORTANT:
+        // Set base URL to the soffice.* files.
+        // Use an empty string if those files are in the same directory.
+        const soffice_base_url = '';
+
+        let url;  // for debugging
+
+        const canvas = document.getElementById('qtcanvas');
+        const addrName = document.getElementById('addr_name');
+        const loadingInfo = document.getElementById('loadingInfo');
+        const btnNamedAry = {
+          Bold: document.getElementById('btnBold'),
+          Italic: document.getElementById('btnItalic'),
+          Underline: document.getElementById('btnUnderline'),
+          Odt: document.getElementById('btnOdt'),
+          Pdf: document.getElementById('btnPdf'),
+          Insert: document.getElementById('btnInsert'),
+          Reload: document.getElementById('btnReload'),
+        };
+
+
+        // Workaround initial canvas size +2 bug.
+        canvas.height -= 2;
+        canvas.width -= 2;
+
+        var Module = {
+            canvas,
+            uno_scripts: ['./zeta.js', './office_thread.js'],
+            locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
+        };
+        if (soffice_base_url !== '') {
+            // Must not be set when soffice.js is in the same directory.
+            Module.mainScriptUrlOrBlob = new Blob(
+                ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
+        }
+
+        let thrPort;     // zetajs thread communication
+
+
+        function formatBtn(btnObj) {
+          thrPort.postMessage({
+            cmd: 'toggleFormat',
+            id: btnObj.id.substring(3),
+          });
+          btnObj.style.borderStyle = btnObj.style.borderStyle === 'inset' ? '' : 'inset';
+        }
+
+        function btnDownloadFunc(btnObj) {
+          thrPort.postMessage({cmd: 'download', id: btnObj.id});
+        }
+
+        function btnInsertFunc() {
+          if (addrName.selectedIndex != -1) {
+            const recipient = data[addrName.selectedIndex];
+            thrPort.postMessage({cmd: 'insert_address', recipient});
+          }
+        }
+
+        function btnReloadFunc() {
+          for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = true;
+          thrPort.postMessage({cmd: 'reload'});
+        }
+
+        async function load_business_letter_sans() {
+            const response = await fetch("./Modern_business_letter_sans_serif.ott");
+            return response.arrayBuffer();
+        }
+
+
+        const data = [
+          {
+            title:       "Dr.",
+            name:        "Bashir, Julian Subatoi",
+            street:      "Level 42",
+            postal_code: "DS9",
+            city:        "Deep Space 9",
+            state:       "Bajoran Republic",
+          }, {
+            title:       "Dr.",
+            name:        "Chapel, Christine",
+            street:      "Deck 42",
+            postal_code: "NCC-1701",
+            city:        "USS Enterprise",
+            state:       "United Federation of Planets",
+          }, {
+            title:       "Mr.",
+            name:        "Chekov, Pavel",
+            street:      "Deck 42",
+            postal_code: "NCC-1701",
+            city:        "USS Enterprise",
+            state:       "United Federation of Planets",
+          }, {
+            title:       "Mrs.",
+            name:        "Dax, Jadzia",
+            street:      "Section 25 Alpha",
+            postal_code: "DS9",
+            city:        "Deep Space 9",
+            state:       "Bajoran Republic",
+          }, {
+            title:       "Mr.",
+            name:        "de Monti, Mario",
+            street:      "Mariosstreet",
+            postal_code: "1B 1B1B",
+            city:        "Deepseabase 104",
+            state:       "Earth",
+          }, {
+            title:       "Mr.",
+            name:        "Sigbjörnson, Hasso",
+            street:      "Hassosstreet",
+            postal_code: "1B 1B1B",
+            city:        "Deepseabase 104",
+            state:       "Earth",
+          }, {
+            title:       "Mrs.",
+            name:        "Jagellovsk, Tamara",
+            street:      "Tamarasstreet",
+            postal_code: "1B 1B1B",
+            city:        "Deepseabase 104",
+            state:       "Earth",
+          }, {
+            title:       "Mr.",
+            name:        "Kirk, James T.",
+            street:      "Deck 5",
+            postal_code: "NCC-1701",
+            city:        "USS Enterprise",
+            state:       "United Federation of Planets",
+          }, {
+            title:       "Mrs.",
+            name:        "Legrelle, Helga",
+            street:      "Helgasstreet",
+            postal_code: "1B 1B1B",
+            city:        "Deepseabase 104",
+            state:       "Earth",
+          }, {
+            title:       "Dr.",
+            name:        "McCoy, Leonard",
+            street:      "Deck 9, Section 2, 3F 127",
+            postal_code: "NCC-1701",
+            city:        "USS Enterprise",
+            state:       "United Federation of Planets",
+          }, {
+            title:       "Mr.",
+            name:        "McLane, Cliff Allister",
+            street:      "Cliffsstreet",
+            postal_code: "1B 1B1B",
+            city:        "Deepseabase 104",
+            state:       "Earth",
+          }, {
+            title:       "Mrs.",
+            name:        "Nerys, Kira",
+            street:      "Level 42",
+            postal_code: "DS9",
+            city:        "Deep Space 9",
+            state:       "Bajoran Republic",
+          }, {
+            title:       "Mr.",
+            name:        "O'Brien, Miles Edward",
+            street:      "Level 5",
+            postal_code: "DS9",
+            city:        "Deep Space 9",
+            state:       "Bajoran Republic",
+          }, {
+            title:       "Mrs.",
+            name:        "O'Brien, Keiko",
+            street:      "Level 5",
+            postal_code: "DS9",
+            city:        "Deep Space 9",
+            state:       "Bajoran Republic",
+          }, {
+            title:       "",
+            name:        "Odo, Mr.",
+            street:      "Level 42",
+            postal_code: "DS9",
+            city:        "Deep Space 9",
+            state:       "Bajoran Republic",
+          }, {
+            title:       "",
+            name:        "Quark, Mr.",
+            street:      "Level 7, Section 5",
+            postal_code: "DS9",
+            city:        "Deep Space 9",
+            state:       "Bajoran Republic",
+          }, {
+            title:       "Mrs.",
+            name:        "Rand, Janice",
+            street:      "Deck 42",
+            postal_code: "NCC-1701",
+            city:        "USS Enterprise",
+            state:       "United Federation of Planets",
+          }, {
+            title:       "Mr.",
+            name:        "Scott, Montgomery",
+            street:      "Deck 42",
+            postal_code: "NCC-1701",
+            city:        "USS Enterprise",
+            state:       "United Federation of Planets",
+          }, {
+            title:       "Mr.",
+            name:        "Shubashi, Atan",
+            street:      "Atansstreet",
+            postal_code: "1B 1B1B",
+            city:        "Deepseabase 104",
+            state:       "Earth",
+          }, {
+            title:       "Mr.",
+            name:        "Sisko, Benjamin Lafayette",
+            street:      "Level 42",
+            postal_code: "DS9",
+            city:        "Deep Space 9",
+            state:       "Bajoran Republic",
+          }, {
+            title:       "",
+            name:        "Spock, Mr.",
+            street:      "Spocksstreet",
+            postal_code: "NCC-1701",
+            city:        "USS Enterprise",
+            state:       "United Federation of Planets",
+          }, {
+            title:       "Mr.",
+            name:        "Sulu, Hikaru",
+            street:      "Deck 42",
+            postal_code: "NCC-1701",
+            city:        "USS Enterprise",
+            state:       "United Federation of Planets",
+          }, {
+            title:       "Mrs.",
+            name:        "Uhura, Nyota",
+            street:      "Deck 42",
+            postal_code: "NCC-1701",
+            city:        "USS Enterprise",
+            state:       "United Federation of Planets",
+          }, {
+            title:       "",
+            name:        "Worf, Mr.",
+            street:      "Level 3, Section 27, Room 9",
+            postal_code: "DS9",
+            city:        "Deep Space 9",
+            state:       "Bajoran Republic",
+          }, {
+            title:       "Mrs.",
+            name:        "Yates-Sisko, Kasidy Danielle",
+            street:      "Deck B",
+            postal_code: "ECV-197",
+            city:        "The Orville",
+            state:       "Planetary Union",
+          },
+        ];
+        for (const recipient of data) {
+           const option = document.createElement('option');
+           option.innerHTML = recipient.name;
+           addrName.appendChild(option);
+        }
+
+
+        const soffice_js = document.createElement("script");
+        soffice_js.src = soffice_base_url + "soffice.js";
+        // "onload" runs after the loaded script has run.
+        soffice_js.onload = function() {
+            console.log('PLUS: Configuring Module');
+            Module.uno_main.then(function(pThrPort) {
+                thrPort = pThrPort;
+                thrPort.onmessage = function(e) {
+                  switch (e.data.cmd) {
+                  case 'ready':
+                    loadingInfo.style.display = 'none';
+                    canvas.style.border = '1px solid #cccccc';
+                    for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = false;
+                    // Trigger resize of the embedded window to match the canvas size.
+                    // May somewhen be obsoleted by:
+                    //   https://gerrit.libreoffice.org/c/core/+/174040
+                    window.dispatchEvent(new Event('resize'));
+                    break;
+                  case 'download':
+                    const bytes = FS.readFile('/tmp/output');
+                    const format = e.data.id === 'btnOdt' ? 'odt' : 'pdf';
+                    const blob = new Blob([bytes], {type: 'application/' + format});
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'letter.' + format;
+                    link.style = 'display:none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(link.href);
+                    break;
+                  case 'setFormat':
+                    btnNamedAry[e.data.id].style.borderStyle = e.data.state ? 'inset' : '';
+                    break;
+                  default:
+                    throw Error('Unknown message command ' + e.data.cmd);
+                  }
+                };
+
+                load_business_letter_sans().then(function(aryBuf) {
+                    FS.writeFile('/tmp/Modern_business_letter_sans_serif.ott',
+                            new Uint8Array(aryBuf));
+                });
+            });
+        };
+        // Hint: The global objects "canvas" and "Module" must exist before the next line.
+        document.body.appendChild(soffice_js);
+    </script>
+  </body>
+</html>
