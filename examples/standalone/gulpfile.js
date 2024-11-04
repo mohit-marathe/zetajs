@@ -15,6 +15,7 @@ const mergeStream = require('merge-stream');
  * Do not add/edit/save any files or folders iside this folder. They will be deleted by the gulp tasks.
 */
 const distDir = './public/';
+var soffice_base = 'https://zetaoffice.b-cdn.net/lowa-25.2.0.0.alpha0%2B-5f0f69ba9-patched-br/';
 
 // Clean up the dist folder before running any task
 function clean() {
@@ -29,6 +30,7 @@ function compileHTML() {
   return gulp.src(['index.html'])
     .pipe( inject.replace('<!-- Vendor CSS Files -->', css_links) )
     .pipe( inject.replace('<!-- Vendor JS Files -->', js_links) )
+    .pipe( inject.replace('<!-- soffice.js Base -->', soffice_base) )
     .pipe(gulp.dest(distDir))
     .pipe(browserSync.stream());
 }
@@ -76,9 +78,15 @@ function watchFiles() {
   gulp.watch('*.js', compileJS);
 }
 
+function setDebug(done) {
+  soffice_base = '';
+  done();
+}
+
 // Export tasks
 const dist = gulp.series(clean, gulp.parallel(compileHTML, compileJS, copyVendors) );
 
 exports.watch = gulp.series(dist, watchFiles);
 exports.start = gulp.series(dist, gulp.parallel(watchFiles, initBrowserSync) );
+exports.debug = gulp.series(setDebug, dist, gulp.parallel(watchFiles, initBrowserSync) );
 exports.default = dist;

@@ -42,9 +42,9 @@
       const canvas = document.getElementById('qtcanvas');
       var Module = {canvas, uno_scripts: ['./assets/vendor/zetajs/zeta.js', './index.js']};
     </script>
-    <script src="https://zetaoffice.b-cdn.net/lowa-25.2.0.0.alpha0%2B-5f0f69ba9-patched-br/soffice.js" type="text/javascript" crossorigin=""></script>
+    <script src="<!-- soffice.js Base -->soffice.js" type="text/javascript" crossorigin=""></script>
     <script type="text/javascript">
-      Module.locateFile = function(path, prefix) { return (prefix || 'https://zetaoffice.b-cdn.net/lowa-25.2.0.0.alpha0%2B-5f0f69ba9-patched-br/') + path; }
+      Module.locateFile = function(path, prefix) { return (prefix || '<!-- soffice.js Base -->/') + path; }
       Module.uno_main.then(function(port) {
           const elements = {};
           function button(id) {
