@@ -15,7 +15,7 @@ const mergeStream = require('merge-stream');
  * Do not add/edit/save any files or folders iside this folder. They will be deleted by the gulp tasks.
 */
 const distDir = './public/';
-var soffice_base = 'https://zetaoffice.b-cdn.net/lowa-25.2.0.0.alpha0%2B-5f0f69ba9-patched-br/';
+var soffice_base = 'https://zetaoffice.b-cdn.net/zetaoffice_latest/';
 
 // Clean up the dist folder before running any task
 function clean() {

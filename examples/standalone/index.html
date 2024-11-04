@@ -44,7 +44,7 @@
     </script>
     <script src="<!-- soffice.js Base -->soffice.js" type="text/javascript" crossorigin=""></script>
     <script type="text/javascript">
-      Module.locateFile = function(path, prefix) { return (prefix || '<!-- soffice.js Base -->/') + path; }
+      Module.locateFile = function(path, prefix) { return (prefix || '<!-- soffice.js Base -->') + path; }
       Module.uno_main.then(function(port) {
           const elements = {};
           function button(id) {
