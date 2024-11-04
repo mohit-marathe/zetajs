@@ -8,7 +8,7 @@
 let zetajs, css;
 
 // global variables: demo specific
-let context, ctrl, urls;
+let context, toolkit, topwin, ctrl, urls;
 
 
 function demo() {
@@ -26,38 +26,33 @@ function demo() {
         }
     }
     config.commitChanges();
+    toolkit = css.awt.Toolkit.create(context);
+
+    // css.awt.XExtendedToolkit::getActiveTopWindow only becomes non-null asynchronously, so wait
+    // for it if necessary.
+    // addTopWindowListener only works as intended when the following loadComponentFromURL sets
+    // '_default' as target and no other document is already open.
+    toolkit.addTopWindowListener(
+      zetajs.unoObject([css.awt.XTopWindowListener], {
+        disposing(Source) {},
+        windowOpened(e) {},
+        windowClosing(e) {},
+        windowClosed(e) {},
+        windowMinimized(e) {},
+        windowNormalized(e) {},
+        windowActivated(e) {
+          if (!topwin) {
+            topwin = toolkit.getActiveTopWindow();
+            topwin.FullScreen = true;
+            zetajs.mainPort.postMessage({cmd: 'ready'});
+          }
+        },
+        windowDeactivated(e) {},
+      }));
 
     ctrl = css.frame.Desktop.create(context)
           .loadComponentFromURL('private:factory/swriter', '_default', 0, [])
           .getCurrentController();
-
-    // css.awt.XExtendedToolkit::getActiveTopWindow only becomes non-null asynchronously, so wait
-    // for it if necessary:
-    let topwin;
-    const toolkit = css.awt.Toolkit.create(context);
-    function setUpTopWindow() {
-        topwin = toolkit.getActiveTopWindow();
-        if (topwin) {
-            topwin.FullScreen = true;
-            topwin.setMenuBar(null);
-        }
-    }
-    toolkit.addTopWindowListener(
-        zetajs.unoObject([css.awt.XTopWindowListener], {
-            disposing(Source) {},
-            windowOpened(e) {},
-            windowClosing(e) {},
-            windowClosed(e) {},
-            windowMinimized(e) {},
-            windowNormalized(e) {},
-            windowActivated(e) {
-                if (!topwin) {
-                    setUpTopWindow();
-                }
-            },
-            windowDeactivated(e) {},
-        }));
-    setUpTopWindow();
 
     // Turn off sidebar:
     dispatch('.uno:Sidebar');

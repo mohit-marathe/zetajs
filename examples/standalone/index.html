@@ -64,6 +64,12 @@
           button('underline');
           port.onmessage = function(e) {
               switch (e.data.cmd) {
+              case 'ready':
+                // Trigger resize of the embedded window to match the canvas size.
+                // May somewhen be obsoleted by:
+                //   https://gerrit.libreoffice.org/c/core/+/174040
+                window.dispatchEvent(new Event('resize'));
+                break;
               case 'enable':
                   elements[e.data.id].disabled = false;
                   break;
