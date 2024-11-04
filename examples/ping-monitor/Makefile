@@ -1,4 +1,5 @@
 # -*- Mode: makefile-gmake; tab-width: 4; indent-tabs-mode: t; fill-column: 100 -*-
+# SPDX-License-Identifier: MIT
 
 source := \
     $(LOWAINSTDIR)favicon.ico \

@@ -1,5 +1,5 @@
 /* -*- Mode: JS; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4; fill-column: 100 -*- */
-// SPDX-License-Identifier: MPL-2.0
+// SPDX-License-Identifier: MIT
 
 "use strict";
 
