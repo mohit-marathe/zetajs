@@ -54,6 +54,9 @@ function demo() {
           .loadComponentFromURL('private:factory/swriter', '_default', 0, [])
           .getCurrentController();
 
+    // topwin.setMenuBar(null) has race conditions on fast networks like localhost.
+    ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
+
     // Turn off sidebar:
     dispatch('.uno:Sidebar');
 
