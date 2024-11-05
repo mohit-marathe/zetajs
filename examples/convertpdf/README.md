@@ -8,5 +8,5 @@ To build the example, the `LOWAINSTDIR` make variable must point to a LOWA insta
 (and must end in a slash).  Something like
 ```
 $ make LOWAINSTDIR=/path-to-libreoffice-build/workdir/installation/LibreOffice/emscripten/
-$ emrun out/convertpdf.html
+$ emrun out/index.html
 ```

@@ -2,7 +2,6 @@
   "name": "zetajs-example-standalone",
   "version": "1.0.0",
   "description": "Example how to use zetajs to do simple text formatting in LibreOffice Writer",
-  "main": "standalone.js",
   "scripts": {
     "start": "node_modules/.bin/gulp start",
     "debug": "node_modules/.bin/gulp debug",

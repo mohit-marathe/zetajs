@@ -57,7 +57,7 @@ function compileHTML() {
 
 // Task: Compile JS
 function compileJS() {
-  return gulp.src( './index.js')
+  return gulp.src( './office_thread.js') //
     .pipe(beautify.js({ indent_size: 2, max_preserve_newlines: 2}))
     .pipe(gulp.dest(distDir))
     .pipe(browserSync.stream());
