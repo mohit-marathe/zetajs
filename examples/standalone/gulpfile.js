@@ -4,6 +4,7 @@
 const browserSync = require("browser-sync").create();
 const del = require('del');
 const gulp = require('gulp');
+const argv = require('yargs').argv;
 const beautify = require('gulp-beautify');
 const inject = require('gulp-inject-string');
 const mergeStream = require('merge-stream');
@@ -15,10 +16,29 @@ const mergeStream = require('merge-stream');
  * Do not add/edit/save any files or folders iside this folder. They will be deleted by the gulp tasks.
 */
 const distDir = './public/';
-var soffice_base = 'https://zetaoffice.b-cdn.net/zetaoffice_latest/';
+
+
+
+
+// Variables can be adjusted via command line arguments. Example:
+//   npm run start -- --clean_disabled --port 8080 --browser chromium
+// Overwrites in gulpfile_config.js have priority over command line arguments.
+
+var soffice_base = argv.soffice_base;
+// Set "" for same server. But empty strings are falsy, so check "undefined".
+if (soffice_base === "undefined") soffice_base = 'https://zetaoffice.b-cdn.net/zetaoffice_latest/';
+
+var custom_browser = argv.browser;  // else use default system browser
+var custom_listen = argv.listen || '127.0.0.1';
+var custom_port = argv.port || 3000;
+var clean_disabled = argv.clean_disabled;
+
+
+
 
 // Clean up the dist folder before running any task
 function clean() {
+  if (clean_disabled) return Promise.resolve();
   return del(distDir + '**/*');
 }
 
@@ -66,8 +86,10 @@ function initBrowserSync(done) {
         next();
       }
     },
-    port: 3000,
-    notify: false
+    listen: custom_listen,  // host ip
+    port: custom_port,
+    notify: false,
+    browser: custom_browser
   });
   done();
 }
@@ -90,3 +112,9 @@ exports.watch = gulp.series(dist, watchFiles);
 exports.start = gulp.series(dist, gulp.parallel(watchFiles, initBrowserSync) );
 exports.debug = gulp.series(setDebug, gulp.parallel(compileHTML, compileJS, copyVendors) );
 exports.default = dist;
+
+const fs = require('fs');
+const gulpfile_optional = 'gulpfile_config.js';
+if (fs.existsSync(gulpfile_optional)) {
+  eval(fs.readFileSync(gulpfile_optional)+'');
+}

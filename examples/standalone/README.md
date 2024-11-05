@@ -14,6 +14,16 @@ npm install
 npm start
 ```
 
+Optionally pass options behind the "--" parameter.
+"--soffice_base ''" expects the soffice.* files in the public/ folder.
+"--clean_disabled" prevents the public/ being wiped.
+
+```
+npm install
+npm run start -- --clean_disabled --soffice_base '' --port 8080 --browser chromium
+
+```
+
 To use with local ZetaOffice build, place your soffice.* files in the public/ subfolder and do:
 
 ```
