@@ -7,9 +7,7 @@
 // for debugging
 let zetajs, css, context, desktop, bean_hidden, bean_overwrite, bean_pdf_export, e, from, to, doc;
 
-Module.zetajs.then(function(argZetajs) {
-    zetajs = argZetajs;
-    css = zetajs.uno.com.sun.star;
+function demo() {
     context = zetajs.getUnoComponentContext();
     desktop = css.frame.Desktop.create(context);
 
@@ -44,6 +42,13 @@ Module.zetajs.then(function(argZetajs) {
     }
 
     zetajs.mainPort.postMessage({cmd: 'start'});
+}
+
+Module.zetajs.then(function(pZetajs) {
+    // initializing zetajs environment
+    zetajs = pZetajs;
+    css = zetajs.uno.com.sun.star;
+    demo();  // launching demo
 });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

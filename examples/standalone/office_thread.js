@@ -108,8 +108,7 @@ Module.zetajs.then(function(pZetajs) {
     // initializing zetajs environment
     zetajs = pZetajs;
     css = zetajs.uno.com.sun.star;
-    // launching demo
-    demo();
+    demo();  // launching demo
 });
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

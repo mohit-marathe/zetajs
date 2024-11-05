@@ -39,48 +39,69 @@
     </div>
 
     <script type="text/javascript">
+      'use strict';
+
+      // IMPORTANT:
+      // Set base URL to the soffice.* files.
+      // Use an empty string if those files are in the same directory.
+      const soffice_base_url = '<!-- soffice.js Base -->';
+
       const canvas = document.getElementById('qtcanvas');
-      var Module = {canvas, uno_scripts: ['./assets/vendor/zetajs/zeta.js', './index.js']};
-    </script>
-    <script src="<!-- soffice.js Base -->soffice.js" type="text/javascript" crossorigin=""></script>
-    <script type="text/javascript">
-      Module.locateFile = function(path, prefix) { return (prefix || '<!-- soffice.js Base -->') + path; }
-      Module.uno_main.then(function(port) {
-          const elements = {};
-          function button(id) {
-              const element = document.getElementById(id);
-              element.onchange = function() {
-                  port.postMessage({cmd: 'toggle', id});
-                  // Give focus to the LO canvas to avoid issues with
-                  // <https://bugs.documentfoundation.org/show_bug.cgi?id=162291> "Setting Bold is
-                  // undone when clicking into non-empty document" when the user would need to click
-                  // into the canvas to give back focus to it:
-                  canvas.focus();
-              }
-              elements[id] = element;
-          };
-          button('bold');
-          button('italic');
-          button('underline');
-          port.onmessage = function(e) {
-              switch (e.data.cmd) {
-              case 'ready':
-                // Trigger resize of the embedded window to match the canvas size.
-                // May somewhen be obsoleted by:
-                //   https://gerrit.libreoffice.org/c/core/+/174040
-                window.dispatchEvent(new Event('resize'));
-                break;
-              case 'enable':
-                  elements[e.data.id].disabled = false;
+
+      var Module = {
+          canvas,
+          uno_scripts: ['./assets/vendor/zetajs/zeta.js', './office_thread.js'],
+          locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
+      };
+      if (soffice_base_url !== '') {
+          // Must not be set when soffice.js is in the same directory.
+          Module.mainScriptUrlOrBlob = new Blob(
+              ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
+      }
+
+      const soffice_js = document.createElement("script");
+      soffice_js.src = soffice_base_url + "soffice.js";
+      // "onload" runs after the loaded script has run.
+      soffice_js.onload = function() {
+        Module.uno_main.then(function(port) {
+            const elements = {};
+            function button(id) {
+                const element = document.getElementById(id);
+                element.onchange = function() {
+                    port.postMessage({cmd: 'toggle', id});
+                    // Give focus to the LO canvas to avoid issues with
+                    // <https://bugs.documentfoundation.org/show_bug.cgi?id=162291> "Setting Bold is
+                    // undone when clicking into non-empty document" when the user would need to click
+                    // into the canvas to give back focus to it:
+                    canvas.focus();
+                }
+                elements[id] = element;
+            };
+            button('bold');
+            button('italic');
+            button('underline');
+            port.onmessage = function(e) {
+                switch (e.data.cmd) {
+                case 'ready':
+                  // Trigger resize of the embedded window to match the canvas size.
+                  // May somewhen be obsoleted by:
+                  //   https://gerrit.libreoffice.org/c/core/+/174040
+                  window.dispatchEvent(new Event('resize'));
                   break;
-              case 'state':
-                  elements[e.data.id].checked = e.data.state;
-                  break;
-              default:
-                  throw Error('Unknonwn message command ' + e.data.cmd);
-              }
-          };
-      });
+                case 'enable':
+                    elements[e.data.id].disabled = false;
+                    break;
+                case 'state':
+                    elements[e.data.id].checked = e.data.state;
+                    break;
+                default:
+                    throw Error('Unknonwn message command ' + e.data.cmd);
+                }
+            };
+        });
+      };
+      // Hint: The global objects "canvas" and "Module" must exist before the next line.
+      document.body.appendChild(soffice_js);
     </script>
   </body>
 </html>
