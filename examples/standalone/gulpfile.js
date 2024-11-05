@@ -88,5 +88,5 @@ const dist = gulp.series(clean, gulp.parallel(compileHTML, compileJS, copyVendor
 
 exports.watch = gulp.series(dist, watchFiles);
 exports.start = gulp.series(dist, gulp.parallel(watchFiles, initBrowserSync) );
-exports.debug = gulp.series(setDebug, dist, gulp.parallel(watchFiles, initBrowserSync) );
+exports.debug = gulp.series(setDebug, gulp.parallel(compileHTML, compileJS, copyVendors) );
 exports.default = dist;

@@ -14,7 +14,7 @@ npm install
 npm start
 ```
 
-To use with local ZetaOffice build, do:
+To use with local ZetaOffice build, place your soffice.* files in the public/ subfolder and do:
 
 ```
 npm install
