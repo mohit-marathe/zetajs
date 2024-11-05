@@ -26,7 +26,7 @@ const distDir = './public/';
 
 var soffice_base = argv.soffice_base;
 // Set "" for same server. But empty strings are falsy, so check "undefined".
-if (typeof soffice_base === "undefined") soffice_base = 'https://zetaoffice.b-cdn.net/zetaoffice_latest/';
+if (typeof soffice_base === "undefined") soffice_base = 'https://cdn.zetaoffice.net/zetaoffice_latest/';
 
 var custom_browser = argv.browser;  // else use default system browser
 var custom_listen = argv.listen || '127.0.0.1';
