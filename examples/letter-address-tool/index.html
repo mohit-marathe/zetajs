@@ -40,10 +40,18 @@
             <div class="spinner"></div><br>
             <h2>ZetaOffice is loading...</h2>
           </div>
-          <canvas
-            id="qtcanvas" contenteditable="true"
-            oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
-            width="850px" height="450px"/>
+          <div onselectstart="event.preventDefault()">
+            <!--  onselectstart:
+                    Prevent accidently selecting / highlighting the canvas.
+                    Must be set on the surrounding HTML element. (tested in Firefox-128) -->
+            <canvas
+              id="qtcanvas" contenteditable="true"
+              onkeydown="event.preventDefault()"
+              width="850px" height="450px"
+              style="border: 0px none; padding: 0;"/>
+              <!-- QT requires the canvas to have the ID "qtcanvas". -->
+              <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
+          </div>
         </td>
         <td style="vertical-align: top; width:250px">
           <div class="w3-margin-bottom">
