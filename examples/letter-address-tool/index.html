@@ -6,10 +6,6 @@
   <title>ZetaJS Deta: Letter Address Tool</title>
   <head>
     <style>
-        .disable-mouse-input {
-            cursor: not-allowed;
-            pointer-events: none;
-        }
         .spinner {
           border: 16px solid #1F2937; /* ZetaOffice brand color */
           border-top: 16px solid #059669; /* ZetaOffice brand color */
@@ -21,6 +17,10 @@
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+        select option {
+          /* Same spacing in select lists for Firefox-128 as for Chromium-130. */
+          padding: 0;
         }
     </style>
   </head>
@@ -61,7 +61,8 @@
             <button id="btnInsert" onclick="btnInsertFunc()" disabled>Insert Address</button> <button id="btnReload" onclick="btnReloadFunc()" disabled>Reload file</button>
           </div>
           <div>
-            <select id="addr_name" name="addr_name" Size="19" style="width: 100%;" autofocus></select>
+            <!-- size="18" looks best with canvas height="450px" in Firefox-128. -->
+            <select id="addrName" size="18" style="width: 100%;" autofocus></select>
           </div>
         </td>
       </tr>
@@ -77,7 +78,7 @@
         let url;  // for debugging
 
         const canvas = document.getElementById('qtcanvas');
-        const addrName = document.getElementById('addr_name');
+        const addrName = document.getElementById('addrName');
         const loadingInfo = document.getElementById('loadingInfo');
         const btnNamedAry = {
           Bold: document.getElementById('btnBold'),
@@ -93,6 +94,7 @@
         // Workaround initial canvas size +2 bug.
         canvas.height -= 2;
         canvas.width -= 2;
+
 
         var Module = {
             canvas,
@@ -334,7 +336,8 @@
                   switch (e.data.cmd) {
                   case 'ready':
                     loadingInfo.style.display = 'none';
-                    canvas.style.border = '1px solid #cccccc';
+                    // Use an outline, not a border. Else QT's mouse coordinates will be offset.
+                    canvas.style.outline = '1px solid #cccccc';
                     for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = false;
                     // Trigger resize of the embedded window to match the canvas size.
                     // May somewhen be obsoleted by:
