@@ -28,7 +28,7 @@ The mapping between [UNO types](http://www.openoffice.org/udk/common/man/typesys
 
 - UNO `STRING` maps to the JavaScript String type's values that correspond to valid UTF-16 strings, up to the JavaScript length limit of 2<sup>53</sup>&minus;1 UTF16 code units.
 
-- UNO `TYPE` maps to opaque JavaScript objects, see the documentation of `zetajs.type` at [Starting Points: Using zetajs](start.html#using-zetajs).
+- UNO `TYPE` maps to opaque JavaScript objects, see the documentation of `zetajs.type` at [Starting Points: Using zetajs](start.md#using-zetajs).
 
 - UNO `ANY` maps to the combined set of wrapped and unwrapped representations:
 
@@ -36,10 +36,10 @@ The mapping between [UNO types](http://www.openoffice.org/udk/common/man/typesys
 
     - A value of UNO type `ANY` where the contained UNO value is of any of the UNO types `VOID`, `BOOLEAN`, `LONG`, `HYPER`, `STRING`, `TYPE`, a UNO enum type, a UNO struct type, or a UNO exception type, can also be mapped to an unwrapped representation, which directly maps to the JavaScript representation of the contained UNO value.
 
-    See the documentation of `zetajs.Any` and `zetajs.fromAny` at [Starting Points: Using zetajs](start.html#using-zetajs).
+    See the documentation of `zetajs.Any` and `zetajs.fromAny` at [Starting Points: Using zetajs](start.md#using-zetajs).
 
 - UNO sequence types map to JavaScript Arrays with corresponding element value constraints, up to the JavaScript length limit of 2<sup>32</sup>&minus;1 elements.
 
-- UNO struct and exception types map to opaque JavaScript objects, where each member with name <var>N</var> maps to a property with property name <var>N</var> and with corresponding value constraints.  See the documentation of the `zetajs.uno` dictionary at [Starting Points: Using zetajs](start.html#using-zetajs) for corresponding constructor functions.
+- UNO struct and exception types map to opaque JavaScript objects, where each member with name <var>N</var> maps to a property with property name <var>N</var> and with corresponding value constraints.  See the documentation of the `zetajs.uno` dictionary at [Starting Points: Using zetajs](start.md#using-zetajs) for corresponding constructor functions.
 
 - UNO interface types map to the JavaScript Null type for null references, and to opaque JavaScript objects for non-null references.  (A zetajs representation referencing a given UNO object has direct access to all the UNO interface methods and attribute getters and setters implemented by that object.  Thus, such zetajs representations are not tied to specific UNO interface types.)

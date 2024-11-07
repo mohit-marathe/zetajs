@@ -8,7 +8,7 @@ There are three functionally different LOWA build configurations:
 
 - A build configured with `--disable-gui`, which provides a headless LOWA server that does not use any graphical canvas.  The starting point for integration is `soffice.js`.
 
-- A build configured with `--enable-emscripten-proxy-posix-sockets`.  This is similar to the plain build, but supports network access via a proxy server.  For now, it requires a modified emsdk.  See [Network Document Access: Access Via a Proxy Server](network.html#access-via-a-proxy-server) for details.
+- A build configured with `--enable-emscripten-proxy-posix-sockets`.  This is similar to the plain build, but supports network access via a proxy server.  For now, it requires a modified emsdk.  See [Network Document Access: Access Via a Proxy Server](network.md#access-via-a-proxy-server) for details.
 
 In each of those build configurations, `soffice.js` expects to find the global [Emscripten `Module` variable](https://emscripten.org/docs/api_reference/module.html) to be bound to an object providing certain properties:
 
@@ -108,7 +108,7 @@ That `zetajs` object has certain properties:
 
 - `zetajs.mainPort` is used for [communication between threads](#communication-between-threads).
 
-See [The zetajs UNO Mapping](uno.html) for further documentation of the mapping between zetajs and UNO.
+See [The zetajs UNO Mapping](uno.md) for further documentation of the mapping between zetajs and UNO.
 
 ## Communication Between Threads
 
