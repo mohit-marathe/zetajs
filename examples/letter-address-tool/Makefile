@@ -9,7 +9,7 @@ source := \
     $(LOWAINSTDIR)soffice.wasm \
     $(LOWAINSTDIR)soffice.worker.js \
     ../../source/zeta.js \
-    index.html
+    index.html \
     Modern_business_letter_sans_serif.ott \
     office_thread.js \
     w3.css \
