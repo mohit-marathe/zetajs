@@ -40,6 +40,7 @@
         <td>
           <div onselectstart="event.preventDefault()" style="position: relative">
             <!--  position: Makes the loading animation overlay the canvas.
+                    Needs a surrounding table with fixed width to work properly.
                   onselectstart: Prevents accidently selecting / highlighting the canvas.
                     Must be set on the surrounding HTML element. (tested in Firefox-128) -->
             <div id="loadingInfo"
