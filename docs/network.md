@@ -8,7 +8,7 @@ Module.arguments = ['https://freetestdata.com/wp-content/uploads/2021/09/Free_Te
 to open a Writer document from the Web will fail.
 
 However, there are at least two ways to work around that, see the [Emscripten Networking
-documentation](https://emscripten.org/docs/porting/networking.md):
+documentation](https://emscripten.org/docs/porting/networking.html):
 
 ## Access Over the WebSocket Protocol
 
