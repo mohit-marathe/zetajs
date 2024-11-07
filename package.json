@@ -1,6 +1,6 @@
 {
   "name": "zetajs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Access ZetaOffice in the Browser from JavaScript via UNO",
   "main": "source/zeta.js",
   "directories": {
@@ -17,6 +17,7 @@
   },
   "keywords": [
     "libreoffice",
+    "zetaoffice",
     "wasm",
     "lowa"
   ],
