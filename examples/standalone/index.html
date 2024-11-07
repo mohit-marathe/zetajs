@@ -6,7 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Vendor CSS Files -->
     <style>
-      canvas {height: 100%; width: 100%;}
+      .spinner {
+        border: 16px solid #1F2937; /* ZetaOffice brand color */
+        border-top: 16px solid #059669; /* ZetaOffice brand color */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        position: relative;
+        left: 120px;  /* adjust to center */
+        animation: spin 2s linear 30; /* 60 seconds */
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
     <!-- Vendor JS Files -->
   </head>
@@ -29,16 +42,22 @@
         </div>
       </div>
       <div class="row mt-1">
-        <div class="col" onselectstart="event.preventDefault()">
-          <!--  onselectstart:
-                  Prevent accidently selecting / highlighting the canvas.
+        <div class="col" onselectstart="event.preventDefault()" style="position: relative">
+          <!--  position: Makes the loading animation overlay the canvas.
+                onselectstart: Prevents accidently selecting / highlighting the canvas.
                   Must be set on the surrounding HTML element. (tested in Firefox-128) -->
+          <div id="loadingInfo"
+              style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div class="spinner"></div><br>
+            <h2>ZetaOffice is loading...</h2>
+          </div>
           <canvas
             id="qtcanvas" contenteditable="true"
             oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
-            style="border: 0px none; padding: 0;"/>
+            style="border: 0px none; padding: 0; height: 100%; width: 100%; outline: 1px solid #cccccc;"/>
             <!-- QT requires the canvas to have the ID "qtcanvas". -->
             <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
+            <!-- An outline is fine though. -->
         </div>
       </div>
     </div>
@@ -51,7 +70,10 @@
       // Use an empty string if those files are in the same directory.
       const soffice_base_url = '<!-- soffice.js Base -->';
 
+      const canvasContainer = document.getElementById('qtcanvas');
       const canvas = document.getElementById('qtcanvas');
+      const loadingInfo = document.getElementById('loadingInfo');
+
 
       var Module = {
           canvas,
@@ -88,6 +110,7 @@
             port.onmessage = function(e) {
                 switch (e.data.cmd) {
                 case 'ready':
+                  loadingInfo.style.display = 'none';
                   // Trigger resize of the embedded window to match the canvas size.
                   // May somewhen be obsoleted by:
                   //   https://gerrit.libreoffice.org/c/core/+/174040

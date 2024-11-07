@@ -29,21 +29,23 @@
       </tr>
       <tr>
         <td>
-          <div id="loadingInfo">
-            <div class="spinner"></div><br>
-            <h2>ZetaOffice is loading...</h2>
-          </div>
-          <div onselectstart="event.preventDefault()">
-            <!--  onselectstart:
-                    Prevent accidently selecting / highlighting the canvas.
+          <div onselectstart="event.preventDefault()" style="position: relative">
+            <!--  position: Makes the loading animation overlay the canvas.
+                  onselectstart: Prevents accidently selecting / highlighting the canvas.
                     Must be set on the surrounding HTML element. (tested in Firefox-128) -->
+            <div id="loadingInfo"
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+              <div class="spinner"></div><br>
+              <h2>ZetaOffice is loading...</h2>
+            </div>
             <canvas
               id="qtcanvas" contenteditable="true"
               oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
               width="900px" height="450px"
-              style="border: 0px none; padding: 0;"/>
+              style="border: 0px none; padding: 0; outline: 1px solid #cccccc;"/>
               <!-- QT requires the canvas to have the ID "qtcanvas". -->
               <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
+              <!-- An outline is fine though. -->
           </div>
         </td>
         <td style="vertical-align: top; width:250px">
@@ -68,6 +70,8 @@
     border-radius: 50%;
     width: 120px;
     height: 120px;
+    position: relative;
+    left: 60px;  /* adjust to center */
     animation: spin 2s linear 30; /* 60 seconds */
   }
   @keyframes spin {
