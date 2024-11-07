@@ -12,7 +12,8 @@ source := \
   office_thread.js \
   ping.js \
   ping_monitor.ods \
-  index.html
+  index.html \
+  w3.css \
 
 define target
 all: out/$(notdir $(1))
