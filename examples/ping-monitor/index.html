@@ -5,22 +5,22 @@
   <title>ZetaJS Demo: Ping Monitor</title>
   <head>
     <style>
-        .disable-mouse-input {
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-        .spinner {
-          border: 16px solid #1F2937; /* ZetaOffice brand color */
-          border-top: 16px solid #059669; /* ZetaOffice brand color */
-          border-radius: 50%;
-          width: 120px;
-          height: 120px;
-          animation: spin 2s linear 30; /* 60 seconds */
-        }
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
+      .disable-mouse-input {
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+      .spinner {
+        border: 16px solid #1F2937; /* ZetaOffice brand color */
+        border-top: 16px solid #059669; /* ZetaOffice brand color */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear 30; /* 60 seconds */
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
   </head>
   <body>
@@ -43,98 +43,98 @@
     </div>
     <script src="ping.js" type="text/javascript"></script>
     <script type="text/javascript">
-        'use strict';
+      'use strict';
 
-        // IMPORTANT:
-        // Set base URL to the soffice.* files.
-        // Use an empty string if those files are in the same directory.
-        const soffice_base_url = '';
+      // IMPORTANT:
+      // Set base URL to the soffice.* files.
+      // Use an empty string if those files are in the same directory.
+      const soffice_base_url = '';
 
-        const canvas = document.getElementById('qtcanvas');
-        const pingTarget = document.getElementById('ping_target');
-        const loadingInfo = document.getElementById('loadingInfo');
+      const canvas = document.getElementById('qtcanvas');
+      const pingTarget = document.getElementById('ping_target');
+      const loadingInfo = document.getElementById('loadingInfo');
 
 
-        var Module = {
-            canvas,
-            uno_scripts: ['./zeta.js', './office_thread.js'],
-            locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
-        };
-        if (soffice_base_url !== '') {
-            // Must not be set when soffice.js is in the same directory.
-            Module.mainScriptUrlOrBlob = new Blob(
-                ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
+      var Module = {
+        canvas,
+        uno_scripts: ['./zeta.js', './office_thread.js'],
+        locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
+      };
+      if (soffice_base_url !== '') {
+        // Must not be set when soffice.js is in the same directory.
+        Module.mainScriptUrlOrBlob = new Blob(
+          ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
+      }
+
+      let thrPort;     // zetajs thread communication
+      const pingInst = new Ping();
+      let url = pingTarget.value;
+
+
+      function btnPing() {
+        url = pingTarget.value;
+      }
+      pingTarget.addEventListener ("keyup", (evt) => {
+        if(evt.key === 'Enter') btnPing();
+      });
+
+      async function load_ping_monitor_ods() {
+        const response = await fetch("./ping_monitor.ods");
+        return response.arrayBuffer();
+      }
+      let ping_monitor_ods;
+
+      async function doPing() {
+        if (url != '') {
+          pingInst.ping(url, function(err, ping_value) {
+            // err: In /favicon.ico can't be loaded the result still represents the response time.
+            console.log({url, ping_value});
+            thrPort.postMessage({cmd: 'ping_result', url, ping_value});
+          });
         }
-
-        let thrPort;     // zetajs thread communication
-        const pingInst = new Ping();
-        let url = pingTarget.value;
+      }
 
 
-        function btnPing() {
-            url = pingTarget.value;
-        }
-        pingTarget.addEventListener ("keyup", (evt) => {
-            if(evt.key === 'Enter') btnPing();
-        });
-
-        async function load_ping_monitor_ods() {
-            const response = await fetch("./ping_monitor.ods");
-            return response.arrayBuffer();
-        }
-        let ping_monitor_ods;
-
-        async function doPing() {
-            if (url != '') {
-                pingInst.ping(url, function(err, ping_value) {
-                    // err: In /favicon.ico can't be loaded the result still represents the response time.
-                    console.log({url, ping_value});
-                    thrPort.postMessage({cmd: 'ping_result', url, ping_value});
-                });
+      const soffice_js = document.createElement("script");
+      soffice_js.src = soffice_base_url + "soffice.js";
+      // "onload" runs after the loaded script has run.
+      soffice_js.onload = function() {
+        console.log('PLUS: Configuring Module');
+        Module.uno_main.then(function(pThrPort) {
+          thrPort = pThrPort;
+          thrPort.onmessage = function(e) {
+            switch (e.data.cmd) {
+            case 'ready':
+              loadingInfo.style.display = 'none';
+              // Using Ping callback interface.
+              // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
+              //   acutally having CORP on foreign origins.
+              //   Also 'credentialless' isn't supported by Safari-18 as of 2024-09.
+              pingInst.ping(pingTarget, function() {
+                // Continue after first ping, which is often exceptionally slow.
+                setInterval(function() {
+                    doPing();
+                  }, 1000);  // milliseconds
+              });
+              break;
+            default:
+              throw Error('Unknown message command ' + e.data.cmd);
             }
-        }
+          };
 
+          load_ping_monitor_ods().then(function(aryBuf) {
+            ping_monitor_ods = aryBuf;
+            FS.writeFile('/tmp/ping_monitor.ods', new Uint8Array(ping_monitor_ods));
+          });
 
-        const soffice_js = document.createElement("script");
-        soffice_js.src = soffice_base_url + "soffice.js";
-        // "onload" runs after the loaded script has run.
-        soffice_js.onload = function() {
-            console.log('PLUS: Configuring Module');
-            Module.uno_main.then(function(pThrPort) {
-                thrPort = pThrPort;
-                thrPort.onmessage = function(e) {
-                  switch (e.data.cmd) {
-                  case 'ready':
-                    loadingInfo.style.display = 'none';
-                    // Using Ping callback interface.
-                    // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
-                    //   acutally having CORP on foreign origins.
-                    //   Also 'credentialless' isn't supported by Safari-18 as of 2024-09.
-                    pingInst.ping(pingTarget, function() {
-                        // Continue after first ping, which is often exceptionally slow.
-                        setInterval(function() {
-                            doPing();
-                        }, 1000);  // milliseconds
-                    });
-                    break;
-                  default:
-                    throw Error('Unknown message command ' + e.data.cmd);
-                  }
-                };
-
-                load_ping_monitor_ods().then(function(aryBuf) {
-                    ping_monitor_ods = aryBuf;
-                    FS.writeFile('/tmp/ping_monitor.ods', new Uint8Array(ping_monitor_ods));
-                });
-
-                window.addEventListener("resize", (event) => {
-                    // Else scrollbars may reappear on resize events.
-                    thrPort.postMessage({cmd: 'hide_scrollbars'});
-                });
-            });
-        };
-        // Hint: The global objects "canvas" and "Module" must exist before the next line.
-        document.body.appendChild(soffice_js);
+          window.addEventListener("resize", (event) => {
+            // Else scrollbars may reappear on resize events.
+            thrPort.postMessage({cmd: 'hide_scrollbars'});
+          });
+        });
+      };
+      // Hint: The global objects "canvas" and "Module" must exist before the next line.
+      document.body.appendChild(soffice_js);
     </script>
   </body>
 </html>

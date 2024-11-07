@@ -22,14 +22,14 @@
       const canvas = document.getElementById('qtcanvas');
 
       var Module = {
-          canvas,
-          uno_scripts: ['zeta.js', './office_thread.js'],
-          locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
+        canvas,
+        uno_scripts: ['zeta.js', './office_thread.js'],
+        locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
       };
       if (soffice_base_url !== '') {
-          // Must not be set when soffice.js is in the same directory.
-          Module.mainScriptUrlOrBlob = new Blob(
-              ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
+        // Must not be set when soffice.js is in the same directory.
+        Module.mainScriptUrlOrBlob = new Blob(
+            ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
       }
 
       const soffice_js = document.createElement("script");
@@ -37,53 +37,53 @@
       // "onload" runs after the loaded script has run.
       soffice_js.onload = function() {
         Module.uno_main.then(function(port) {
-            const input = document.getElementById('input');
-            input.onchange = function() {
-                input.disabled = true;
-                const file = input.files[0];
-                let name = file.name;
-                // Use a canonical /tmp/input pathname so that it cannot clash with whatever relevant
-                // files might already be present there (which should not be named "input"), but
-                // append the original file name extension so that LO's type detection can use it to
-                // determine the input file type:
-                let from = '/tmp/input';
-                const n = name.lastIndexOf('.');
-                if (n > 0) {
-                    from += name.substring(n);
-                    name = name.substring(0, n);
-                }
-                file.arrayBuffer().then(data => {
-                    FS.writeFile(from, new Uint8Array(data));
-                    port.postMessage({cmd: 'convert', name, from, to: '/tmp/output'});
-                });
-            };
-            port.onmessage = function(e) {
-                switch (e.data.cmd) {
-                case 'converted':
-                    try { FS.unlink(e.data.from); } catch {}  // for easier debugging
-                    const data = FS.readFile(e.data.to);
-                    const blob = new Blob([data], {type: 'application/pdf'});
-                    const url = URL.createObjectURL(blob);
-                    document.getElementById('frame').contentWindow.open(url, '_self');
-                    if (document.getElementById("download").checked) {
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = e.data.name + '.pdf';
-                        link.style = 'display:none';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }
-                    try { FS.unlink(e.data.to); } catch {}  // for easier debugging
-                    URL.revokeObjectURL(url);
-                    // fallthrough
-                case 'start':
-                    input.disabled = false;
-                    break;
-                default:
-                    throw Error('Unknonwn message command ' + e.data.cmd);
-                }
-            };
+          const input = document.getElementById('input');
+          input.onchange = function() {
+            input.disabled = true;
+            const file = input.files[0];
+            let name = file.name;
+            // Use a canonical /tmp/input pathname so that it cannot clash with whatever relevant
+            // files might already be present there (which should not be named "input"), but
+            // append the original file name extension so that LO's type detection can use it to
+            // determine the input file type:
+            let from = '/tmp/input';
+            const n = name.lastIndexOf('.');
+            if (n > 0) {
+              from += name.substring(n);
+              name = name.substring(0, n);
+            }
+            file.arrayBuffer().then(data => {
+              FS.writeFile(from, new Uint8Array(data));
+              port.postMessage({cmd: 'convert', name, from, to: '/tmp/output'});
+            });
+          };
+          port.onmessage = function(e) {
+            switch (e.data.cmd) {
+            case 'converted':
+              try { FS.unlink(e.data.from); } catch {}  // for easier debugging
+              const data = FS.readFile(e.data.to);
+              const blob = new Blob([data], {type: 'application/pdf'});
+              const url = URL.createObjectURL(blob);
+              document.getElementById('frame').contentWindow.open(url, '_self');
+              if (document.getElementById("download").checked) {
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = e.data.name + '.pdf';
+                link.style = 'display:none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }
+              try { FS.unlink(e.data.to); } catch {}  // for easier debugging
+              URL.revokeObjectURL(url);
+              // fallthrough
+            case 'start':
+              input.disabled = false;
+              break;
+            default:
+              throw Error('Unknonwn message command ' + e.data.cmd);
+            }
+          };
         });
       };
       // Hint: The global objects "canvas" and "Module" must exist before the next line.

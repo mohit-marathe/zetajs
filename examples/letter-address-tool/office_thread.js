@@ -1,3 +1,4 @@
+/* -*- Mode: JS; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2; fill-column: 100 -*- */
 // SPDX-License-Identifier: MIT
 
 // Debugging note:
@@ -183,3 +184,5 @@ Module.zetajs.then(function(pZetajs) {
   css = zetajs.uno.com.sun.star;
   demo();  // launching demo
 });
+
+/* vim:set shiftwidth=2 softtabstop=2 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

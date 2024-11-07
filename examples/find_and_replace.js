@@ -28,9 +28,9 @@ function demo() {
 
 
 Module.zetajs.then(function(pZetajs) {
-    // initializing zetajs environment
-    zetajs = pZetajs;
-    css = zetajs.uno.com.sun.star;
-    // launching demo
-    demo();
+  // initializing zetajs environment
+  zetajs = pZetajs;
+  css = zetajs.uno.com.sun.star;
+  // launching demo
+  demo();
 });
