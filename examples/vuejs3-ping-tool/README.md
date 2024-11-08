@@ -1,8 +1,4 @@
-# Use with LOWA
-
-Use with LOWA build from commit:  
-https://git.libreoffice.org/core/+/da75e4750ec0d85aff72d9b7bf47289915488ab2^!
-See .gitignore section "USE FROM LOWA BUILD" for which files to use from LOWA build.
+# A ZetaJS Calc Demo using Vue.js
 
 For Vue.js-3 you'll need nodejs.  
 And either you also install npm system wide or you use:  
