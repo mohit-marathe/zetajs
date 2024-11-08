@@ -6,7 +6,10 @@
 // IMPORTANT:
 // Set base URL to the soffice.* files.
 // Use an empty string if those files are in the same directory.
-const soffice_base_url = '';
+let soffice_base_url = 'https://cdn.zetaoffice.net/zetaoffice_latest/';
+try {
+  soffice_base_url = config_soffice_base_url; // May fail. config.js is optional.
+} catch {}
 
 
 let thrPort;     // zetajs thread communication
@@ -152,6 +155,7 @@ soffice_js.onload = function() {
     });
   });
 };
+console.log('Loading WASM binaries for ZetaJS from: ' + soffice_base_url);
 // Hint: The global objects "canvas" and "Module" must exist before the next line.
 document.body.appendChild(soffice_js);
 

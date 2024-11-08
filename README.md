@@ -63,23 +63,9 @@ for (const next of xParaEnumeration) {
 }
 ```
 
-## Using with an own WASM build
+## Running the examples.
 
-You'll need an own [LOWA build](https://git.libreoffice.org/core/+/refs/heads/master/static/README.wasm.md). There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot.
-
-For most examples you needs to place these LOWA files in their directory.
-
-```
-soffice.data
-soffice.data.js.metadata
-soffice.js
-soffice.wasm
-soffice.worker.js
-```
-
-Alternatively you might specify a LOWA build on a foreign server by setting the "soffice_base_url" variable in the example code.
-
-If you're not using emrun as webserver, you'll need to set two HTTP headers:
+Some examples come with a package.json and can be run according to their README.md with npm. The other examples just need to put into a webserver with the following HTTP headers set.
 
 ```
 Cross-Origin-Opener-Policy "same-origin"
@@ -105,3 +91,9 @@ Module.uno_scripts = [
     'zetajs/examples/simple.js'];
 ```
 (or whatever the paths where you serve them, relative to `qt_soffice.html`; `zeta.js` always needs to come first), and to build LOWA with an `EMSCRIPTEN_EXTRA_SOFFICE_PRE_JS=/path/to/include.js` configuration option (e.g., as a line in `autogen.input`), with `/path/to` adapted accordingly.  (The `test/smoketest.js` code requires a LibreOffice configured with `--enable-dbgutil` to have the `org.libreoffice.embindtest` UNOIDL entities available.)
+
+## Using with an own WASM build
+
+By default the exmaples load a precompiled ZetaOffice form https://cdn.zetaoffice.net/zetaoffice_latest/
+
+You may have a look into the respective config.sample.js file of each demo to use another WASM build. You may compile an own [LOWA build](https://git.libreoffice.org/core/+/refs/heads/master/static/README.wasm.md). There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot. If the host the WASM binary on another origin then the example code you will need to set a [CORS header](https://developer.mozilla.org/docs/Web/HTTP/CORS).

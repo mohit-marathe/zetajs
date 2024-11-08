@@ -7,6 +7,9 @@
 <script lang=ts>
   export default {
     mounted() {
+      const config_js = document.createElement("script");
+      config_js.src = "./config.js";
+      document.body.appendChild(config_js);  // May fail. config.js is optional.
       const pre_soffice_js = document.createElement("script");
       pre_soffice_js.src = "./pre_soffice.js";
       pre_soffice_js.onload = function() {

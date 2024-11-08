@@ -22,7 +22,7 @@ const distDir = './public/';
 
 // Variables can be adjusted via command line arguments. Example:
 //   npm run start -- --clean_disabled --port 8080 --browser chromium
-// Overwrites in gulpfile_config.js have priority over command line arguments.
+// Overwrites in config.js have priority over command line arguments.
 
 var soffice_base_url = argv.soffice_base_url;
 // Set "" for same server. But empty strings are falsy, so check "undefined".
@@ -114,7 +114,7 @@ exports.debug = gulp.series(setDebug, gulp.parallel(compileHTML, compileJS, copy
 exports.default = dist;
 
 const fs = require('fs');
-const gulpfile_optional = 'gulpfile_config.js';
+const gulpfile_optional = 'config.js';
 if (fs.existsSync(gulpfile_optional)) {
   eval(fs.readFileSync(gulpfile_optional)+'');
 }

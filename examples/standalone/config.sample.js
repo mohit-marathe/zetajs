@@ -8,14 +8,13 @@
 
 //////// SIMPLE OPTIONS
 
-//// When serving everything inlcuding LOWA binaries from one server.
-//// E.g. for testing on localhost / 127.0.0.1.
-////
-//// Load soffice.* files from local public/ folder.
-//// Use with "npm run debug". (other tasks clean the public/ folder)
+// This setting will serve everything inlcuding LOWA binaries from one server.
+// E.g. for testing on localhost / 127.0.0.1.
+// IMPORTANT: Place soffice.{data,data.js.metadata,js,wasm,worker.js} in the public/ folder.
+// Use with "npm run debug". (other tasks clean the public/ folder)
 soffice_base_url = '';
 
-//// Disable cleaning the public folder for all tasks.
+// Disable cleaning the public folder for all tasks.
 clean_disabled = true;
 
 
