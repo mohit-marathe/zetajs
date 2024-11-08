@@ -24,9 +24,9 @@ const distDir = './public/';
 //   npm run start -- --clean_disabled --port 8080 --browser chromium
 // Overwrites in gulpfile_config.js have priority over command line arguments.
 
-var soffice_base = argv.soffice_base;
+var soffice_base_url = argv.soffice_base_url;
 // Set "" for same server. But empty strings are falsy, so check "undefined".
-if (typeof soffice_base === "undefined") soffice_base = 'https://cdn.zetaoffice.net/zetaoffice_latest/';
+if (typeof soffice_base_url === "undefined") soffice_base_url = 'https://cdn.zetaoffice.net/zetaoffice_latest/';
 
 var custom_browser = argv.browser;  // else use default system browser
 var custom_listen = argv.listen || '127.0.0.1';
@@ -50,7 +50,7 @@ function compileHTML() {
   return gulp.src(['index.html'])
     .pipe( inject.replace('<!-- Vendor CSS Files -->', css_links) )
     .pipe( inject.replace('<!-- Vendor JS Files -->', js_links) )
-    .pipe( inject.replace('<!-- soffice.js Base -->', soffice_base) )
+    .pipe( inject.replace('<!-- soffice.js Base -->', soffice_base_url) )
     .pipe(gulp.dest(distDir))
     .pipe(browserSync.stream());
 }
@@ -101,7 +101,7 @@ function watchFiles() {
 }
 
 function setDebug(done) {
-  soffice_base = '';
+  soffice_base_url = '';
   done();
 }
 

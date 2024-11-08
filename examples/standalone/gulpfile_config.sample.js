@@ -13,7 +13,7 @@
 ////
 //// Load soffice.* files from local public/ folder.
 //// Use with "npm run debug". (other tasks clean the public/ folder)
-soffice_base = '';
+soffice_base_url = '';
 
 //// Disable cleaning the public folder for all tasks.
 clean_disabled = true;
