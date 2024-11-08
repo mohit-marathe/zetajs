@@ -20,6 +20,8 @@ underyling Embind layer, in a backward-compatible way.)
 
 To see a demo of zetajs in use, visit [zetaoffice.net/demo](https://zetaoffice.net/demo.html).
 
+![screenshots](screenshots.png)
+
 ## Examples and test code
 
 Check out the examples in the [examples](https://github.com/allotropia/zetajs/tree/main/examples) folder. We recommend to start with the [standalone](https://github.com/allotropia/zetajs/tree/main/examples/standalone) example.
