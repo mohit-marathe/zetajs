@@ -4,7 +4,7 @@
 "use strict";
 
 // Make variables accessible from the console for debugging.
-let zetajs, css, xModel, xModel_from_component, xController, refXKeyHandler;
+let zetajs, css, context, xModel, toolkit, xModel_from_component, xController, refXKeyHandler;
 let evtPressed, evtReleased;
 
 
@@ -30,21 +30,22 @@ function demo() {
       }
     });
 
+  context = zetajs.getUnoComponentContext();
   // Open a new writer document.
   // xModel is somethink like: SwXTextDocument, ScModelObj, SdXImpressDocument
-  xModel = css.frame.Desktop.create(zetajs.getUnoComponentContext())
+  xModel = css.frame.Desktop.create(context)
       .loadComponentFromURL('private:factory/swriter', '_default', 0, []);
   xController = xModel.getCurrentController();
+
+  toolkit = css.awt.Toolkit.create(context);
+  setInterval(function() {try {toolkit.getActiveTopWindow().FullScreen = true} catch {}}, 1000);
 
   xController.addKeyHandler(myXKeyHandler);
   // addKeyListener != addKeyHandler (that's something very DIFFERENT)
 
-  // Disabled, so variables can be accessed from console.
-  // Embind-3.1.56 does this if the variables are locally scoped, but
-  // warns it's not reliable.
-  // Seems not actually to delete the object if there are other references
-  // to it. Probably some smart pointer logic.
-  //[refXKeyHandler, xController, xModel].forEach((o) => o.delete());
+  const xText = xModel.getText();
+  const xTextCursor = xText.createTextCursor();
+  xTextCursor.setString("Open browser console and type something in LibreOffice!");
 }
 
 

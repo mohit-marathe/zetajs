@@ -5,16 +5,20 @@
 let zetajs, css;
 
 // Make variables accessible from the console for debugging.
-let desktop, xModel, searchDescriptor, xTextCursor;
+let context, desktop, xModel, toolkit, searchDescriptor, xTextCursor;
 
 
 function demo() {
   // Replaces every occurence of "LibreOffice" with "LIBRE-OFFICE YEAH".
   console.log('PLUS: execute example code');
 
-  desktop = css.frame.Desktop.create(zetajs.getUnoComponentContext());
+  context = zetajs.getUnoComponentContext();
+  desktop = css.frame.Desktop.create(context);
   const in_path = 'file:///android/default-document/example.odt'
   xModel = desktop.loadComponentFromURL(in_path, '_default', 0, []);
+
+  toolkit = css.awt.Toolkit.create(context);
+  setInterval(function() {try {toolkit.getActiveTopWindow().FullScreen = true} catch {}}, 1000);
 
   searchDescriptor = xModel.createSearchDescriptor();
   searchDescriptor.setSearchString('LibreOffice');

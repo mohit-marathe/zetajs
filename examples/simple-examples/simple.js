@@ -8,7 +8,8 @@
 Module.zetajs.then(function(zetajs) {
   function getTextDocument() {
     const css = zetajs.uno.com.sun.star;
-    const desktop = css.frame.Desktop.create(zetajs.getUnoComponentContext());
+    const context = zetajs.getUnoComponentContext();
+    const desktop = css.frame.Desktop.create(context);
     let xModel = desktop.getCurrentFrame().getController().getModel();
     if (xModel === null
       || !zetajs.fromAny(
@@ -17,6 +18,8 @@ Module.zetajs.then(function(zetajs) {
       xModel = desktop.loadComponentFromURL(
         'file:///android/default-document/example.odt', '_default', 0, []);
     }
+    const toolkit = css.awt.Toolkit.create(context);
+    setInterval(function() {try {toolkit.getActiveTopWindow().FullScreen = true} catch {}}, 1000);
     return xModel;
   };
   {

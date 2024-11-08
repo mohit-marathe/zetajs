@@ -67,7 +67,17 @@ for (const next of xParaEnumeration) {
 
 You'll need an own [LOWA build](https://git.libreoffice.org/core/+/refs/heads/master/static/README.wasm.md). There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot.
 
-The single files directly in the `examples/` folder may be run according to one of the following descriptions.
+For most examples you needs to place these LOWA files in their directory.
+
+```
+soffice.data
+soffice.data.js.metadata
+soffice.js
+soffice.wasm
+soffice.worker.js
+```
+
+Alternatively you might specify a LOWA build on a foreign server by setting the "soffice_base_url" variable in the example code.
 
 If you're not using emrun as webserver, you'll need to set two HTTP headers:
 

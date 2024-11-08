@@ -3,9 +3,13 @@
 
 "use strict";
 
+let zetajs, css;
+
 //              [     red,   orange,   yellow,    green,     blue,   violet]
 const rainbow = [0xE50000, 0xF08500, 0xFFEE00, 0x008121, 0x004CFF, 0x760188];
-let zetajs, css, uno_bold, uno_long, uno_font_monospace;
+
+// Make variables accessible from the console for debugging.
+let context, desktop, xModel, toolkit, uno_bold, uno_long, uno_font_monospace;
 
 
 function demo() {
@@ -15,11 +19,15 @@ function demo() {
   uno_long = zetajs.type.long;
   uno_font_monospace = "Monospace";
 
-  // Open a new writer document.
-  const xModel = css.frame.Desktop.create(zetajs.getUnoComponentContext())
-        .loadComponentFromURL('private:factory/swriter', '_default', 0, []);
-  const xController = xModel.getCurrentController();
+  context = zetajs.getUnoComponentContext();
+  desktop = css.frame.Desktop.create(context);
+  //// Open a new writer document.
+  xModel = desktop.loadComponentFromURL('private:factory/swriter', '_default', 0, []);
 
+  toolkit = css.awt.Toolkit.create(context);
+  setInterval(function() {try {toolkit.getActiveTopWindow().FullScreen = true} catch {}}, 1000);
+
+  const xController = xModel.getCurrentController();
   const xKeyHandler = zetajs.unoObject([css.awt.XKeyHandler], new ColorXKeyHandler(xModel));
   xController.addKeyHandler(xKeyHandler);                   // XUserInputInterception.addKeyHandler()
 
