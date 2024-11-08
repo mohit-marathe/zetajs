@@ -94,6 +94,6 @@ Module.uno_scripts = [
 
 ## Using with an own WASM build
 
-By default the exmaples load a precompiled ZetaOffice form https://cdn.zetaoffice.net/zetaoffice_latest/
+By default the exmaples load a precompiled ZetaOffice from https://cdn.zetaoffice.net/zetaoffice_latest/
 
 You may have a look into the respective config.sample.js file of each demo to use another WASM build. You may compile an own [LOWA build](https://git.libreoffice.org/core/+/refs/heads/master/static/README.wasm.md). There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot. If the host the WASM binary on another origin then the example code you will need to set a [CORS header](https://developer.mozilla.org/docs/Web/HTTP/CORS).
