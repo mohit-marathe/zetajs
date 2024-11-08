@@ -18,7 +18,7 @@ source := \
 define target
 all: out/$(notdir $(1))
 out/$(notdir $(1)): $(1)
-  cp $$< $$@
+	cp $$< $$@
 endef
 
 .PHONY: all
@@ -26,10 +26,10 @@ all: | out
 
 .PHONY: clean
 clean:
-  rm -fr out
+	rm -fr out
 
 out:
-  mkdir $@
+	mkdir $@
 
 $(foreach i,$(source),$(eval $(call target,$(i))))
 
