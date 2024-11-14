@@ -1,14 +1,21 @@
 /* -*- Mode: JS; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2; fill-column: 100 -*- */
 // SPDX-License-Identifier: MIT
 
+// Debugging note:
+// Switch the web worker in the browsers debug tab to debug this code.
+// It's the "em-pthread" web worker with the most memory usage, where "zetajs" is defined.
+
 'use strict';
 
 
-// global variables: zetajs environment
+// global variables - zetajs environment:
 let zetajs, css;
 
-// global variables: demo specific
-let context, toolkit, topwin, ctrl, urls;
+// = global variables (some are global for easier debugging) =
+// common variables:
+let context, desktop, xModel, toolkit, topwin, ctrl;
+// example specific:
+let urls;
 
 
 function demo() {
@@ -50,9 +57,9 @@ function demo() {
       windowDeactivated(e) {},
     }));
 
-  ctrl = css.frame.Desktop.create(context)
-    .loadComponentFromURL('private:factory/swriter', '_default', 0, [])
-    .getCurrentController();
+  desktop = css.frame.Desktop.create(context);
+  xModel = desktop.loadComponentFromURL('private:factory/swriter', '_default', 0, [])
+  ctrl = xModel.getCurrentController();
 
   // topwin.setMenuBar(null) has race conditions on fast networks like localhost.
   ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
@@ -105,7 +112,7 @@ function dispatch(url) {
 }
 
 Module.zetajs.then(function(pZetajs) {
-  // initializing zetajs environment
+  // initializing zetajs environment:
   zetajs = pZetajs;
   css = zetajs.uno.com.sun.star;
   demo();  // launching demo

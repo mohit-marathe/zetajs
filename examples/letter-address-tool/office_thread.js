@@ -8,12 +8,14 @@
 'use strict';
 
 
-// global variables: zetajs environment
+// global variables - zetajs environment:
 let zetajs, css;
 
-// global variables: demo specific
-const max_values = 20;
-let canvas_height, canvas_width, context, desktop, toolkit, topwin, doc, ctrl;
+// = global variables (some are global for easier debugging) =
+// common variables:
+let context, desktop, xModel, toolkit, topwin, ctrl;
+// example specific:
+let canvas_height, canvas_width;
 
 
 function demo() {
@@ -53,11 +55,11 @@ function demo() {
     switch (e.data.cmd) {
     case 'download':
       const format = e.data.id === 'btnOdt' ? bean_odt_export : bean_pdf_export;
-      doc.storeToURL( 'file:///tmp/output', [bean_overwrite, format]);
+      xModel.storeToURL( 'file:///tmp/output', [bean_overwrite, format]);
       zetajs.mainPort.postMessage({cmd: 'download', id: e.data.id});
       break;
     case 'reload':
-      doc.close(true)
+      xModel.close(true)
       loadFile();
       break;
     case 'toggleFormat':
@@ -65,7 +67,7 @@ function demo() {
       break;
     case 'insert_address':
       const recipient = e.data.recipient;
-      const fieldsEnum = doc.getTextFields().createEnumeration();
+      const fieldsEnum = xModel.getTextFields().createEnumeration();
       let state_count=0, city_count=0, postal_code_count=0, street_count=0;
       while (fieldsEnum.hasMoreElements()) {
         const field = fieldsEnum.nextElement().val.getAnchor();
@@ -143,8 +145,8 @@ function loadFile() {
     }));
 
   const in_path = 'file:///tmp/Modern_business_letter_sans_serif.ott'
-  doc = desktop.loadComponentFromURL(in_path, '_default', 0, []);
-  ctrl = doc.getCurrentController();
+  xModel = desktop.loadComponentFromURL(in_path, '_default', 0, []);
+  ctrl = xModel.getCurrentController();
 
   // Turn off UI elements (idempotent operations):
   ctrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
@@ -179,7 +181,7 @@ function dispatch(unoUrl) {
 }
 
 Module.zetajs.then(function(pZetajs) {
-  // initializing zetajs environment
+  // initializing zetajs environment:
   zetajs = pZetajs;
   css = zetajs.uno.com.sun.star;
   demo();  // launching demo

@@ -8,13 +8,14 @@
 'use strict';
 
 
-// global variables: zetajs environment
+// global variables - zetajs environment:
 let zetajs, css;
 
-// global variables: demo specific
-let context, desktop, doc, ctrl, urls, ping_line;
-
-let xComponent, charLocale, formatNumber, formatText, activeSheet, cell;  // for debugging
+// = global variables (some are global for easier debugging) =
+// common variables:
+let context, desktop, xModel, toolkit, topwin, ctrl;
+// example specific:
+let urls, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell;
 
 
 function demo() {
@@ -33,8 +34,7 @@ function demo() {
   }
   config.commitChanges();
 
-  let topwin;
-  const toolkit = css.awt.Toolkit.create(context);
+  toolkit = css.awt.Toolkit.create(context);
   // css.awt.XExtendedToolkit::getActiveTopWindow only becomes non-null asynchronously, so wait
   // for it if necessary.
   // addTopWindowListener only works as intended when the following loadComponentFromURL sets
@@ -58,8 +58,8 @@ function demo() {
     }));
 
   desktop = css.frame.Desktop.create(context);
-  doc = desktop.loadComponentFromURL('file:///tmp/calc_ping_example.ods', '_default', 0, []);
-  ctrl = doc.getCurrentController();
+  xModel = desktop.loadComponentFromURL('file:///tmp/calc_ping_example.ods', '_default', 0, []);
+  ctrl = xModel.getCurrentController();
   xComponent = ctrl.getModel();
   charLocale = zetajs.fromAny(xComponent.getPropertyValue('CharLocale'));
   formatNumber = xComponent.getNumberFormats().
@@ -153,7 +153,7 @@ function dispatch(url) {
 }
 
 Module.zetajs.then(function(pZetajs) {
-  // initializing zetajs environment
+  // initializing zetajs environment:
   zetajs = pZetajs;
   css = zetajs.uno.com.sun.star;
   demo();  // launching demo

@@ -8,12 +8,14 @@
 'use strict';
 
 
-// global variables: zetajs environment
+// global variables - zetajs environment:
 let zetajs, css;
 
-// global variables: demo specific
-const max_values = 20;
-let canvas_height, canvas_width, context, desktop, toolkit, topwin, doc, ctrl;
+// = global variables (some are global for easier debugging) =
+// common variables:
+let context, desktop, xModel, toolkit, topwin, ctrl;
+// example specific:
+let canvas_height, canvas_width;
 
 
 function demo() {
@@ -36,7 +38,7 @@ function demo() {
       loadFile(e.data.filename);
       break;
     case 'download':
-      doc.store();
+      xModel.store();
       zetajs.mainPort.postMessage({cmd: 'download', id: e.data.id});
       break;
     default:
@@ -49,8 +51,8 @@ function loadFile(filename) {
   topwin = false;
   topWinListener();
   const in_path = 'file:///tmp/office/' + filename;
-  doc = desktop.loadComponentFromURL(in_path, '_default', 0, []);
-  ctrl = doc.getCurrentController();
+  xModel = desktop.loadComponentFromURL(in_path, '_default', 0, []);
+  ctrl = xModel.getCurrentController();
 }
 
 function topWinListener() {
@@ -78,7 +80,7 @@ function topWinListener() {
 }
 
 Module.zetajs.then(function(pZetajs) {
-  // initializing zetajs environment
+  // initializing zetajs environment:
   zetajs = pZetajs;
   css = zetajs.uno.com.sun.star;
   demo();  // launching demo

@@ -8,15 +8,16 @@
 'use strict';
 
 
-// global variables: zetajs environment
+// global variables - zetajs environment:
 let zetajs, css;
 
-// global variables: demo specific
-const max_values = 20;
-let context, desktop, toolkit, ready, topwinVar, doc, ctrl, oldUrl;
+// = global variables (some are global for easier debugging) =
+// common variables:
+let context, desktop, xModel, toolkit, topwin, ctrl;
+// example specific:
+let ready, activeSheet, cellRange, dataAry, oldUrl;
 
-// for debugging
-let xComponent, charLocale, formatNumber, formatText, activeSheet, cellRange, dataAry;
+const max_values = 20;  // setting, adjust as needed
 
 
 function demo() {
@@ -49,7 +50,7 @@ function demo() {
       windowMinimized(e) {},
       windowNormalized(e) {},
       windowActivated(e) {
-        topwin().FullScreen = true;
+        getTopwin().FullScreen = true;
         hideScrollbars();
         if (!ready) {
           ready = true;
@@ -60,15 +61,15 @@ function demo() {
     }));
 
   desktop = css.frame.Desktop.create(context);
-  doc = desktop.loadComponentFromURL('file:///tmp/ping_monitor.ods', '_default', 0, []);
-  ctrl = doc.getCurrentController();
+  xModel = desktop.loadComponentFromURL('file:///tmp/ping_monitor.ods', '_default', 0, []);
+  ctrl = xModel.getCurrentController();
 
   // Turn off UI elements:
   dispatch('.uno:Sidebar');
   dispatch('.uno:InputLineVisible');  // FormulaBar at the top
   dispatch('.uno:ViewRowColumnHeaders');
   ctrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
-  // topwin.setMenuBar(null) has race conditions on fast networks like localhost.
+  // getTopwin.setMenuBar(null) has race conditions on fast networks like localhost.
   ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
 
   activeSheet = ctrl.getActiveSheet();
@@ -96,14 +97,14 @@ function demo() {
   }
 }
 
-function topwin() {
-  if (!topwinVar) topwinVar = toolkit.getActiveTopWindow();
-  return topwinVar;
+function getTopwin() {
+  if (!topwin) topwin = toolkit.getActiveTopWindow();
+  return topwin;
 }
 
 function hideScrollbars() {
-  topwin().setPosSize(0, 0, 1300+12, 600+40, 15);
-  //topwin().setPosSize(-40, 0, 1300+52, 600+40, 15);  // with "Formula Bar" and "RowColumnHeaders"
+  getTopwin().setPosSize(0, 0, 1300+12, 600+40, 15);
+  //getTopwin().setPosSize(-40, 0, 1300+52, 600+40, 15);  // with "Formula Bar" and "RowColumnHeaders"
 }
 
 function moveRows(ary) {
@@ -148,7 +149,7 @@ function dispatch(unoUrl) {
 }
 
 Module.zetajs.then(function(pZetajs) {
-  // initializing zetajs environment
+  // initializing zetajs environment:
   zetajs = pZetajs;
   css = zetajs.uno.com.sun.star;
   demo();  // launching demo

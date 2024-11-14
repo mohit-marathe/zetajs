@@ -1,11 +1,22 @@
 /* -*- Mode: JS; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2; fill-column: 100 -*- */
 // SPDX-License-Identifier: MIT
 
+// Debugging note:
+// Switch the web worker in the browsers debug tab to debug this code.
+// It's the "em-pthread" web worker with the most memory usage, where "zetajs" is defined.
+
 'use strict';
 
 
-// for debugging
-let zetajs, css, context, desktop, bean_hidden, bean_overwrite, bean_pdf_export, e, from, to, doc;
+// global variables - zetajs environment:
+let zetajs, css;
+
+// = global variables (some are global for easier debugging) =
+// common variables:
+let context, desktop, xModel;
+// example specific:
+let bean_hidden, bean_overwrite, bean_pdf_export, from, to;
+
 
 function demo() {
   context = zetajs.getUnoComponentContext();
@@ -15,21 +26,20 @@ function demo() {
   bean_overwrite = new css.beans.PropertyValue({Name: 'Overwrite', Value: true});
   bean_pdf_export = new css.beans.PropertyValue({Name: 'FilterName', Value: 'writer_pdf_Export'});
 
-  zetajs.mainPort.onmessage = function (eArg) {
-    e = eArg;
+  zetajs.mainPort.onmessage = function (e) {
     switch (e.data.cmd) {
     case 'convert':
       try {
-        // Close old doc in advance. Keep doc open afterwards for debugging.
-        if (doc !== undefined &&
-            zetajs.fromAny(doc.queryInterface(zetajs.type.interface(css.util.XCloseable)))
+        // Close old document in advance. Keep document open afterwards for debugging.
+        if (xModel !== undefined &&
+            zetajs.fromAny(xModel.queryInterface(zetajs.type.interface(css.util.XCloseable)))
             !== undefined) {
-          doc.close(false);
+          xModel.close(false);
         }
         from = e.data.from;
         to = e.data.to;
-        doc = desktop.loadComponentFromURL('file://' + from, '_blank', 0, [bean_hidden]);
-        doc.storeToURL( 'file://' + to, [bean_overwrite, bean_pdf_export]);
+        xModel = desktop.loadComponentFromURL('file://' + from, '_blank', 0, [bean_hidden]);
+        xModel.storeToURL( 'file://' + to, [bean_overwrite, bean_pdf_export]);
         zetajs.mainPort.postMessage({cmd: 'converted', name: e.data.name, from, to});
       } catch (e) {
         const exc = zetajs.catchUnoException(e);
@@ -45,7 +55,7 @@ function demo() {
 }
 
 Module.zetajs.then(function(pZetajs) {
-  // initializing zetajs environment
+  // initializing zetajs environment:
   zetajs = pZetajs;
   css = zetajs.uno.com.sun.star;
   demo();  // launching demo

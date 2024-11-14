@@ -1,11 +1,21 @@
 /* -*- Mode: JS; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2; fill-column: 100 -*- */
 // SPDX-License-Identifier: MIT
 
+// Debugging note:
+// Switch the web worker in the browsers debug tab to debug this code.
+// It's the "em-pthread" web worker with the most memory usage, where "zetajs" is defined.
+
 "use strict";
 
-// Make variables accessible from the console for debugging.
-let zetajs, css, context, xModel, toolkit, xModel_from_component, xController, refXKeyHandler;
-let evtPressed, evtReleased;
+
+// global variables - zetajs environment:
+let zetajs, css;
+
+// = global variables (some are global for easier debugging) =
+// common variables:
+let context, desktop, xModel, toolkit;
+// example specific:
+let myXKeyHandler, evtPressed, evtReleased, xController;
 
 
 function demo() {
@@ -15,7 +25,7 @@ function demo() {
    * Outputs printable characters typed into the OfficeDocument.
    * Browser console is used for output.
    */
-  const myXKeyHandler = zetajs.unoObject(
+  myXKeyHandler = zetajs.unoObject(
     [css.awt.XKeyHandler],
     {
       keyPressed(e) {
@@ -31,10 +41,10 @@ function demo() {
     });
 
   context = zetajs.getUnoComponentContext();
+  desktop = css.frame.Desktop.create(context);
   // Open a new writer document.
   // xModel is somethink like: SwXTextDocument, ScModelObj, SdXImpressDocument
-  xModel = css.frame.Desktop.create(context)
-      .loadComponentFromURL('private:factory/swriter', '_default', 0, []);
+  xModel = desktop.loadComponentFromURL('private:factory/swriter', '_default', 0, []);
   xController = xModel.getCurrentController();
 
   toolkit = css.awt.Toolkit.create(context);
@@ -50,11 +60,10 @@ function demo() {
 
 
 Module.zetajs.then(function(pZetajs) {
-  // initializing zetajs environment
+  // initializing zetajs environment:
   zetajs = pZetajs;
   css = zetajs.uno.com.sun.star;
-  // launching demo
-  demo();
+  demo();  // launching demo
 });
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
