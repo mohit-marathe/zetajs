@@ -1,7 +1,7 @@
 //// Usage:
-//// Copy this file to gulpfile_config.js to use it.
+//// Copy this file to config.js to use it.
 ////
-//// gulpfile.js will automatically include gulpfile_config.js if it exists.
+//// gulpfile.js will automatically include config.js if it exists.
 
 
 
@@ -16,6 +16,12 @@ soffice_base_url = '';
 
 // Disable cleaning the public folder for all tasks.
 clean_disabled = true;
+
+// Custom webserver port.
+//custom_port = "8080";
+
+// Which web browser to start with "npm run start".
+//custom_browser = "chromium";
 
 
 
