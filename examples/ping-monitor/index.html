@@ -72,7 +72,12 @@
       </tr>
     </table>
     <script type="text/javascript">
+      'use strict';
+
+      // Set base URL to the soffice.* files.
+      // Use an empty string if those files are in the same directory.
       let soffice_base_url = '<!-- soffice.js Base -->';
+
       const canvas = document.getElementById('qtcanvas');
       const pingTarget = document.getElementById('pingTarget');
       const loadingInfo = document.getElementById('loadingInfo');
