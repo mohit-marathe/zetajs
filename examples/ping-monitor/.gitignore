@@ -1,12 +1,1 @@
 public/
-
-# USAGE
-# Replace these with build LOWA files or symlinks to them.
-#
-# = USE FROM LOWA BUILD =
-soffice.data
-soffice.data.js.metadata
-soffice.js
-soffice.wasm
-soffice.worker.js
-# soffice.worker.js: needed for older emsdk versions (about 3.1.46)
