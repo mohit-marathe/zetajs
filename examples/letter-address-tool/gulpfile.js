@@ -17,9 +17,6 @@ const mergeStream = require('merge-stream');
 */
 const distDir = './public/';
 
-
-
-
 // Variables can be adjusted via command line arguments. Example:
 //   npm run start -- --clean_disabled --port 8080 --browser chromium
 // Overwrites in config.js have priority over command line arguments.
@@ -32,9 +29,6 @@ var custom_browser = argv.browser;  // else use default system browser
 var custom_listen = argv.listen || '127.0.0.1';
 var custom_port = argv.port || 3000;
 var clean_disabled = argv.clean_disabled;
-
-
-
 
 // Clean up the dist folder before running any task
 function clean() {
