@@ -8,3 +8,5 @@ soffice.js
 soffice.wasm
 soffice.worker.js
 # soffice.worker.js: needed for older emsdk versions (about 3.1.46)
+
+public/

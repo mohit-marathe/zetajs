@@ -3,8 +3,8 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="w3.css">
-    <title>ZetaJS Deta: Letter Address Tool</title>
+    <title>ZetaJS Demo: Letter Address Tool</title>
+    <!-- Vendor CSS Files -->
     <style>
       .spinner {
         border: 16px solid #1F2937; /* ZetaOffice brand color */
@@ -107,7 +107,7 @@
 
       var Module = {
         canvas,
-        uno_scripts: ['./zeta.js', './office_thread.js'],
+        uno_scripts: ['./assets/vendor/zetajs/zeta.js', './office_thread.js'],
         locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
       };
       if (soffice_base_url !== '') {
@@ -144,7 +144,7 @@
       }
 
       async function load_business_letter_sans() {
-        const response = await fetch("./Modern_business_letter_sans_serif.ott");
+        const response = await fetch("./assets/Modern_business_letter_sans_serif.ott");
         return response.arrayBuffer();
       }
 
