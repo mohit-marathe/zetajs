@@ -2,7 +2,8 @@ An example of a local file to PDF conversion service.  If the "Download" button 
 converted PDF document is downloaded to the local file system, in addition to being shown in an
 iframe on the web page.
 
-To run the example. use something like
+To run the example, do
 ```
-$ emrun index.html
+npm install
+npm start
 ```

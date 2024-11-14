@@ -14,21 +14,14 @@
     <canvas id="qtcanvas" style="display: none"/>
     <script type="text/javascript">
       'use strict';
-
-      // IMPORTANT:
-      // Set base URL to the soffice.* files.
-      // Use an empty string if those files are in the same directory.
-      let soffice_base_url = 'https://cdn.zetaoffice.net/zetaoffice_latest/';
-    </script>
-    <script src="config.js"></script> <!-- May fail. config.js is optional. -->
-    <script type="text/javascript">
+      let soffice_base_url = '<!-- soffice.js Base -->';
 
       // Enable usage of LOWA builds with UI.
       const canvas = document.getElementById('qtcanvas');
 
       var Module = {
         canvas,
-        uno_scripts: ['zeta.js', './office_thread.js'],
+        uno_scripts: ['./assets/vendor/zetajs/zeta.js', './office_thread.js'],
         locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
       };
       if (soffice_base_url !== '') {
