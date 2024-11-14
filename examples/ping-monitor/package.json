@@ -1,7 +1,7 @@
 {
   "name": "zetajs-example-letter",
   "version": "1.0.0",
-  "description": "Example how to use zetajs to do insert addresses in LibreOffice Writer",
+  "description": "Example how to use zetajs to display a chart with values being added on the fly.",
   "scripts": {
     "start": "node_modules/.bin/gulp start",
     "debug": "node_modules/.bin/gulp debug",
