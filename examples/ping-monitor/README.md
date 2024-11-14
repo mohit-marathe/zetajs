@@ -1,7 +1,8 @@
-An example of a stripped-down, standalone Calc document canvas without any surrounding menubars,
-toolbars, side panels, etc..
+An example of a simple Calc document displaying a single chart with data being added on the fly.
+All surrounding UI elements are hidden in this demo.
 
-To run the example. use something like
+To run the example, do:
 ```
-$ emrun index.html
+npm install
+npm start
 ```
