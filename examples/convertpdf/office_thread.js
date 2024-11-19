@@ -32,8 +32,7 @@ function demo() {
       try {
         // Close old document in advance. Keep document open afterwards for debugging.
         if (xModel !== undefined &&
-            zetajs.fromAny(xModel.queryInterface(zetajs.type.interface(css.util.XCloseable)))
-            !== undefined) {
+            xModel.queryInterface(zetajs.type.interface(css.util.XCloseable))) {
           xModel.close(false);
         }
         from = e.data.from;
@@ -43,7 +42,7 @@ function demo() {
         zetajs.mainPort.postMessage({cmd: 'converted', name: e.data.name, from, to});
       } catch (e) {
         const exc = zetajs.catchUnoException(e);
-        console.log('TODO', zetajs.getAnyType(exc), zetajs.fromAny(exc).Message);
+        console.log('TODO', zetajs.getAnyType(exc), exc.Message);
       }
       break;
     default:

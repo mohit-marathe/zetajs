@@ -32,12 +32,11 @@ function demo() {
 
   // Turn off toolbars:
   const config = css.configuration.ReadWriteAccess.create(context, 'en-US')
-  const uielems = zetajs.fromAny(
-    config.getByHierarchicalName(
-      '/org.openoffice.Office.UI.WriterWindowState/UIElements/States'));
+  const uielems = config.getByHierarchicalName(
+    '/org.openoffice.Office.UI.WriterWindowState/UIElements/States');
   for (const i of uielems.getElementNames()) {
-    const uielem = zetajs.fromAny(uielems.getByName(i));
-    if (zetajs.fromAny(uielem.getByName('Visible'))) {
+    const uielem = uielems.getByName(i);
+    if (uielem.getByName('Visible')) {
       uielem.setPropertyValue('Visible', false);
     }
   }
@@ -70,7 +69,7 @@ function demo() {
       const fieldsEnum = xModel.getTextFields().createEnumeration();
       let state_count=0, city_count=0, postal_code_count=0, street_count=0;
       while (fieldsEnum.hasMoreElements()) {
-        const field = zetajs.fromAny(fieldsEnum.nextElement()).getAnchor();
+        const field = fieldsEnum.nextElement().getAnchor();
         switch (field.getString()) {
           case "<Recipient's Title>": // additional space is needed
             field.setString(recipient.title === '' ? '' : recipient.title+' ');  // recipient

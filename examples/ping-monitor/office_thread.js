@@ -25,12 +25,11 @@ function demo() {
 
   // Turn off toolbars:
   const config = css.configuration.ReadWriteAccess.create(context, 'en-US')
-  const uielems = zetajs.fromAny(
-    config.getByHierarchicalName(
-      '/org.openoffice.Office.UI.CalcWindowState/UIElements/States'));
+  const uielems = config.getByHierarchicalName(
+    '/org.openoffice.Office.UI.CalcWindowState/UIElements/States');
   for (const i of uielems.getElementNames()) {
-    const uielem = zetajs.fromAny(uielems.getByName(i));
-    if (zetajs.fromAny(uielem.getByName('Visible'))) {
+    const uielem = uielems.getByName(i);
+    if (uielem.getByName('Visible')) {
       uielem.setPropertyValue('Visible', false);
     }
   }
@@ -111,7 +110,7 @@ function moveRows(ary) {
   for (let i = 0; i < max_values-1; i++) {
     const writeCell = ary[i];
     const readCell  = ary[i+1];
-    const ping_value = zetajs.fromAny(readCell[0]);
+    const ping_value = readCell[0];
     setCell(writeCell, ping_value);
   }
 }
@@ -125,9 +124,9 @@ function clearRows(ary) {
 function setCell(cell, value) {
   let num = value;  // keep original value
   if (typeof(value) === 'number' || !isNaN(num=parseFloat(value))) {
-    cell[0] = new zetajs.Any(zetajs.type.double, num);
+    cell[0] = num;
   } else {
-    cell[0] = new zetajs.Any(zetajs.type.string, value.toString());
+    cell[0] = value.toString();
   }
 }
 
