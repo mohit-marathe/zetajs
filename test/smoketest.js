@@ -1,4 +1,4 @@
-/* -*- Mode: JS; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4; fill-column: 100 -*- */
+/* -*- Mode: JS; tab-width: 4; indent-tabs-mode: nil; js-indent-level: 4; fill-column: 100 -*- */
 // SPDX-License-Identifier: MIT
 
 'use strict';
