@@ -226,35 +226,35 @@ Module.zetajs = new Promise(function (resolve, reject) {
     function translateFromEmbind(val, type, precise, cleanUpVal) {
       switch (type.getTypeClass()) {
       case Module.uno.com.sun.star.uno.TypeClass.BOOLEAN:
-          return Boolean(val);
+        return Boolean(val);
       case Module.uno.com.sun.star.uno.TypeClass.TYPE:
-          return gcWrap(val);
+        return gcWrap(val);
       case Module.uno.com.sun.star.uno.TypeClass.ANY:
-          {
-              const ty = gcWrap(val.getType());
-              let v;
-              try {
-                  v = translateFromEmbind(val.get(), ty, precise, cleanUpVal);
-              } finally {
-                  if (cleanUpVal) {
-                      val.delete();
-                  }
-              }
-              return precise ? new Any(ty, v) : v;
+        {
+          const ty = gcWrap(val.getType());
+          let v;
+          try {
+            v = translateFromEmbind(val.get(), ty, precise, cleanUpVal);
+          } finally {
+            if (cleanUpVal) {
+              val.delete();
+            }
           }
+          return precise ? new Any(ty, v) : v;
+        }
       case Module.uno.com.sun.star.uno.TypeClass.SEQUENCE:
-          {
-              const td = type.getSequenceComponentType();
-              const arr = [];
-              for (let i = 0; i !== val.size(); ++i) {
-                  arr.push(translateFromEmbind(val.get(i), td, precise, cleanUpVal));
-              }
-              if (cleanUpVal) {
-                  val.delete();
-              }
-              td.delete();
-              return arr;
+        {
+          const td = type.getSequenceComponentType();
+          const arr = [];
+          for (let i = 0; i !== val.size(); ++i) {
+            arr.push(translateFromEmbind(val.get(i), td, precise, cleanUpVal));
           }
+          if (cleanUpVal) {
+            val.delete();
+          }
+          td.delete();
+          return arr;
+        }
       case Module.uno.com.sun.star.uno.TypeClass.STRUCT:
       case Module.uno.com.sun.star.uno.TypeClass.EXCEPTION:
         {
@@ -299,7 +299,7 @@ Module.zetajs = new Promise(function (resolve, reject) {
           return obj;
         }
       case Module.uno.com.sun.star.uno.TypeClass.INTERFACE:
-          return proxy(val);
+        return proxy(val);
       default:
         return val;
       }
@@ -670,8 +670,8 @@ Module.zetajs = new Promise(function (resolve, reject) {
       const td = Module.uno.com.sun.star.reflection.XCompoundTypeDescription.query(type);
       const base = td.getBaseType();
       if (base !== null) {
-          computeMembers(base, obj);
-          base.delete();
+        computeMembers(base, obj);
+        base.delete();
       }
       const types = td.getMemberTypes();
       const names = td.getMemberNames();
@@ -875,17 +875,17 @@ Module.zetajs = new Promise(function (resolve, reject) {
     };
     function fromAny(val) { return val instanceof Any ? val.val : val; };
     function throwUnoException(exception) {
-        const type = gcWrap(Module.uno_Type.Exception(exception[Module.unoTagSymbol].type));
-        const toDelete = [];
-        const val = translateToEmbind(exception, type, toDelete);
-        Module.throwUnoException(type, val, toDelete);
+      const type = gcWrap(Module.uno_Type.Exception(exception[Module.unoTagSymbol].type));
+      const toDelete = [];
+      const val = translateToEmbind(exception, type, toDelete);
+      Module.throwUnoException(type, val, toDelete);
     };
     function catchUnoException(exception) {
         const td = Module.uno_Type.Any();
         try {
-            return translateFromAnyAndDelete(Module.catchUnoException(exception), td);
+          return translateFromAnyAndDelete(Module.catchUnoException(exception), td);
         } finally {
-            td.delete();
+          td.delete();
         }
     };
     const uno = new Proxy({}, {
@@ -983,15 +983,15 @@ Module.zetajs = new Promise(function (resolve, reject) {
           if (!Object.hasOwn(seen, iname)) {
             seen[iname] = true;
             if (td.getTypeClass() !== Module.uno.com.sun.star.uno.TypeClass.INTERFACE) {
-                throw new Error('not a UNO interface type: ' + iname);
+              throw new Error('not a UNO interface type: ' + iname);
             }
             const itd = Module.uno.com.sun.star.reflection.XInterfaceTypeDescription2
                   .query(td);
             const bases = itd.getBaseTypes();
             for (let i = 0; i !== bases.size(); ++i) {
-                const base = bases.get(i);
-                walk(base);
-                base.delete();
+              const base = bases.get(i);
+              walk(base);
+              base.delete();
             }
             bases.delete();
             const mems = itd.getMembers();
