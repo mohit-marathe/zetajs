@@ -22,7 +22,7 @@ function demo() {
   context = zetajs.getUnoComponentContext();
 
   // Turn off toolbars:
-  const config = css.configuration.ReadWriteAccess.create(context, 'en-US')
+  const config = css.configuration.ReadWriteAccess.create(context, 'en-US');
   const uielems = config.getByHierarchicalName(
     '/org.openoffice.Office.UI.WriterWindowState/UIElements/States');
   for (const i of uielems.getElementNames()) {
@@ -32,8 +32,8 @@ function demo() {
     }
   }
   config.commitChanges();
-  toolkit = css.awt.Toolkit.create(context);
 
+  toolkit = css.awt.Toolkit.create(context);
   // css.awt.XExtendedToolkit::getActiveTopWindow only becomes non-null asynchronously, so wait
   // for it if necessary.
   // addTopWindowListener only works as intended when the following loadComponentFromURL sets

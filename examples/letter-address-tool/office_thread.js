@@ -31,7 +31,7 @@ function demo() {
   const bean_pdf_export = new css.beans.PropertyValue({Name: 'FilterName', Value: 'writer_pdf_Export'});
 
   // Turn off toolbars:
-  const config = css.configuration.ReadWriteAccess.create(context, 'en-US')
+  const config = css.configuration.ReadWriteAccess.create(context, 'en-US');
   const uielems = config.getByHierarchicalName(
     '/org.openoffice.Office.UI.WriterWindowState/UIElements/States');
   for (const i of uielems.getElementNames()) {

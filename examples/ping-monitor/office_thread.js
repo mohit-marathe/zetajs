@@ -24,7 +24,7 @@ function demo() {
   context = zetajs.getUnoComponentContext();
 
   // Turn off toolbars:
-  const config = css.configuration.ReadWriteAccess.create(context, 'en-US')
+  const config = css.configuration.ReadWriteAccess.create(context, 'en-US');
   const uielems = config.getByHierarchicalName(
     '/org.openoffice.Office.UI.CalcWindowState/UIElements/States');
   for (const i of uielems.getElementNames()) {
