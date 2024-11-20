@@ -95,3 +95,73 @@ Module.uno_scripts = [
 By default the exmaples load a precompiled ZetaOffice from https://cdn.zetaoffice.net/zetaoffice_latest/
 
 You may have a look into the respective config.sample.js file of each demo to use another WASM build. You may compile an own [LOWA build](https://git.libreoffice.org/core/+/refs/heads/master/static/README.wasm.md). There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot. If the host the WASM binary on another origin then the example code you will need to set a [CORS header](https://developer.mozilla.org/docs/Web/HTTP/CORS).
+
+## Contributions
+
+### Submitting issues
+
+First off, please search existing issues first, before filing a new
+one (see [search on github](https://help.github.com/articles/searching-issues)).
+
+If you think you've found a security problem, feel free to contact one
+of the project maintainers in private, for responsible disclosure.
+
+### Development and Code
+
+For any LibreOffice questions (code, api, features), you'll find us on
+the [LibreOffice IRC channel](https://web.libera.chat/?channels=libreoffice-dev) - changes
+to LibreOffice core then go through
+[TDF's development process and gerrit code review system](https://wiki.documentfoundation.org/Development/GetInvolved).
+
+For changes to the zetajs library, just raise a pull request here, and
+make sure you've got permission to contribute your changes under the
+MIT license. For that, we use the [Developer Certificate of Origin (DCO)](https://developercertificate.org/):
+
+~~~
+Developer Certificate of Origin
+Version 1.1
+
+Copyright (C) 2004, 2006 The Linux Foundation and its contributors.
+
+Everyone is permitted to copy and distribute verbatim copies of this
+license document, but changing it is not allowed.
+
+
+Developer's Certificate of Origin 1.1
+
+By making a contribution to this project, I certify that:
+
+(a) The contribution was created in whole or in part by me and I
+    have the right to submit it under the open source license
+    indicated in the file; or
+
+(b) The contribution is based upon previous work that, to the best
+    of my knowledge, is covered under an appropriate open source
+    license and I have the right under that license to submit that
+    work with modifications, whether created in whole or in part
+    by me, under the same open source license (unless I am
+    permitted to submit under a different license), as indicated
+    in the file; or
+
+(c) The contribution was provided directly to me by some other
+    person who certified (a), (b) or (c) and I have not modified
+    it.
+
+(d) I understand and agree that this project and the contribution
+    are public and that a record of the contribution (including all
+    personal information I submit with it, including my sign-off) is
+    maintained indefinitely and may be redistributed consistent with
+    this project or the open source license(s) involved.
+~~~
+
+When submitting a pull request, to make this certification please
+therefore add a sign-off line to your commits:
+
+~~~
+  Signed-off-by: Random J Developer <random@developer.example.org>
+~~~
+
+Use your real name (sorry, no pseudonyms or anonymous
+contributions).
+
+This project is tested with BrowserStack.
