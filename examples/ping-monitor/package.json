@@ -1,5 +1,5 @@
 {
-  "name": "zetajs-example-letter",
+  "name": "zetajs-ping-monitor",
   "version": "1.0.0",
   "description": "Example how to use zetajs to display a chart with values being added on the fly.",
   "scripts": {
