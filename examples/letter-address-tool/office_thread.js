@@ -70,7 +70,7 @@ function demo() {
       const fieldsEnum = xModel.getTextFields().createEnumeration();
       let state_count=0, city_count=0, postal_code_count=0, street_count=0;
       while (fieldsEnum.hasMoreElements()) {
-        const field = fieldsEnum.nextElement().val.getAnchor();
+        const field = zetajs.fromAny(fieldsEnum.nextElement()).getAnchor();
         switch (field.getString()) {
           case "<Recipient's Title>": // additional space is needed
             field.setString(recipient.title === '' ? '' : recipient.title+' ');  // recipient
