@@ -111,7 +111,7 @@ function moveRows(ary) {
   for (let i = 0; i < max_values-1; i++) {
     const writeCell = ary[i];
     const readCell  = ary[i+1];
-    const ping_value = readCell[0].val;
+    const ping_value = zetajs.fromAny(readCell[0]);
     setCell(writeCell, ping_value);
   }
 }
@@ -125,11 +125,9 @@ function clearRows(ary) {
 function setCell(cell, value) {
   let num = value;  // keep original value
   if (typeof(value) === 'number' || !isNaN(num=parseFloat(value))) {
-    cell[0].type = Module.uno_Type.Double();
-    cell[0].val = num;
+    cell[0] = new zetajs.Any(zetajs.type.double, num);
   } else {
-    cell[0].type = Module.uno_Type.String();
-    cell[0].val = value.toString();
+    cell[0] = new zetajs.Any(zetajs.type.string, value.toString());
   }
 }
 
