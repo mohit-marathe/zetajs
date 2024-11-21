@@ -110,7 +110,7 @@
       if (soffice_base_url !== '') {
         // Must not be set when soffice.js is in the same directory.
         Module.mainScriptUrlOrBlob = new Blob(
-            ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
+          ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
       }
 
       let thrPort;     // zetajs thread communication
