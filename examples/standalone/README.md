@@ -30,3 +30,5 @@ To use with local ZetaOffice build, place your soffice.* files in the public/ su
 npm install
 npm run debug
 ```
+
+Attention: When using in production, replace the zetajs 'file:' link in `package.json` with a proper version from npmjs.com.

@@ -21,6 +21,6 @@
   },
   "dependencies": {
     "w3-css": "^4.1.0",
-    "zetajs": "^1.0.3"
+    "zetajs": "file:../.."
   }
 }
