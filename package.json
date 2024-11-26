@@ -1,6 +1,6 @@
 {
   "name": "zetajs",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Access ZetaOffice in the Browser from JavaScript via UNO",
   "main": "source/zeta.js",
   "directories": {
