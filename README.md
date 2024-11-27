@@ -69,7 +69,15 @@ See README.md in the individual folder of the example.
 
 By default the exmaples load a precompiled ZetaOffice from https://cdn.zetaoffice.net/zetaoffice_latest/
 
-You may have a look into the respective config.sample.js file of each demo to use another WASM build. You may compile an own [LOWA build](https://git.libreoffice.org/core/+/refs/heads/master/static/README.wasm.md). There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot. If the host the WASM binary on another origin then the example code you will need to set a [CORS header](https://developer.mozilla.org/docs/Web/HTTP/CORS).
+Please have a look into the respective config.sample.js file of each demo to use another WASM build.
+
+You may also compile a custom [LOWA build](https://git.libreoffice.org/core/+/refs/heads/master/static/README.wasm.md). There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot. If you host the WASM binary on another origin then the example code you will need to set a [CORS header](https://developer.mozilla.org/docs/Web/HTTP/CORS).
+
+For the sources of the WASM binaries served by cdn.zetaoffice.net see:  
+https://git.libreoffice.org/core/+/refs/heads/distro/allotropia/zeta-24-2  
+https://github.com/allotropia/emscripten/commits/fixed-3.1.65/  
+https://github.com/allotropia/qt5/tree/5.15.2%2Bwasm  
+https://github.com/allotropia/qtbase/tree/5.15.2%2Bwasm
 
 ## Contributions
 
