@@ -63,32 +63,7 @@ for (const xParagraph of xParaEnumeration) {
 
 ## Running the examples.
 
-Some examples come with a package.json and can be run according to their README.md with npm. The other examples just need to put into a webserver with the following HTTP headers set.
-
-```
-Cross-Origin-Opener-Policy "same-origin"
-Cross-Origin-Embedder-Policy "require-corp"
-```
-
-### Via uno_scripts in qt_soffice.html
-
-Add this line right before `</body>` in `qt_soffice.html` and replace `EXAMPLE_FILE.js` with the example you choose.
-Then add the mentioned files to the webroot.
-
-```
-    <script type="text/javascript">Module["uno_scripts"] = ['zeta.js', 'EXAMPLE_FILE.js']</script>
-```
-
-### Via building with EMSCRIPTEN_EXTRA_SOFFICE_PRE_JS
-
-One way to run some of the provided example and test code is to serve those files next to `qt_soffice.html`, along with some `include.js` that looks like
-```
-Module.uno_scripts = [
-    'zetajs/source/zeta.js',
-    'zetajs/test/smoketest.js',
-    'zetajs/examples/simple.js'];
-```
-(or whatever the paths where you serve them, relative to `qt_soffice.html`; `zeta.js` always needs to come first), and to build LOWA with an `EMSCRIPTEN_EXTRA_SOFFICE_PRE_JS=/path/to/include.js` configuration option (e.g., as a line in `autogen.input`), with `/path/to` adapted accordingly.  (The `test/smoketest.js` code requires a LibreOffice configured with `--enable-dbgutil` to have the `org.libreoffice.embindtest` UNOIDL entities available.)
+See README.md in the individual folder of the example.
 
 ## Using with an own WASM build
 
