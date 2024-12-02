@@ -1,34 +1,28 @@
-# Writer Document canvas
-
 An example of a stripped-down, standalone Writer document canvas without any surrounding menubars,
-toolbars, side panels, etc.
+toolbars, side panels, etc. Includes HTML buttons to for simple formatting (bold, italic, underlined).
 
-Includes HTML buttons to for simple formatting (bold, italic, underlined).
+See config.sample.js for configuration options.
 
-## Try it
+## Run local for development
 
-To run with default ZetaOffice delivered by our CDN:
-
+To run the example, do
 ```
 npm install
 npm start
 ```
 
-Optionally pass options behind the "--" parameter.
-"--soffice_base ''" expects the soffice.* files in the public/ folder.
-"--clean_disabled" prevents the public/ being wiped.
+## Using with a web server
 
+For getting files you can put on a web server, do
 ```
 npm install
-npm run start -- --clean_disabled --soffice_base '' --port 8080 --browser chromium
-
+npm run dist
 ```
 
-To use with local ZetaOffice build, place your soffice.* files in the public/ subfolder and do:
-
+The following HTTP headers must be set in the web server configuration.
 ```
-npm install
-npm run debug
+Cross-Origin-Opener-Policy "same-origin"
+Cross-Origin-Embedder-Policy "require-corp"
 ```
 
 Attention: When using in production, replace the zetajs 'file:' link in `package.json` with a proper version from npmjs.com.

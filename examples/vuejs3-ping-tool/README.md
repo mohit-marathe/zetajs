@@ -30,6 +30,12 @@ npm run dev
 npm run build
 ```
 
+The following HTTP headers must be set in the web server configuration.
+```
+Cross-Origin-Opener-Policy "same-origin"
+Cross-Origin-Embedder-Policy "require-corp"
+```
+
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
