@@ -67,13 +67,7 @@
               const url = URL.createObjectURL(blob);
               document.getElementById('frame').contentWindow.open(url, '_self');
               if (document.getElementById("download").checked) {
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = e.data.name + '.pdf';
-                link.style = 'display:none';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                window.open(url);
               }
               try { FS.unlink(e.data.to); } catch {}  // for easier debugging
               URL.revokeObjectURL(url);
