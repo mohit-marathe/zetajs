@@ -4,6 +4,7 @@
   "description": "Example how to use zetajs to convert a document to PDF fully client-side",
   "scripts": {
     "start": "node_modules/.bin/gulp start",
+    "start-nobrowser": "node_modules/.bin/gulp start --nobrowser",
     "debug": "node_modules/.bin/gulp debug",
     "dist": "node_modules/.bin/gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
