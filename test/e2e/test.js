@@ -1,12 +1,9 @@
-// Test the 'convertpdf' example
+describe("convert", () => {
+  beforeAll(async () => {
+    await page.goto("http://127.0.0.1:3000");
+  });
 
-const puppeteer = require('puppeteer');
-
-(async () => {
-    const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
-    const page = await browser.newPage();
-    await page.goto('http://127.0.0.1:3000');
-
+  it('should convert an odt file to pdf', async () => {
     // Wait for zetaoffice to load
     await page.evaluate("Module.uno_main");
 
@@ -14,9 +11,8 @@ const puppeteer = require('puppeteer');
     const download = await page.$("#download");
     download.click();
     const input = await page.$('#input');
-    await input.uploadFile('test/test.odt');
+    await input.uploadFile('test/e2e/test.odt');
     const newTarget = await browser.waitForTarget(target => target.opener() === page.target());
     await newTarget.page();
-
-    await browser.close();
-})();
+  }, 30000);
+});
