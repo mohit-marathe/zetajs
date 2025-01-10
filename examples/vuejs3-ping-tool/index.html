@@ -3,6 +3,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
+    <script type="text/javascript">
+      // Relative URLs break if the main URL's last directory has no slash.
+      // Some web servers don't add that / as "Apache DirectorySlash" does.
+      if (!window.location.pathname.endsWith('/') && !window.location.pathname.endsWith('.html')) {
+        window.location.replace(window.location.pathname +
+          '/' + window.location.search + window.location.hash);
+      }
+    </script>
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZetaJS Calc Demo</title>
