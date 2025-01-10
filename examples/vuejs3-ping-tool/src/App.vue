@@ -46,10 +46,11 @@
               id="qtcanvas" contenteditable="true"
               oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
               width="900px" height="450px"
-              style="border: 0px none; padding: 0; outline: 1px solid #cccccc;"/>
+              style="border: 0px none; padding: 0; outline: 1px solid #cccccc;">
               <!-- QT requires the canvas to have the ID "qtcanvas". -->
               <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
               <!-- An outline is fine though. -->
+            </canvas>
           </div>
         </td>
         <td style="vertical-align: top; width:250px">
