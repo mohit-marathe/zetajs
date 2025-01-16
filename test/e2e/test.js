@@ -1,9 +1,9 @@
 describe("convert", () => {
   beforeAll(async () => {
     // Wait a bit to give time for the server to start
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 5000));
     await page.goto("http://127.0.0.1:3000");
-  });
+  }, 30000);
 
   it('should convert an odt file to pdf', async () => {
     // Wait for zetaoffice to load
