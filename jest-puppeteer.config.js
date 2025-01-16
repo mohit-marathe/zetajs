@@ -1,8 +1,10 @@
 module.exports = {
     launch: {
+        headless: true,
         args: ["--no-sandbox"]
     },
     server: {
-        command: "cd examples/convertpdf && npm install && npm run start-nobrowser"
+        command: "npm run test:convertpdf",
+        debug: true
     },
 };

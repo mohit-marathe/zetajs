@@ -9,7 +9,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "jest test/e2e/"
+    "test": "jest test/e2e/",
+    "test:convertpdf": "cd examples/convertpdf && npm install && npm run start-nobrowser"
   },
   "repository": {
     "type": "git",
