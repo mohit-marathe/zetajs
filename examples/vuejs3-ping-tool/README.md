@@ -1,4 +1,4 @@
-# A ZetaJS Calc Demo using Vue.js
+# A ZetaJS Ping Tool (Calc Demo using Vue.js-3)
 
 [online demo](https://zetaoffice.net/demos/vuejs3-ping-tool/)
 

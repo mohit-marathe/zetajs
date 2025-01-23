@@ -26,7 +26,7 @@
     <table style="width:1150px; border-spacing: 10px;">
       <tr>
         <td>
-          <div><h1>ZetaJS Calc Demo</h1></div>
+          <div><h1>ZetaJS Ping Tool (Calc Demo with Vue.js-3)</h1></div>
           <ControlBar/>
         </td>
       </tr>
