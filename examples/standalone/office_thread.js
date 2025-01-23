@@ -15,7 +15,7 @@ let zetajs, css;
 // common variables:
 let context, desktop, xModel, toolkit, topwin, ctrl;
 // example specific:
-let urls;
+let unoUrlsAry;
 
 
 function demo() {
@@ -66,7 +66,7 @@ function demo() {
   // Turn off sidebar:
   dispatch('.uno:Sidebar');
 
-  urls = {};
+  unoUrlsAry = {};
   button('bold', '.uno:Bold');
   button('italic', '.uno:Italic');
   button('underline', '.uno:Underline');
@@ -74,7 +74,7 @@ function demo() {
   zetajs.mainPort.onmessage = function (e) {
     switch (e.data.cmd) {
     case 'toggle':
-      dispatch(urls[e.data.id]);
+      dispatch(unoUrlsAry[e.data.id]);
       break;
     default:
       throw Error('Unknonwn message command ' + e.data.cmd);
@@ -82,9 +82,9 @@ function demo() {
   }
 }
 
-function button(id, url) {
-  urls[id] = url;
-  const urlObj = transformUrl(url);
+function button(id, unoUrl) {
+  unoUrlsAry[id] = unoUrl;
+  const urlObj = transformUrl(unoUrl);
   const listener = zetajs.unoObject([css.frame.XStatusListener], {
     disposing: function(source) {},
     statusChanged: function(state) {
@@ -95,8 +95,8 @@ function button(id, url) {
   zetajs.mainPort.postMessage({cmd: 'enable', id});
 }
 
-function transformUrl(url) {
-  const ioparam = {val: new css.util.URL({Complete: url})};
+function transformUrl(unoUrl) {
+  const ioparam = {val: new css.util.URL({Complete: unoUrl})};
   css.util.URLTransformer.create(context).parseStrict(ioparam);
   return ioparam.val;
 }
@@ -105,8 +105,8 @@ function queryDispatch(urlObj) {
   return ctrl.queryDispatch(urlObj, '_self', 0);
 }
 
-function dispatch(url) {
-  const urlObj = transformUrl(url);
+function dispatch(unoUrl) {
+  const urlObj = transformUrl(unoUrl);
   queryDispatch(urlObj).dispatch(urlObj, []);
 }
 
