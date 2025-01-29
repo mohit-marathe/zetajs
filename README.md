@@ -5,7 +5,7 @@ web site, allowing you to control it with JavaScript code via the LibreOffice
 [UNO](https://wiki.documentfoundation.org/Documentation/DevGuide) technology.
 
 Use cases range from an in-browser office suite that looks and feels just like its desktop
-counterpart, to fine-tuned custom text editing and spreadsheet capabilites embedded in your web
+counterpart, to fine-tuned custom text editing and spreadsheet capabilities embedded in your web
 site, to a headless zetajs instance that does document conversion in the background.
 
 For a detailed description of zetajs, see the [Starting Points](docs/start.md) documentation.
@@ -14,7 +14,7 @@ For a detailed description of zetajs, see the [Starting Points](docs/start.md) d
 [Embind-based](https://blog.allotropia.de/2024/04/30/libreoffice-javascripted/) JavaScript scripting
 capabilities for LibreOffice.  But it aims to provide a nicer, more idiomatic JavaScript experience,
 and completely hides the underlying machinery.  In the future, it may even move away from that
-underyling Embind layer, in a backward-compatible way.)
+underlying Embind layer, in a backward-compatible way.)
 
 ## Demo
 
@@ -67,11 +67,11 @@ See README.md in the individual folder of the example.
 
 ## Using with an own WASM build
 
-By default the exmaples load a precompiled ZetaOffice from https://cdn.zetaoffice.net/zetaoffice_latest/
+By default the examples load a precompiled ZetaOffice from https://cdn.zetaoffice.net/zetaoffice_latest/
 
 Please have a look into the respective config.sample.js file of each demo to use another WASM build.
 
-You may also compile a custom [LOWA build](https://git.libreoffice.org/core/+/refs/heads/master/static/README.wasm.md). There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the webroot. If you host the WASM binary on another origin then the example code you will need to set a [CORS header](https://developer.mozilla.org/docs/Web/HTTP/CORS).
+You may also compile a custom [LOWA build](https://git.libreoffice.org/core/+/refs/heads/master/static/README.wasm.md). There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the web root. If you host the WASM binary on another origin then the example code you will need to set a [CORS header](https://developer.mozilla.org/docs/Web/HTTP/CORS).
 
 For the sources of the WASM binaries served by cdn.zetaoffice.net see:
 * https://git.libreoffice.org/core/+/refs/heads/distro/allotropia/zeta-24-2
@@ -91,7 +91,7 @@ of the project maintainers in private, for responsible disclosure.
 
 ### Development and Code
 
-For any LibreOffice questions (code, api, features), you'll find us on
+For any LibreOffice questions (code, API, features), you'll find us on
 the [LibreOffice IRC channel](https://web.libera.chat/?channels=libreoffice-dev) - changes
 to LibreOffice core then go through
 [TDF's development process and gerrit code review system](https://wiki.documentfoundation.org/Development/GetInvolved).
