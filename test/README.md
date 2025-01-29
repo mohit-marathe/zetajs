@@ -24,7 +24,6 @@ soffice.data
 soffice.data.js.metadata
 soffice.js
 soffice.wasm
-soffice.worker.js
 zeta.js
 ```
 
