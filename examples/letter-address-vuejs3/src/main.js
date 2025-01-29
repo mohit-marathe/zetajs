@@ -1,3 +1,4 @@
+import './assets/w3.css'
 import './assets/main.css'
 
 import { createApp } from 'vue'
