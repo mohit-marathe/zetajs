@@ -16,6 +16,8 @@ let zetajs, css;
 let context, desktop, xModel, toolkit, topwin, ctrl;
 // example specific:
 let canvas_height, canvas_width;
+const readyList = {Fonts: false, Window: false};
+let fontsList;
 
 
 function demo() {
@@ -142,7 +144,7 @@ function loadFile() {
         if (!topwin) {
           topwin = toolkit.getActiveTopWindow();
           topwin.FullScreen = true;
-          zetajs.mainPort.postMessage({cmd: 'ready'});
+          startupReady('Window');
         }
       },
       windowDeactivated(e) {},
@@ -156,12 +158,25 @@ function loadFile() {
   ctrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
   // topwin.setMenuBar(null) has race conditions on fast networks like localhost.
   ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
+  
+  // Get font list for toolbar.
+  const fontListener = zetajs.unoObject(
+    [css.frame.XStatusListener],
+    { statusChanged(e) {
+      fontsList = e.State.val;
+      startupReady('Fonts');
+    }});
+  const fontsUrlObj = transformUrl('.uno:FontNameList');
+  const fontsDispatcher = ctrl.queryDispatch(fontsUrlObj, '_self', 0);
+  const fontsDispatchNotifier = css.frame.XDispatch.constructor(fontsDispatcher)
+  fontsDispatchNotifier.addStatusListener(fontListener, fontsUrlObj);
+  fontsDispatchNotifier.removeStatusListener(fontListener, fontsUrlObj);
 
   for (const id of [
       'Bold', 'Italic', 'Underline',
       'Overline', 'Strikeout', 'Shadowed', 'Color', 'CharBackColor',
       'LeftPara', 'CenterPara', 'RightPara', 'JustifyPara', 'DefaultBullet',
-      'FontHeight'
+      'FontHeight', 'CharFontName'
       ]) {
     const urlObj = transformUrl('.uno:' + id);
     const listener = zetajs.unoObject([css.frame.XStatusListener], {
@@ -169,6 +184,7 @@ function loadFile() {
       statusChanged: function(state) {
         state = zetajs.fromAny(state.State);
         if (id == 'FontHeight') state = state.Height;
+        if (id == 'CharFontName') state = state.Name;
         if (id == 'Color' && state == -1) state = 0x000000;
         if (id == 'CharBackColor' && state == -1) state = 0xFFFFFF;
         if (['Color', 'CharBackColor'].includes(id))  // int to #RRGGBB
@@ -177,6 +193,13 @@ function loadFile() {
       }
     });
     queryDispatch(urlObj).addStatusListener(listener, urlObj);
+  }
+}
+
+function startupReady(startupStep) {
+  readyList[startupStep] = true;
+  if (Object.values(readyList).indexOf(false) == -1) {
+    zetajs.mainPort.postMessage({cmd: 'ready', fontsList});
   }
 }
 

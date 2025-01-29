@@ -280,6 +280,7 @@ soffice_js.onload = function() {
       switch (e.data.cmd) {
       case 'ready':
         loadingInfo.style.display = 'none';
+        tbDataJs.font_name_list = e.data.fontsList;
         for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = false;
         tbDataJs.disabled = false;
         // Trigger resize of the embedded window to match the canvas size.

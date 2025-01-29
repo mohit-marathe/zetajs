@@ -20,6 +20,7 @@ export default {
         CharBackColor: "#FFFFFF",
         //
         FontHeight: 12,
+        CharFontName: "Noto Sans",
         //
         LeftPara: false,
         CenterPara: false,
@@ -27,6 +28,7 @@ export default {
         JustifyPara: false,
         DefaultBullet: false,
       },
+      font_name_list: [],
       disabled: true,  // startup default
     };
   },
@@ -112,6 +114,14 @@ export default {
           menu_height: 300,
           disabled: this.disabled,
         },
+        {
+          html: this.active['CharFontName'],
+          title: "Font Name",
+          chevron: true,
+          menu: this.font_name_menu,
+          menu_height: 300,
+          disabled: this.disabled,
+        },
         { is: "separator" },
         {
           icon: "format_align_left", title: "Align Left",
@@ -170,6 +180,20 @@ export default {
       });
     },
     font_height_list: () => [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32],
+    font_name_menu() {
+      return this.font_name_list.map(font_name => {
+        return {
+          html: font_name,
+          /* icon: (this.theme != "default" && this.active['CharFontName'] == font_name) ? 'check' : false, */
+          active: (this.active['CharFontName'] == font_name),
+          click: () => {
+            toggleFormatting('CharFontName', [['CharFontName.FamilyName', font_name]]),
+            this.active['CharFontName'] = font_name;
+          }
+        };
+      });
+    },
+    // "DejaVu Sans, DejaVu Serif, Liberation Sans, Liberation Serif, Linux Biolinum G, Linux Libertine G, Noto Sans, Noto Serif, Open Symbol".split(",").map((x) => x.trim()),
   },
   init_control_bar: function() {
     jsPassCtrlBar(tbDataForJs);
