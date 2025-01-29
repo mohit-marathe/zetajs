@@ -27,7 +27,7 @@ export default {
         JustifyPara: false,
         DefaultBullet: false,
       },
-      disabled: false,  // TODO: vuejs-ify
+      disabled: true,  // startup default
     };
   },
 
@@ -109,7 +109,8 @@ export default {
           title: "Font Size",
           chevron: true,
           menu: this.font_height_menu,
-          menu_height: 300
+          menu_height: 300,
+          disabled: this.disabled,
         },
         { is: "separator" },
         {
@@ -161,7 +162,6 @@ export default {
           html: font_height,
           /* icon: (this.theme != "default" && this.active['FontHeight'] == font_height) ? 'check' : false, */
           active: (this.active['FontHeight'] == font_height),
-          height: 20,
           click: () => {
             toggleFormatting('FontHeight', [['FontHeight.Height', font_height]]),
             this.active['FontHeight'] = font_height;

@@ -19,27 +19,7 @@ let PingModule;  // Ping module passed from vue.js for plain JS
 const loadingInfo = document.getElementById('loadingInfo');
 const canvas = document.getElementById('qtcanvas');
 const addrName = document.getElementById('addrName');
-const btnToolbarNamedAry = {
-  Bold: document.getElementById('btnBold'),
-  Italic: document.getElementById('btnItalic'),
-  Underline: document.getElementById('btnUnderline'),
-  //
-  Overline: document.getElementById('btnOverline'),
-  Strikeout: document.getElementById('btnStrikeout'),
-  Shadowed: document.getElementById('btnShadowed'),
-  Color: document.getElementById('btnColor'),
-  CharBackColor: document.getElementById('btnCharBackColor'),
-  //
-  LeftPara: document.getElementById('btnLeftPara'),
-  CenterPara: document.getElementById('btnCenterPara'),
-  RightPara: document.getElementById('btnRightPara'),
-  JustifyPara: document.getElementById('btnJustifyPara'),
-  DefaultBullet: document.getElementById('btnDefaultBullet'),
-  //
-  Odt: document.getElementById('btnOdt'),
-  Pdf: document.getElementById('btnPdf'),
-};
-const btnNamedAry = {
+const btnNamedAry = {  // enables buttons after loading
   Insert: document.getElementById('btnInsert'),
   Reload: document.getElementById('btnReload'),
 };
@@ -309,15 +289,6 @@ soffice_js.onload = function() {
         break;
       case 'setFormat':
         setToolbarActive(e.data.id, e.data.state);
-        break;
-      case 'ready':
-        loadingInfo.style.display = 'none';
-        for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = false;
-        tbDataJs.disabled = false;
-        // Trigger resize of the embedded window to match the canvas size.
-        // May somewhen be obsoleted by:
-        //   https://gerrit.libreoffice.org/c/core/+/174040
-        window.dispatchEvent(new Event('resize'));
         break;
       case 'download':
         const bytes = FS.readFile('/tmp/output');
