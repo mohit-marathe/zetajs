@@ -50,7 +50,6 @@ function demo() {
       windowNormalized(e) {},
       windowActivated(e) {
         getTopwin().FullScreen = true;
-        hideScrollbarsSheetbar();
         if (!ready) {
           ready = true;
           zetajs.mainPort.postMessage({cmd: 'ready'});
@@ -70,15 +69,15 @@ function demo() {
   ctrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
   // getTopwin.setMenuBar(null) has race conditions on fast networks like localhost.
   ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
+  ctrl.setPropertyValue('SheetTabs', false);
+  ctrl.setPropertyValue('HasHorizontalScrollBar', false);
+  ctrl.setPropertyValue('HasVerticalScrollBar', false);
 
   activeSheet = ctrl.getActiveSheet();
   cellRange = activeSheet.getCellRangeByPosition(0, 1, 0, max_values+1);
   dataAry = cellRange.getDataArray();  // 2 dimensional array
   zetajs.mainPort.onmessage = function (e) {
     switch (e.data.cmd) {
-    case 'hide_scrollbars':
-      hideScrollbarsSheetbar();
-      break;
     case 'ping_result':
       const newUrl = e.data.url;
       if (newUrl == oldUrl) {
@@ -99,17 +98,6 @@ function demo() {
 function getTopwin() {
   if (!topwin) topwin = toolkit.getActiveTopWindow();
   return topwin;
-}
-
-function hideScrollbarsSheetbar() {
-  // old workaround way to do it
-  getTopwin().setPosSize(0, 0, 1150 + 12, 500 + 40, 15);
-  //getTopwin().setPosSize(-40, 0, 1150+52, 500+40, 15);  // with "Formula Bar" and "RowColumnHeaders"
-
-  // better way to do it (TODO: enable instead of workaround)
-  //ctrl.setPropertyValue('SheetTabs', false);
-  //ctrl.setPropertyValue('HasHorizontalScrollBar', false);
-  //ctrl.setPropertyValue('HasVerticalScrollBar', false);
 }
 
 function moveRows(ary) {

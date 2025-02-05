@@ -142,6 +142,10 @@
             switch (e.data.cmd) {
             case 'ready':
               loadingInfo.style.display = 'none';
+              // Trigger resize of the embedded window to match the canvas size.
+              // May somewhen be obsoleted by:
+              //   https://gerrit.libreoffice.org/c/core/+/174040
+              window.dispatchEvent(new Event('resize'));
               // Using Ping callback interface.
               // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
               //   acutally having CORP on foreign origins.
@@ -161,11 +165,6 @@
           load_ping_monitor_ods().then(function(aryBuf) {
             ping_monitor_ods = aryBuf;
             FS.writeFile('/tmp/ping_monitor.ods', new Uint8Array(ping_monitor_ods));
-          });
-
-          window.addEventListener("resize", (event) => {
-            // Else scrollbars may reappear on resize events.
-            thrPort.postMessage({cmd: 'hide_scrollbars'});
           });
         });
       };
