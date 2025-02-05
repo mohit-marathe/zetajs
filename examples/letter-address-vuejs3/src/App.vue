@@ -21,16 +21,39 @@
 
 <template>
   <div id="app">
-    <table style="width:1150px; border-spacing: 10px;">
+    <table style="width:1150px; border-spacing: 0px;" class="special-table">
       <tbody>
         <tr>
-          <td>
+          <td colspan="3">
             <div><h1>ZetaJS: Letter Address Tool (Writer Demo with Vue.js-3)</h1></div>
-            <ControlBar/>
           </td>
         </tr>
         <tr>
-          <td>
+          <td rowspan="2" style="white-space: nowrap; width: 1%; border-width: 1px 1px 0 1px; padding: 0px;">
+            <button class="w3-button w3-white" id="btnLetter" onclick="btnSwitchTab('letter')" disabled>Letter</button> <button class="w3-button w3-theme" id="btnTable" onclick="btnSwitchTab('table')" disabled>Addresses</button>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="border-width: 0 0 1px 0; 
+    padding: 0;">
+            &nbsp;
+            <label class="w3-button w3-disabled w3-round w3-padding-small w3-spacing-large w3-theme" id="lblUpload">
+              Upload File
+              <input accept=".odt" style="display: none;" class="w3-round" type="file" id="btnUpload" onchange="btnUploadFunc()" required disabled>
+            </label>
+            &nbsp;
+            <button class="w3-button w3-round w3-padding-small w3-spacing-large w3-theme" id="btnReload" onclick="btnReloadFunc()" disabled>Reload File</button>
+            &nbsp;
+            <button class="w3-button w3-round w3-padding-small w3-theme" id="btnInsert" onclick="btnInsertFunc()" disabled>Insert Address</button>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="border-width: 0 1px 0 1px; padding: 10px 10px 0 10px;" id="controlbar_row">
+            <ControlBar id="controlbar"/>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="border-width: 0 0 1px 1px;" id="canvasCell">
             <div onselectstart="event.preventDefault()" style="position: relative">
               <!--  position: Makes the loading animation overlay the canvas.
                       Needs a surrounding table with fixed width to work properly.
@@ -52,13 +75,9 @@
               </canvas>
             </div>
           </td>
-          <td style="vertical-align: top; width:250px">
-            <div class="w3-margin-bottom">
-              <button class="w3-button w3-round w3-grey w3-padding-small w3-theme" id="btnInsert" onclick="btnInsertFunc()" disabled>Insert Address</button> <button class="w3-button w3-round w3-grey w3-padding-small w3-theme" id="btnReload" onclick="btnReloadFunc()" disabled>Reload file</button>
-            </div>
+          <td style="vertical-align: top; width:250px; border-width: 0 1px 1px 0;" id="addrNameCell">
             <div>
-              <!-- size="18" looks best with canvas height="450px" in Firefox-128. -->
-              <select class="w3-select w3-round w3-light-grey" id="addrName" size="18" style="width: 100%;" autofocus></select>
+              <select class="w3-select w3-round w3-light-grey" id="addrName" size="24" style="width: 100%;" autofocus disabled></select>
             </div>
           </td>
         </tr>
@@ -82,5 +101,28 @@
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+  }
+
+  /* Disable dark mode. ControlBar doesn't work well with it. */
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+
+  select option {
+    /* Same spacing in select lists for Firefox-128 as for Chromium-130. */
+    padding: 0;
+    height: 18px;
+  }
+  .w3-theme {
+    color: #1F2937 !important; /* ZetaOffice brand color */
+    background-color: #059669 !important; /* ZetaOffice brand color */
+  }
+
+  .special-table td {
+    padding: 10px;
+    border-color: #B0B0B0;
+    border-style: solid;
+    border-width: 0 0 0 0;
   }
 </style>

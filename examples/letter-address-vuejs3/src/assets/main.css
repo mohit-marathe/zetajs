@@ -37,24 +37,3 @@ a,
     padding: 0.3rem 0.6rem;  /* border: top left */
   }
 }
-
-/* Disable dark mode. ControlBar doesn't work well with it. */
-body {
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-select option {
-  /* Same spacing in select lists for Firefox-128 as for Chromium-130. */
-  padding: 0;
-  height: 18px;
-}
-.w3-theme {
-  color: #1F2937 !important; /* ZetaOffice brand color */
-  background-color: #059669 !important; /* ZetaOffice brand color */
-}
