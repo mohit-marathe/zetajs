@@ -111,7 +111,7 @@ export default {
           title: "Font Size",
           chevron: true,
           menu: this.font_height_menu,
-          menu_height: 300,
+          menu_height: 450,
           disabled: this.disabled,
         },
         {
@@ -119,7 +119,7 @@ export default {
           title: "Font Name",
           chevron: true,
           menu: this.font_name_menu,
-          menu_height: 300,
+          menu_height: 450,
           disabled: this.disabled,
         },
         { is: "separator" },
@@ -167,11 +167,30 @@ export default {
       ];
     },
     font_height_menu() {
-      return this.font_height_list.map(font_height => {
+      // dynamic height list around the current value
+      const font_height_list = [];
+      const cur_height = this.active['FontHeight'];
+      const cur_height_fl = Math.floor(cur_height);
+      let height_start = cur_height_fl - 7;
+      if (height_start < 1) height_start = 1;
+      //                                 current
+      // example: 12  : [   ,  ..., 11.9, 12  , 12.1, 13  , ...]
+      // example: 12.1: [   ,  ..., 12  , 12.1, 12.2, 13  , ...]
+      // example: 12.5: [..., 12  , 12.4, 12.5, 12.6, 13  , ...]
+      // example: 12.9: [..., 12  , 12.8, 12.9, 13  , ... ,    ]
+      for (let i=height_start; i < cur_height_fl; i++) font_height_list.push(i);
+      const minus_01 = (cur_height*10 -1) / 10;  // fix floating point
+      const  plus_01 = (cur_height*10 +1) / 10;  // fix floating point
+      if (minus_01 > cur_height_fl) font_height_list.push(cur_height_fl);
+      font_height_list.push(minus_01);
+      font_height_list.push(cur_height);
+      if (plus_01 < cur_height_fl+1) font_height_list.push(plus_01);
+      for (let i=cur_height_fl+1; i <= cur_height_fl+7; i++) font_height_list.push(i);
+      return font_height_list.map(font_height => {
         return {
           html: font_height,
-          /* icon: (this.theme != "default" && this.active['FontHeight'] == font_height) ? 'check' : false, */
-          active: (this.active['FontHeight'] == font_height),
+          /* icon: (this.theme != "default" && cur_height == font_height) ? 'check' : false, */
+          active: (cur_height == font_height),
           click: () => {
             toggleFormatting('FontHeight', [['FontHeight.Height', font_height]]),
             this.active['FontHeight'] = font_height;
@@ -179,7 +198,6 @@ export default {
         };
       });
     },
-    font_height_list: () => [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32],
     font_name_menu() {
       return this.font_name_list.map(font_name => {
         return {

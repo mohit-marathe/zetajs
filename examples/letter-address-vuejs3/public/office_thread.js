@@ -183,7 +183,7 @@ function loadFile() {
       disposing: function(source) {},
       statusChanged: function(state) {
         state = zetajs.fromAny(state.State);
-        if (id == 'FontHeight') state = state.Height;
+        if (id == 'FontHeight') state = Math.round(state.Height * 10) / 10;
         if (id == 'CharFontName') state = state.Name;
         if (id == 'Color' && state == -1) state = 0x000000;
         if (id == 'CharBackColor' && state == -1) state = 0xFFFFFF;
