@@ -15,14 +15,23 @@ try {
 let thrPort;     // zetajs thread communication
 let tbDataJs;    // toolbar dataset passed from vue.js for plain JS
 let PingModule;  // Ping module passed from vue.js for plain JS
+let letterForeground = true;
+let data = [];
 
 const loadingInfo = document.getElementById('loadingInfo');
 const canvas = document.getElementById('qtcanvas');
+const controlbar = document.getElementById('controlbar');
+const addrNameCell = document.getElementById('addrNameCell');
+const canvasCell = document.getElementById('canvasCell');
+const btnLetter = document.getElementById('btnLetter');
+const btnTable = document.getElementById('btnTable');
+const lblUpload = document.getElementById('lblUpload');
+const btnUpload = document.getElementById('btnUpload');
+const btnReload = document.getElementById('btnReload');
+const btnInsert = document.getElementById('btnInsert');
 const addrName = document.getElementById('addrName');
-const btnNamedAry = {  // enables buttons after loading
-  Insert: document.getElementById('btnInsert'),
-  Reload: document.getElementById('btnReload'),
-};
+const disabledElementsAry =
+  [btnLetter, btnTable, btnUpload, btnReload, btnInsert, addrName];
 
 
 // Debugging note:
@@ -41,6 +50,7 @@ if (soffice_base_url !== '') {
 
 function jsPassCtrlBar(pTbDataJs) {
   tbDataJs = pTbDataJs;
+  disabledElementsAry.push(tbDataJs);
   console.log('PLUS: assigned tbDataJs');
 }
 
@@ -60,212 +70,70 @@ function setToolbarActive(id, value) {
   tbDataJs.active = tbDataJs.active;
 }
 
+function btnSwitchTab(tab) {
+  if (tab === 'letter') {
+    letterForeground = true;
+    btnLetter.classList.remove('w3-theme');
+    btnLetter.classList.add('w3-white');
+    btnTable.classList.remove('w3-white');
+    btnTable.classList.add('w3-theme');
+    controlbar_row.style.display = null;
+    btnUpload.accept = '.odt';
+    btnInsert.disabled = false;
+    canvasCell.colSpan = 2;
+    canvasCell.style.borderWidth = '0 0 1px 1px';
+    addrNameCell.style.visibility = null;
+    addrName.style.visibility = null;
+  } else {  // table
+    letterForeground = false;
+    btnLetter.classList.remove('w3-white');
+    btnLetter.classList.add('w3-theme');
+    btnTable.classList.remove('w3-theme');
+    btnTable.classList.add('w3-white');
+    controlbar_row.style.display = 'none';
+    btnUpload.accept = '.ods';
+    btnInsert.disabled = true;
+    canvasCell.colSpan = 3;
+    canvasCell.style.borderWidth = '0 1px 1px 1px';
+    addrNameCell.style.visibility = 'hidden';
+    addrName.style.visibility = 'hidden';
+  }
+  thrPort.postMessage({cmd: 'switch_tab', id: tab});
+}
+
 function btnDownloadFunc(btnId) {
   thrPort.postMessage({cmd: 'download', id: btnId});
+}
+
+function btnUploadFunc(btnId) {
+  for (const elem of disabledElementsAry) elem.disabled = true;
+  lblUpload.classList.add('w3-disabled');
+  const filename = letterForeground ? 'letter.odt' : 'table.ods';
+  btnUpload.files[0].arrayBuffer().then(aryBuf => {
+    FS.writeFile('/tmp/' + filename, new Uint8Array(aryBuf));
+    btnReloadFunc();
+  });
+}
+
+function btnReloadFunc() {
+  for (const elem of disabledElementsAry) elem.disabled = true;
+  lblUpload.classList.add('w3-disabled');
+  loadingInfo.style.display = null;
+  canvas.style.visibility = 'hidden';
+  thrPort.postMessage({cmd: 'reload', id: letterForeground});
 }
 
 function btnInsertFunc() {
   if (addrName.selectedIndex != -1) {
     const recipient = data[addrName.selectedIndex];
-    thrPort.postMessage({cmd: 'insert_address', recipient});
+    thrPort.postMessage({cmd: 'insertAddress', recipient});
   }
 }
 
-function btnReloadFunc() {
-  for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = true;
-  thrPort.postMessage({cmd: 'reload'});
-}
 
-
-async function get_modern_business_letter_sans_serif_odt() {
-  const response = await fetch("./modern_business_letter_sans_serif.odt");
+async function getDataFile(file_url) {
+  const response = await fetch(file_url);
   return response.arrayBuffer();
-}
-let modern_business_letter_sans_serif_odt;
-
-
-const data = [
-  {
-    title:       "Dr.",
-    name:        "Bashir, Julian Subatoi",
-    street:      "Level 42",
-    postal_code: "DS9",
-    city:        "Deep Space 9",
-    state:       "Bajoran Republic",
-  }, {
-    title:       "Dr.",
-    name:        "Chapel, Christine",
-    street:      "Deck 42",
-    postal_code: "NCC-1701",
-    city:        "USS Enterprise",
-    state:       "United Federation of Planets",
-  }, {
-    title:       "Mr.",
-    name:        "Chekov, Pavel",
-    street:      "Deck 42",
-    postal_code: "NCC-1701",
-    city:        "USS Enterprise",
-    state:       "United Federation of Planets",
-  }, {
-    title:       "Mrs.",
-    name:        "Dax, Jadzia",
-    street:      "Section 25 Alpha",
-    postal_code: "DS9",
-    city:        "Deep Space 9",
-    state:       "Bajoran Republic",
-  }, {
-    title:       "Mr.",
-    name:        "de Monti, Mario",
-    street:      "Mariosstreet",
-    postal_code: "1B 1B1B",
-    city:        "Deepseabase 104",
-    state:       "Earth",
-  }, {
-    title:       "Mr.",
-    name:        "Sigbjörnson, Hasso",
-    street:      "Hassosstreet",
-    postal_code: "1B 1B1B",
-    city:        "Deepseabase 104",
-    state:       "Earth",
-  }, {
-    title:       "Mrs.",
-    name:        "Jagellovsk, Tamara",
-    street:      "Tamarasstreet",
-    postal_code: "1B 1B1B",
-    city:        "Deepseabase 104",
-    state:       "Earth",
-  }, {
-    title:       "Mr.",
-    name:        "Kirk, James T.",
-    street:      "Deck 5",
-    postal_code: "NCC-1701",
-    city:        "USS Enterprise",
-    state:       "United Federation of Planets",
-  }, {
-    title:       "Mrs.",
-    name:        "Legrelle, Helga",
-    street:      "Helgasstreet",
-    postal_code: "1B 1B1B",
-    city:        "Deepseabase 104",
-    state:       "Earth",
-  }, {
-    title:       "Dr.",
-    name:        "McCoy, Leonard",
-    street:      "Deck 9, Section 2, 3F 127",
-    postal_code: "NCC-1701",
-    city:        "USS Enterprise",
-    state:       "United Federation of Planets",
-  }, {
-    title:       "Mr.",
-    name:        "McLane, Cliff Allister",
-    street:      "Cliffsstreet",
-    postal_code: "1B 1B1B",
-    city:        "Deepseabase 104",
-    state:       "Earth",
-  }, {
-    title:       "Mrs.",
-    name:        "Nerys, Kira",
-    street:      "Level 42",
-    postal_code: "DS9",
-    city:        "Deep Space 9",
-    state:       "Bajoran Republic",
-  }, {
-    title:       "Mr.",
-    name:        "O'Brien, Miles Edward",
-    street:      "Level 5",
-    postal_code: "DS9",
-    city:        "Deep Space 9",
-    state:       "Bajoran Republic",
-  }, {
-    title:       "Mrs.",
-    name:        "O'Brien, Keiko",
-    street:      "Level 5",
-    postal_code: "DS9",
-    city:        "Deep Space 9",
-    state:       "Bajoran Republic",
-  }, {
-    title:       "",
-    name:        "Odo, Mr.",
-    street:      "Level 42",
-    postal_code: "DS9",
-    city:        "Deep Space 9",
-    state:       "Bajoran Republic",
-  }, {
-    title:       "",
-    name:        "Quark, Mr.",
-    street:      "Level 7, Section 5",
-    postal_code: "DS9",
-    city:        "Deep Space 9",
-    state:       "Bajoran Republic",
-  }, {
-    title:       "Mrs.",
-    name:        "Rand, Janice",
-    street:      "Deck 42",
-    postal_code: "NCC-1701",
-    city:        "USS Enterprise",
-    state:       "United Federation of Planets",
-  }, {
-    title:       "Mr.",
-    name:        "Scott, Montgomery",
-    street:      "Deck 42",
-    postal_code: "NCC-1701",
-    city:        "USS Enterprise",
-    state:       "United Federation of Planets",
-  }, {
-    title:       "Mr.",
-    name:        "Shubashi, Atan",
-    street:      "Atansstreet",
-    postal_code: "1B 1B1B",
-    city:        "Deepseabase 104",
-    state:       "Earth",
-  }, {
-    title:       "Mr.",
-    name:        "Sisko, Benjamin Lafayette",
-    street:      "Level 42",
-    postal_code: "DS9",
-    city:        "Deep Space 9",
-    state:       "Bajoran Republic",
-  }, {
-    title:       "",
-    name:        "Spock, Mr.",
-    street:      "Spocksstreet",
-    postal_code: "NCC-1701",
-    city:        "USS Enterprise",
-    state:       "United Federation of Planets",
-  }, {
-    title:       "Mr.",
-    name:        "Sulu, Hikaru",
-    street:      "Deck 42",
-    postal_code: "NCC-1701",
-    city:        "USS Enterprise",
-    state:       "United Federation of Planets",
-  }, {
-    title:       "Mrs.",
-    name:        "Uhura, Nyota",
-    street:      "Deck 42",
-    postal_code: "NCC-1701",
-    city:        "USS Enterprise",
-    state:       "United Federation of Planets",
-  }, {
-    title:       "",
-    name:        "Worf, Mr.",
-    street:      "Level 3, Section 27, Room 9",
-    postal_code: "DS9",
-    city:        "Deep Space 9",
-    state:       "Bajoran Republic",
-  }, {
-    title:       "Mrs.",
-    name:        "Yates-Sisko, Kasidy Danielle",
-    street:      "Deck B",
-    postal_code: "ECV-197",
-    city:        "The Orville",
-    state:       "Planetary Union",
-  },
-];
-for (const recipient of data) {
-  const option = document.createElement('option');
-  option.innerHTML = recipient.name;
-  addrName.appendChild(option);
 }
 
 
@@ -280,13 +148,27 @@ soffice_js.onload = function() {
       switch (e.data.cmd) {
       case 'ready':
         loadingInfo.style.display = 'none';
+        canvas.style.visibility = null;
         tbDataJs.font_name_list = e.data.fontsList;
-        for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = false;
-        tbDataJs.disabled = false;
+        for (const elem of disabledElementsAry) elem.disabled = false;
+        lblUpload.classList.remove('w3-disabled');
+        btnInsert.disabled = !letterForeground;
         // Trigger resize of the embedded window to match the canvas size.
         // May somewhen be obsoleted by:
         //   https://gerrit.libreoffice.org/c/core/+/174040
         window.dispatchEvent(new Event('resize'));
+        break;
+      case 'resizeEvt':
+        window.dispatchEvent(new Event('resize'));
+        break;
+      case 'addrData':
+        data = e.data.data;
+        addrName.innerHTML = '';
+        for (const recipient of data) {
+          const option = document.createElement('option');
+          option.innerHTML = recipient[1];
+          addrName.appendChild(option);
+        }
         break;
       case 'setFormat':
         setToolbarActive(e.data.id, e.data.state);
@@ -298,7 +180,7 @@ soffice_js.onload = function() {
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = 'letter.' + format;
-        link.style = 'display:none';
+        link.style.display = 'none';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -309,9 +191,11 @@ soffice_js.onload = function() {
       }
     };
 
-    get_modern_business_letter_sans_serif_odt().then(function(aryBuf) {
-      modern_business_letter_sans_serif_odt = aryBuf;
-      FS.writeFile('/tmp/modern_business_letter_sans_serif.odt', new Uint8Array(modern_business_letter_sans_serif_odt));
+    getDataFile('./letter.odt').then(function(aryBuf) {
+      FS.writeFile('/tmp/letter.odt', new Uint8Array(aryBuf));
+    });
+    getDataFile('./table.ods').then(function(aryBuf) {
+      FS.writeFile('/tmp/table.ods', new Uint8Array(aryBuf));
     });
   });
 };
