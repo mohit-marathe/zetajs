@@ -160,17 +160,17 @@ function loadFile() {
   ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
   
   // Get font list for toolbar.
+  const fontsUrlObj = transformUrl('.uno:FontNameList');
+  const fontsDispatcher = queryDispatch(fontsUrlObj);
+  const fontsDispatchNotifier = css.frame.XDispatch.constructor(fontsDispatcher)
   const fontListener = zetajs.unoObject(
     [css.frame.XStatusListener],
     { statusChanged(e) {
+      fontsDispatchNotifier.removeStatusListener(fontListener, fontsUrlObj);
       fontsList = e.State.val;
       startupReady('Fonts');
     }});
-  const fontsUrlObj = transformUrl('.uno:FontNameList');
-  const fontsDispatcher = ctrl.queryDispatch(fontsUrlObj, '_self', 0);
-  const fontsDispatchNotifier = css.frame.XDispatch.constructor(fontsDispatcher)
   fontsDispatchNotifier.addStatusListener(fontListener, fontsUrlObj);
-  fontsDispatchNotifier.removeStatusListener(fontListener, fontsUrlObj);
 
   for (const id of [
       'Bold', 'Italic', 'Underline',
