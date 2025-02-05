@@ -50,7 +50,7 @@ function demo() {
       windowNormalized(e) {},
       windowActivated(e) {
         getTopwin().FullScreen = true;
-        hideScrollbars();
+        hideScrollbarsSheetbar();
         if (!ready) {
           ready = true;
           zetajs.mainPort.postMessage({cmd: 'ready'});
@@ -77,7 +77,7 @@ function demo() {
   zetajs.mainPort.onmessage = function (e) {
     switch (e.data.cmd) {
     case 'hide_scrollbars':
-      hideScrollbars();
+      hideScrollbarsSheetbar();
       break;
     case 'ping_result':
       const newUrl = e.data.url;
@@ -101,9 +101,15 @@ function getTopwin() {
   return topwin;
 }
 
-function hideScrollbars() {
-  getTopwin().setPosSize(0, 0, 1300+12, 600+40, 15);
-  //getTopwin().setPosSize(-40, 0, 1300+52, 600+40, 15);  // with "Formula Bar" and "RowColumnHeaders"
+function hideScrollbarsSheetbar() {
+  // old workaround way to do it
+  getTopwin().setPosSize(0, 0, 1150 + 12, 500 + 40, 15);
+  //getTopwin().setPosSize(-40, 0, 1150+52, 500+40, 15);  // with "Formula Bar" and "RowColumnHeaders"
+
+  // better way to do it (TODO: enable instead of workaround)
+  //ctrl.setPropertyValue('SheetTabs', false);
+  //ctrl.setPropertyValue('HasHorizontalScrollBar', false);
+  //ctrl.setPropertyValue('HasVerticalScrollBar', false);
 }
 
 function moveRows(ary) {
