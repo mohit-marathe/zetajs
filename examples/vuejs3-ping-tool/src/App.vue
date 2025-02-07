@@ -83,4 +83,10 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+  /* Disable dark mode. ControlBar doesn't work well with it. */
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
 </style>
