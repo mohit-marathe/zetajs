@@ -15,7 +15,7 @@ let zetajs, css;
 // common variables:
 let context, desktop, xModel, toolkit, topwin, ctrl;
 // example specific:
-let unoUrls, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell;
+let unoUrlsAry, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell;
 
 
 function demo() {
