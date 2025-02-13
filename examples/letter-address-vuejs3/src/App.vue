@@ -1,9 +1,10 @@
 <!-- SPDX-License-Identifier: MIT -->
-<script setup lang=ts>
+<script setup lang="ts">
   import ControlBar from '@/components/ControlBar.vue';
 </script>
 
-<script lang=ts>
+<script lang="ts">
+  //import { pre_soffice } from '@/pre_soffice';
   export default {
     mounted() {
       const config_js = document.createElement("script");
@@ -48,8 +49,8 @@
           </td>
         </tr>
         <tr>
-          <td colspan="3" style="border-width: 0 1px 0 1px; padding: 10px 10px 0 10px;" id="controlbar_row">
-            <ControlBar id="controlbar"/>
+          <td colspan="3" style="border-width: 0 1px 0 1px; padding: 10px 10px 0 10px;" id="controlbarRow">
+            <ControlBar/>
           </td>
         </tr>
         <tr>

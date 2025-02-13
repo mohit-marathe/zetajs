@@ -1,6 +1,14 @@
 /* -*- Mode: JS; tab-width: 2; indent-tabs-mode: nil; js-indent-level: 2; fill-column: 100 -*- */
 // SPDX-License-Identifier: MIT
 
+
+// TypeScript check and compilation:
+//   ./node_modules/.bin/vue-tsc public/pre_soffice.ts
+// 
+
+
+
+
 'use strict';
 
 // IMPORTANT:
@@ -8,29 +16,30 @@
 // Use an empty string if those files are in the same directory.
 let soffice_base_url = 'https://cdn.zetaoffice.net/zetaoffice_latest/';
 try {
+  // @ts-ignore
   soffice_base_url = config_soffice_base_url; // May fail. config.js is optional.
 } catch {}
 
 
-let thrPort;     // zetajs thread communication
-let tbDataJs;    // toolbar dataset passed from vue.js for plain JS
-let PingModule;  // Ping module passed from vue.js for plain JS
+let thrPort : MessagePort;    // zetajs thread communication
+let tbDataJs;                 // toolbar dataset passed from vue.js for plain JS
 let letterForeground = true;
-let data = [];
+let data: string[][] = [];
+let emSdkFs;
 
 const loadingInfo = document.getElementById('loadingInfo');
 const canvas = document.getElementById('qtcanvas');
-const controlbar = document.getElementById('controlbar');
-const addrNameCell = document.getElementById('addrNameCell');
-const canvasCell = document.getElementById('canvasCell');
-const btnLetter = document.getElementById('btnLetter');
-const btnTable = document.getElementById('btnTable');
+const controlbarRow = document.getElementById('controlbarRow');
+const canvasCell = document.getElementById('canvasCell') as HTMLTableCellElement;
+const btnLetter = document.getElementById('btnLetter') as HTMLButtonElement;
+const btnTable = document.getElementById('btnTable') as HTMLButtonElement;
 const lblUpload = document.getElementById('lblUpload');
-const btnUpload = document.getElementById('btnUpload');
-const btnReload = document.getElementById('btnReload');
-const btnInsert = document.getElementById('btnInsert');
-const addrName = document.getElementById('addrName');
-const disabledElementsAry =
+const btnUpload = document.getElementById('btnUpload') as HTMLInputElement;
+const btnReload = document.getElementById('btnReload') as HTMLButtonElement;
+const btnInsert = document.getElementById('btnInsert') as HTMLButtonElement;
+const addrNameCell = document.getElementById('addrNameCell');
+const addrName = document.getElementById('addrName') as HTMLSelectElement;
+const disabledElementsAry: (HTMLButtonElement | HTMLInputElement | HTMLSelectElement)[] =
   [btnLetter, btnTable, btnUpload, btnReload, btnInsert, addrName];
 
 
@@ -43,6 +52,7 @@ var Module = {
 };
 if (soffice_base_url !== '') {
   // Must not be set when soffice.js is in the same directory.
+  // @ts-ignore
   Module.mainScriptUrlOrBlob = new Blob(
     ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
 }
@@ -64,6 +74,7 @@ function toggleFormatting(id, value) {
   canvas.focus();
 }
 
+// Sets a single element of the toolbar active or inactive.
 function setToolbarActive(id, value) {
   tbDataJs.active[id] = value;
   // Need to set "active" on "tbDataJs" to trigger an UI update.
@@ -77,7 +88,7 @@ function btnSwitchTab(tab) {
     btnLetter.classList.add('w3-white');
     btnTable.classList.remove('w3-white');
     btnTable.classList.add('w3-theme');
-    controlbar_row.style.display = null;
+    controlbarRow.style.display = null;
     btnUpload.accept = '.odt';
     btnInsert.disabled = false;
     canvasCell.colSpan = 2;
@@ -90,7 +101,7 @@ function btnSwitchTab(tab) {
     btnLetter.classList.add('w3-theme');
     btnTable.classList.remove('w3-theme');
     btnTable.classList.add('w3-white');
-    controlbar_row.style.display = 'none';
+    controlbarRow.style.display = 'none';
     btnUpload.accept = '.ods';
     btnInsert.disabled = true;
     canvasCell.colSpan = 3;
@@ -110,6 +121,7 @@ function btnUploadFunc(btnId) {
   lblUpload.classList.add('w3-disabled');
   const filename = letterForeground ? 'letter.odt' : 'table.ods';
   btnUpload.files[0].arrayBuffer().then(aryBuf => {
+    // @ts-ignore
     FS.writeFile('/tmp/' + filename, new Uint8Array(aryBuf));
     btnReloadFunc();
   });
@@ -142,8 +154,11 @@ soffice_js.src = soffice_base_url + "soffice.js";
 // "onload" runs after the loaded script has run.
 soffice_js.onload = function() {
   console.log('PLUS: Configuring Module');
+  // @ts-ignore
   Module.uno_main.then(function(pThrPort) {
     thrPort = pThrPort;
+    // @ts-ignore
+    emSdkFs = FS;
     thrPort.onmessage = function(e) {
       switch (e.data.cmd) {
       case 'ready':
@@ -174,7 +189,7 @@ soffice_js.onload = function() {
         setToolbarActive(e.data.id, e.data.state);
         break;
       case 'download':
-        const bytes = FS.readFile('/tmp/output');
+        const bytes = emSdkFs.readFile('/tmp/output');
         const format = e.data.id === 'btnOdt' ? 'odt' : 'pdf';
         const blob = new Blob([bytes], {type: 'application/' + format});
         const link = document.createElement('a');
@@ -192,10 +207,10 @@ soffice_js.onload = function() {
     };
 
     getDataFile('./letter.odt').then(function(aryBuf) {
-      FS.writeFile('/tmp/letter.odt', new Uint8Array(aryBuf));
+      emSdkFs.writeFile('/tmp/letter.odt', new Uint8Array(aryBuf));
     });
     getDataFile('./table.ods').then(function(aryBuf) {
-      FS.writeFile('/tmp/table.ods', new Uint8Array(aryBuf));
+      emSdkFs.writeFile('/tmp/table.ods', new Uint8Array(aryBuf));
     });
   });
 };

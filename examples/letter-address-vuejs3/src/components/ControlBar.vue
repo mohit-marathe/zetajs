@@ -1,5 +1,6 @@
 <!-- SPDX-License-Identifier: MIT -->
 <script lang="ts">
+//import { jsPassCtrlBar } from '@/pre_soffice';
 import VueFileToolbarMenu from "vue-file-toolbar-menu";
 
 let tbDataForJs;

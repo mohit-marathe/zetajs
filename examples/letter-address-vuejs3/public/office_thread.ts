@@ -1,15 +1,25 @@
 /* -*- Mode: JS; tab-width: 2; indent-tabs-mode: nil; js-indent-level: 2; fill-column: 100 -*- */
 // SPDX-License-Identifier: MIT
 
+
+// TypeScript check and compilation:
+//   ./node_modules/.bin/vue-tsc public/office_thread.ts
+// 
+
 // Debugging note:
 // Switch the web worker in the browsers debug tab to debug this code.
 // It's the "em-pthread" web worker with the most memory usage, where "zetajs" is defined.
+
+
+
 
 'use strict';
 
 
 // global variables - zetajs environment:
 let zetajs, css;
+// @ts-ignore
+let QtModule = Module;
 
 // = global variables (some are global for easier debugging) =
 // common variables:
@@ -19,7 +29,7 @@ let canvas_height, canvas_width;
 let letterWindowConfigured=false, tableWindowConfigured=false;
 let writerModuleConfigured=false, calcModuleConfigured=false;
 const readyList = {Fonts: false, Window: false};
-const dataEmun = 'title name street postal_code city state'.split();
+const dataEmun = 'title name street postal_code city state'.split(' ');
 let fontsList, switchVals, topWinNum = 0;
 // switchVals needed globally in case the user switches tabs rapidly.
 
@@ -28,8 +38,8 @@ function demo() {
   // The following 'ready' message needs to trigger a 'resize'.
   // Unfortunately there's a bug where resize increases the canvas size always by +2.
   // This is needed to workaround that. (tested in Chromium-129)
-  canvas_height = Module.canvas.height;
-  canvas_width = Module.canvas.width;
+  canvas_height = QtModule.canvas.height;
+  canvas_width = QtModule.canvas.width;
 
   context = zetajs.getUnoComponentContext();
   const bean_overwrite = new css.beans.PropertyValue({Name: 'Overwrite', Value: true});
@@ -67,9 +77,9 @@ function demo() {
         switchVals = [canvas_height, canvas_width, true, false];
         tableToHtml();
       } else switchVals = [canvas_height + 49, canvas_width + 228, false, true];  // table
-      function setVals() {
-        Module.canvas.height = switchVals[0];
-        Module.canvas.width = switchVals[1];
+      const setVals: () => void = function() {
+        QtModule.canvas.height = switchVals[0];
+        QtModule.canvas.width = switchVals[1];
         // Swapping both windows FullScreen setting triggers windowActivated
         // of the foreground window.
         letterCtrl.getFrame().getContainerWindow().FullScreen = switchVals[2];
@@ -302,7 +312,7 @@ function dispatch(ctrl, unoUrl, params) {
   queryDispatch(ctrl, urlObj).dispatch(urlObj, params);
 }
 
-Module.zetajs.then(function(pZetajs) {
+QtModule.zetajs.then(function(pZetajs) {
   // initializing zetajs environment:
   zetajs = pZetajs;
   css = zetajs.uno.com.sun.star;
