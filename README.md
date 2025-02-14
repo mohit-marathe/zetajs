@@ -18,7 +18,7 @@ underlying Embind layer, in a backward-compatible way.)
 
 ## Demo
 
-To see a demo of zetajs in use, visit [zetaoffice.net/demo](https://zetaoffice.net/demo.html).
+To see a demo of zetajs in use, visit [zetaoffice.net/#tryit](https://zetaoffice.net/#tryit).
 
 ![screenshots](screenshots.png)
 
