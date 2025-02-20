@@ -1,5 +1,5 @@
 An example of a simple Calc document displaying a single chart with data being added on the fly.
-All surrounding UI elements are hidden in this demo.
+All surrounding UI elements are hidden in this demo. Can be installed as PWA.
 
 See config.sample.js for configuration options.
 

@@ -65,6 +65,8 @@ function copyVendors() {
   stream.add( gulp.src( 'node_modules/ping.js/dist/ping.js' ).pipe( gulp.dest( distDir + 'assets/vendor/ping/' ) ) );
   stream.add( gulp.src( 'node_modules/w3-css/3/w3.css' ).pipe( gulp.dest( distDir + 'assets/vendor/w3/' ) ) );
 
+  stream.add( gulp.src( 'pwa-icon-192x192.png' ).pipe( gulp.dest( distDir + 'assets/' ) ) );
+  stream.add( gulp.src( 'pwa-manifest.json' ).pipe( gulp.dest( distDir + 'assets/' ) ) );
   stream.add( gulp.src( 'ping_monitor.ods' ).pipe( gulp.dest( distDir + 'assets/' ) ) );
 
   return stream;
