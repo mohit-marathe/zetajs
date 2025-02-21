@@ -1,6 +1,6 @@
 {
   "name": "ZetaJS Demo: Ping Monitor",
-  "start_url": "/",
+  "start_url": "../",
   "display": "standalone",
   "icons": [
     {
