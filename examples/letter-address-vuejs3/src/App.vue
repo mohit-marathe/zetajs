@@ -37,14 +37,14 @@
         <tr>
           <td colspan="2" class="upload-section">
             &nbsp;
-            <label class="w3-button w3-disabled w3-round w3-padding-small w3-spacing-large w3-theme" id="lblUpload">
+            <label class="w3-button w3-disabled w3-round w3-padding-small w3-spacing-large w3-theme-border" id="lblUpload">
               Upload File
               <input accept=".odt" class="w3-round file-input" type="file" id="btnUpload" onchange="btnUploadFunc()" required disabled>
             </label>
             &nbsp;
-            <button class="w3-button w3-round w3-padding-small w3-spacing-large w3-theme w3-white" id="btnReload" onclick="btnReloadFunc()" disabled>Reload File</button>
+            <button class="w3-button w3-round w3-padding-small w3-spacing-large w3-theme-border w3-white" id="btnReload" onclick="btnReloadFunc()" disabled>Reload File</button>
             &nbsp;
-            <button class="w3-button w3-round w3-padding-small w3-theme" id="btnInsert" onclick="btnInsertFunc()" disabled>Insert Address</button>
+            <button class="w3-button w3-round w3-padding-small w3-theme-border" id="btnInsert" onclick="btnInsertFunc()" disabled>Insert Address</button>
           </td>
         </tr>
         <tr>
@@ -115,6 +115,11 @@
   .w3-theme {
     color: #1F2937 !important; /* ZetaOffice brand color */
     background-color: #059669 !important; /* ZetaOffice brand color */
+  }
+
+  .w3-theme-border {
+    border: 1px solid #1F2937; /* ZetaOffice brand color */
+    background-color: white !important; /* ZetaOffice brand color */
   }
 
   .main-table {
