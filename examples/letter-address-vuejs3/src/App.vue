@@ -30,8 +30,8 @@
         </tr>
         <tr>
           <td rowspan="2" class="tab-buttons">
-            <button class="w3-button w3-white" id="btnLetter" onclick="btnSwitchTab('letter')" disabled>Letter</button>
-            <button class="w3-button w3-theme" id="btnTable" onclick="btnSwitchTab('table')" disabled>Addresses</button>
+            <button class="w3-button active" id="btnLetter" onclick="btnSwitchTab('letter')" disabled>Letter</button>
+            <button class="w3-button" id="btnTable" onclick="btnSwitchTab('table')" disabled>Addresses</button>
           </td>
         </tr>
         <tr>
@@ -139,6 +139,13 @@
     width: 1%;
     border-width: 1px 1px 0 1px !important;
     padding: 0px !important;
+    button {
+      border-bottom: 3px solid transparent;
+    }
+  }
+
+  .active {
+    border-bottom: 3px solid #059669 !important;
   }
 
   .upload-section {

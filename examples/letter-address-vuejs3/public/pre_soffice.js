@@ -73,10 +73,8 @@ function setToolbarActive(id, value) {
 function btnSwitchTab(tab) {
   if (tab === 'letter') {
     letterForeground = true;
-    btnLetter.classList.remove('w3-theme');
-    btnLetter.classList.add('w3-white');
-    btnTable.classList.remove('w3-white');
-    btnTable.classList.add('w3-theme');
+    btnLetter.classList.add('active');
+    btnTable.classList.remove('active');
     controlbar_row.style.display = null;
     btnUpload.accept = '.odt';
     btnInsert.disabled = false;
@@ -86,10 +84,8 @@ function btnSwitchTab(tab) {
     addrName.style.visibility = null;
   } else {  // table
     letterForeground = false;
-    btnLetter.classList.remove('w3-white');
-    btnLetter.classList.add('w3-theme');
-    btnTable.classList.remove('w3-theme');
-    btnTable.classList.add('w3-white');
+    btnLetter.classList.remove('active');
+    btnTable.classList.add('active');
     controlbar_row.style.display = 'none';
     btnUpload.accept = '.ods';
     btnInsert.disabled = true;
