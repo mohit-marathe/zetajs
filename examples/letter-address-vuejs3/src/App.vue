@@ -25,7 +25,7 @@
       <tbody>
         <tr>
           <td colspan="3">
-            <div><h1>ZetaJS: Letter Address Tool (Writer Demo with Vue.js-3)</h1></div>
+            <div><h1>ZetaJS: Letter Address Tool</h1></div>
           </td>
         </tr>
         <tr>
@@ -34,7 +34,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="2" style="border-width: 0 0 1px 0; 
+          <td colspan="2" style="border-width: 0 0 1px 0;
     padding: 0;">
             &nbsp;
             <label class="w3-button w3-disabled w3-round w3-padding-small w3-spacing-large w3-theme" id="lblUpload">
