@@ -21,7 +21,7 @@
 
 <template>
   <div id="app">
-    <table style="width:1150px; border-spacing: 0px;" class="special-table">
+    <table class="main-table">
       <tbody>
         <tr>
           <td colspan="3">
@@ -29,55 +29,53 @@
           </td>
         </tr>
         <tr>
-          <td rowspan="2" style="white-space: nowrap; width: 1%; border-width: 1px 1px 0 1px; padding: 0px;">
-            <button class="w3-button w3-white" id="btnLetter" onclick="btnSwitchTab('letter')" disabled>Letter</button> <button class="w3-button w3-theme" id="btnTable" onclick="btnSwitchTab('table')" disabled>Addresses</button>
+          <td rowspan="2" class="tab-buttons">
+            <button class="w3-button w3-white" id="btnLetter" onclick="btnSwitchTab('letter')" disabled>Letter</button>
+            <button class="w3-button w3-theme" id="btnTable" onclick="btnSwitchTab('table')" disabled>Addresses</button>
           </td>
         </tr>
         <tr>
-          <td colspan="2" style="border-width: 0 0 1px 0;
-    padding: 0;">
+          <td colspan="2" class="upload-section">
             &nbsp;
             <label class="w3-button w3-disabled w3-round w3-padding-small w3-spacing-large w3-theme" id="lblUpload">
               Upload File
-              <input accept=".odt" style="display: none;" class="w3-round" type="file" id="btnUpload" onchange="btnUploadFunc()" required disabled>
+              <input accept=".odt" class="w3-round file-input" type="file" id="btnUpload" onchange="btnUploadFunc()" required disabled>
             </label>
             &nbsp;
-            <button class="w3-button w3-round w3-padding-small w3-spacing-large w3-theme" id="btnReload" onclick="btnReloadFunc()" disabled>Reload File</button>
+            <button class="w3-button w3-round w3-padding-small w3-spacing-large w3-theme w3-white" id="btnReload" onclick="btnReloadFunc()" disabled>Reload File</button>
             &nbsp;
             <button class="w3-button w3-round w3-padding-small w3-theme" id="btnInsert" onclick="btnInsertFunc()" disabled>Insert Address</button>
           </td>
         </tr>
         <tr>
-          <td colspan="3" style="border-width: 0 1px 0 1px; padding: 10px 10px 0 10px;" id="controlbar_row">
+          <td colspan="3" id="controlbar_row">
             <ControlBar id="controlbar"/>
           </td>
         </tr>
         <tr>
-          <td colspan="2" style="border-width: 0 0 1px 1px;" id="canvasCell">
-            <div onselectstart="event.preventDefault()" style="position: relative">
-              <!--  position: Makes the loading animation overlay the canvas.
-                      Needs a surrounding table with fixed width to work properly.
-                    onselectstart: Prevents accidently selecting / highlighting the canvas.
-                      Must be set on the surrounding HTML element. (tested in Firefox-128) -->
-              <div id="loadingInfo"
-                  style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+          <td colspan="2" class="canvas-cell" id="canvasCell">
+            <div class="canvas-container" onselectstart="event.preventDefault()">
+              <div id="loadingInfo" class="loading-info">
                 <div class="spinner"></div><br>
                 <h2>ZetaOffice is loading...</h2>
               </div>
               <canvas
-                id="qtcanvas" contenteditable="true"
-                oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
-                width="900px" height="450px"
-                style="border: 0px none; padding: 0; outline: 1px solid #cccccc;">
-                <!-- QT requires the canvas to have the ID "qtcanvas". -->
+                id="qtcanvas"
+                contenteditable="true"
+                oncontextmenu="event.preventDefault()"
+                onkeydown="event.preventDefault()"
+                width="900px"
+                height="450px"
+                class="qt-canvas">
+                <!-- Qt requires the canvas to have the ID "qtcanvas". -->
                 <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
                 <!-- An outline is fine though. -->
               </canvas>
             </div>
           </td>
-          <td style="vertical-align: top; width:250px; border-width: 0 1px 1px 0;" id="addrNameCell">
+          <td class="addr-name-cell" id="addrNameCell">
             <div>
-              <select class="w3-select w3-round w3-light-grey" id="addrName" size="24" style="width: 100%;" autofocus disabled></select>
+              <select class="w3-select w3-round w3-light-grey addr-select" id="addrName" size="24" autofocus disabled></select>
             </div>
           </td>
         </tr>
@@ -119,10 +117,67 @@
     background-color: #059669 !important; /* ZetaOffice brand color */
   }
 
-  .special-table td {
+  .main-table {
+    width: 1150px;
+    border-spacing: 0px;
+  }
+
+  .main-table td {
     padding: 10px;
     border-color: #B0B0B0;
     border-style: solid;
     border-width: 0 0 0 0;
+  }
+
+  .tab-buttons {
+    white-space: nowrap;
+    width: 1%;
+    border-width: 1px 1px 0 1px !important;
+    padding: 0px !important;
+  }
+
+  .upload-section {
+    border-width: 0 0 1px 0 !important;
+    padding: 0;
+  }
+
+  .file-input {
+    display: none;
+  }
+
+  #controlbar_row {
+    border-width: 0 1px 0 1px !important;
+    padding: 10px 10px 0 10px;
+  }
+
+  .canvas-cell {
+    border-width: 0 0 1px 1px !important;
+  }
+
+  .canvas-container {
+    position: relative;
+  }
+
+  .loading-info {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .qt-canvas {
+    border: 0px none;
+    padding: 0;
+    outline: 1px solid #cccccc;
+  }
+
+  .addr-name-cell {
+    vertical-align: top;
+    width: 250px;
+    border-width: 0 1px 1px 0 !important;
+  }
+
+  .addr-select {
+    width: 100%;
   }
 </style>
