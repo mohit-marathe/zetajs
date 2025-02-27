@@ -44,7 +44,6 @@
             &nbsp;
             <button class="w3-button w3-round w3-padding-small w3-spacing-large w3-theme-border w3-white" id="btnReload" onclick="btnReloadFunc()" disabled>Reload File</button>
             &nbsp;
-            <button class="w3-button w3-round w3-padding-small w3-theme-border" id="btnInsert" onclick="btnInsertFunc()" disabled>Insert Address</button>
           </td>
         </tr>
         <tr>
@@ -75,6 +74,7 @@
           </td>
           <td class="addr-name-cell" id="addrNameCell">
             <div>
+              <button class="w3-button w3-round w3-margin-bottom w3-margin-top w3-padding-small w3-small w3-theme-border" id="btnInsert" onclick="btnInsertFunc()" disabled>Insert Address</button>
               <select class="w3-select w3-round w3-light-grey addr-select" id="addrName" size="24" autofocus disabled></select>
             </div>
           </td>
