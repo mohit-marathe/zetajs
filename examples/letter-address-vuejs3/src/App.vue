@@ -64,7 +64,7 @@
                 oncontextmenu="event.preventDefault()"
                 onkeydown="event.preventDefault()"
                 width="900px"
-                height="450px"
+                height="500px"
                 class="qt-canvas">
                 <!-- Qt requires the canvas to have the ID "qtcanvas". -->
                 <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
@@ -74,7 +74,7 @@
           </td>
           <td class="addr-name-cell" id="addrNameCell">
             <div>
-              <button class="w3-button w3-round w3-margin-bottom w3-margin-top w3-padding-small w3-small w3-theme-border" id="btnInsert" onclick="btnInsertFunc()" disabled>Insert Address</button>
+              <button class="w3-button w3-round w3-margin-bottom w3-padding-small w3-small w3-theme-border" id="btnInsert" onclick="btnInsertFunc()" disabled>Insert Address</button>
               <select class="w3-select w3-round w3-light-grey addr-select" id="addrName" size="24" autofocus disabled></select>
             </div>
           </td>
