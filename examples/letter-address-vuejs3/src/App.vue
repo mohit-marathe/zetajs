@@ -63,8 +63,7 @@
                 contenteditable="true"
                 oncontextmenu="event.preventDefault()"
                 onkeydown="event.preventDefault()"
-                width="900px"
-                height="500px"
+                style="width:900px; height:500px;"
                 class="qt-canvas">
                 <!-- Qt requires the canvas to have the ID "qtcanvas". -->
                 <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
