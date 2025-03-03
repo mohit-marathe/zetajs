@@ -5,10 +5,10 @@ without any surrounding menubars, toolbars, side panels, etc. This version uses 
 
 [online demo](https://zetaoffice.net/demos/letter-address-vuejs3/)
 
-For Vue.js-3 you'll need nodejs.  
-And either you also install npm system wide or you use:  
-`nodeenv --node=system --with-npm nodeenv/`  
-https://packages.debian.org/bookworm/nodejs  
+For Vue.js-3 you'll need nodejs.
+And either you also install npm system wide or you use:
+`nodeenv --node=system --with-npm nodeenv/`
+https://packages.debian.org/bookworm/nodejs
 https://packages.debian.org/bookworm/nodeenv
 
 # vuejs3
