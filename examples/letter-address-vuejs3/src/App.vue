@@ -117,8 +117,8 @@
   }
 
   .w3-theme-border {
-    border: 1px solid #1F2937; /* ZetaOffice brand color */
-    background-color: white !important; /* ZetaOffice brand color */
+    border: 1px solid #B0B0B0;
+    background-color: white !important;
   }
 
   .main-table {
