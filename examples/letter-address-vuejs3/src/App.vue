@@ -162,7 +162,7 @@
   }
 
   .canvas-cell {
-    border-width: 0 0 1px 1px !important;
+    border-width: 0 1px 1px 1px !important;
   }
 
   .canvas-container {
