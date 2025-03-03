@@ -17,6 +17,7 @@ let tbDataJs;    // toolbar dataset passed from vue.js for plain JS
 let PingModule;  // Ping module passed from vue.js for plain JS
 let letterForeground = true;
 let data = [];
+let lastDevicePixelRatio = window.devicePixelRatio;
 
 const loadingInfo = document.getElementById('loadingInfo');
 const canvas = document.getElementById('qtcanvas');
@@ -137,6 +138,23 @@ async function getDataFile(file_url) {
   const response = await fetch(file_url);
   return response.arrayBuffer();
 }
+
+window.onresize = function() {
+  // Workaround to inform Qt5 about changed browser zoom.
+  setTimeout(function() {
+    if (lastDevicePixelRatio) {
+      if (lastDevicePixelRatio != window.devicePixelRatio) {
+        lastDevicePixelRatio = false;
+        canvas.style.width = parseInt(canvas.style.width) + 1 + 'px';
+        window.dispatchEvent(new Event('resize'));
+      }
+    } else {
+      lastDevicePixelRatio = window.devicePixelRatio
+      canvas.style.width = parseInt(canvas.style.width) - 1 + 'px';
+      window.dispatchEvent(new Event('resize'));
+    }
+  }, 100);
+};
 
 
 const soffice_js = document.createElement("script");

@@ -120,6 +120,7 @@
       }
 
       let thrPort;     // zetajs thread communication
+      let lastDevicePixelRatio = window.devicePixelRatio;
 
 
       btnUploadFile.onchange = function() {
@@ -135,6 +136,23 @@
       function btnDownloadFileFunc(btnObj) {
         thrPort.postMessage({cmd: 'download'});
       }
+
+      window.onresize = function() {
+        // Workaround to inform Qt5 about changed browser zoom.
+        setTimeout(function() {
+          if (lastDevicePixelRatio) {
+            if (lastDevicePixelRatio != window.devicePixelRatio) {
+              lastDevicePixelRatio = false;
+              canvas.style.width = parseInt(canvas.style.width) + 1 + 'px';
+              window.dispatchEvent(new Event('resize'));
+            }
+          } else {
+            lastDevicePixelRatio = window.devicePixelRatio
+            canvas.style.width = parseInt(canvas.style.width) - 1 + 'px';
+            window.dispatchEvent(new Event('resize'));
+          }
+        }, 100);
+      };
 
 
       const soffice_js = document.createElement("script");

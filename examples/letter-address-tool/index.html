@@ -121,6 +121,7 @@
       }
 
       let thrPort;     // zetajs thread communication
+      let lastDevicePixelRatio = window.devicePixelRatio;
 
 
       function formatBtn(btnObj) {
@@ -151,6 +152,23 @@
         const response = await fetch("./assets/Modern_business_letter_sans_serif.ott");
         return response.arrayBuffer();
       }
+
+      window.onresize = function() {
+        // Workaround to inform Qt5 about changed browser zoom.
+        setTimeout(function() {
+          if (lastDevicePixelRatio) {
+            if (lastDevicePixelRatio != window.devicePixelRatio) {
+              lastDevicePixelRatio = false;
+              canvas.style.width = parseInt(canvas.style.width) + 1 + 'px';
+              window.dispatchEvent(new Event('resize'));
+            }
+          } else {
+            lastDevicePixelRatio = window.devicePixelRatio
+            canvas.style.width = parseInt(canvas.style.width) - 1 + 'px';
+            window.dispatchEvent(new Event('resize'));
+          }
+        }, 100);
+      };
 
 
       const data = [
