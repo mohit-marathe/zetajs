@@ -37,21 +37,21 @@
         <tr>
           <td colspan="2" class="upload-section">
             &nbsp;
-            <label class="w3-button w3-disabled w3-round w3-padding-small w3-spacing-large w3-theme-border" id="lblUpload">
+            <label class="w3-button w3-disabled w3-round w3-small w3-padding-small w3-spacing-large w3-theme-border w3-right w3-margin-left" id="lblUpload">
               Upload File
               <input accept=".odt" class="w3-round file-input" type="file" id="btnUpload" onchange="btnUploadFunc()" required disabled>
             </label>
             &nbsp;
-            <button class="w3-button w3-round w3-padding-small w3-spacing-large w3-theme-border w3-white" id="btnReload" onclick="btnReloadFunc()" disabled>Reload File</button>
+            <button class="w3-button w3-round w3-small w3-padding-small w3-spacing-large w3-theme-border w3-white w3-right w3-margin-left" id="btnReload" onclick="btnReloadFunc()" disabled>Reload File</button>
             &nbsp;
           </td>
         </tr>
-        <tr>
+        <tr class="toolbar-row">
           <td colspan="3" id="controlbar_row">
             <ControlBar id="controlbar"/>
           </td>
         </tr>
-        <tr>
+        <tr class="canvas-row">
           <td colspan="2" class="canvas-cell" id="canvasCell">
             <div class="canvas-container" onselectstart="event.preventDefault()">
               <div id="loadingInfo" class="loading-info">
@@ -121,16 +121,25 @@
     background-color: white !important;
   }
 
+  .w3-margin-left {
+    margin-left: 8px !important;
+  }
+
   .main-table {
     width: 1150px;
     border-spacing: 0px;
   }
 
   .main-table td {
-    padding: 10px;
     border-color: #B0B0B0;
     border-style: solid;
     border-width: 0 0 0 0;
+  }
+
+  .toolbar-row, .canvas-row {
+    td {
+      padding: 10px;
+    }
   }
 
   .tab-buttons {
@@ -162,7 +171,7 @@
   }
 
   .canvas-cell {
-    border-width: 0 1px 1px 1px !important;
+    border-width: 0 0 1px 1px !important;
   }
 
   .canvas-container {
