@@ -25,12 +25,6 @@ let fontsList, switchVals, topWinNum = 0;
 
 
 function demo() {
-  // The following 'ready' message needs to trigger a 'resize'.
-  // Unfortunately there's a bug where resize increases the canvas size always by +2.
-  // This is needed to workaround that. (tested in Chromium-129)
-  canvas_height = Module.canvas.height;
-  canvas_width = Module.canvas.width;
-
   context = zetajs.getUnoComponentContext();
   const bean_overwrite = new css.beans.PropertyValue({Name: 'Overwrite', Value: true});
   const bean_odt_export = new css.beans.PropertyValue({Name: 'FilterName', Value: 'writer8'});
@@ -64,16 +58,14 @@ function demo() {
     switch (e.data.cmd) {
     case 'switch_tab':
       if (e.data.id === 'letter') {
-        switchVals = [canvas_height, canvas_width, true, false];
+        switchVals = [true, false];
         tableToHtml();
-      } else switchVals = [canvas_height + 49, canvas_width + 228, false, true];  // table
+      } else switchVals = [false, true];  // table
       function setVals() {
-        Module.canvas.height = switchVals[0];
-        Module.canvas.width = switchVals[1];
         // Swapping both windows FullScreen setting triggers windowActivated
         // of the foreground window.
-        letterCtrl.getFrame().getContainerWindow().FullScreen = switchVals[2];
-        tableCtrl.getFrame().getContainerWindow().FullScreen = switchVals[3];
+        letterCtrl.getFrame().getContainerWindow().FullScreen = switchVals[0];
+        tableCtrl.getFrame().getContainerWindow().FullScreen = switchVals[1];
         zetajs.mainPort.postMessage({cmd: 'resizeEvt'});
       }
       setVals();  // sometimes needed twice to apply resize

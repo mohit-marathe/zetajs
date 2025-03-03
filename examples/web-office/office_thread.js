@@ -14,17 +14,9 @@ let zetajs, css;
 // = global variables (some are global for easier debugging) =
 // common variables:
 let context, desktop, xModel, toolkit, topwin, ctrl;
-// example specific:
-let canvas_height, canvas_width;
 
 
 function demo() {
-  // The following 'ready' message needs to trigger a 'resize'.
-  // Unfortunately there's a bug where resize increases the canvas size always by +2.
-  // This is needed to workaround that. (tested in Chromium-129)
-  canvas_height = Module.canvas.height;
-  canvas_width = Module.canvas.width;
-
   context = zetajs.getUnoComponentContext();
   const bean_overwrite = new css.beans.PropertyValue({Name: 'Overwrite', Value: true});
   const bean_odt_export = new css.beans.PropertyValue({Name: 'FilterName', Value: 'writer8'});

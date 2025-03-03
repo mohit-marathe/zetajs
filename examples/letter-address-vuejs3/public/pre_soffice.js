@@ -32,6 +32,8 @@ const btnInsert = document.getElementById('btnInsert');
 const addrName = document.getElementById('addrName');
 const disabledElementsAry =
   [btnLetter, btnTable, btnUpload, btnReload, btnInsert, addrName];
+const canvas_height = parseInt(canvas.style.height);
+const canvas_width = parseInt(canvas.style.width);
 
 
 // Debugging note:
@@ -82,6 +84,8 @@ function btnSwitchTab(tab) {
     canvasCell.classList.remove('tab-address');
     addrNameCell.style.visibility = null;
     addrName.style.visibility = null;
+    canvas.style.height = canvas_height + 'px';
+    canvas.style.width = canvas_width + 'px';
   } else {  // table
     letterForeground = false;
     btnLetter.classList.remove('active');
@@ -93,6 +97,8 @@ function btnSwitchTab(tab) {
     canvasCell.classList.add('tab-address');
     addrNameCell.style.visibility = 'hidden';
     addrName.style.visibility = 'hidden';
+    canvas.style.height = canvas_height + 51 + 'px';
+    canvas.style.width = canvas_width + 230 + 'px';
   }
   thrPort.postMessage({cmd: 'switch_tab', id: tab});
 }
