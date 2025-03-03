@@ -79,7 +79,7 @@ function btnSwitchTab(tab) {
     btnUpload.accept = '.odt';
     btnInsert.disabled = false;
     canvasCell.colSpan = 2;
-    canvasCell.style.borderWidth = '0 0 1px 1px';
+    canvasCell.classList.remove('tab-address');
     addrNameCell.style.visibility = null;
     addrName.style.visibility = null;
   } else {  // table
@@ -90,7 +90,7 @@ function btnSwitchTab(tab) {
     btnUpload.accept = '.ods';
     btnInsert.disabled = true;
     canvasCell.colSpan = 3;
-    canvasCell.style.borderWidth = '0 1px 1px 1px';
+    canvasCell.classList.add('tab-address');
     addrNameCell.style.visibility = 'hidden';
     addrName.style.visibility = 'hidden';
   }

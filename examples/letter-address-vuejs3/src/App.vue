@@ -174,6 +174,10 @@
     border-width: 0 0 1px 1px !important;
   }
 
+  .canvas-cell.tab-address {
+    border-right-width: 1px !important;
+  }
+
   .canvas-container {
     position: relative;
   }
