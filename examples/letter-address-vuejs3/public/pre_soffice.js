@@ -99,7 +99,7 @@ function btnSwitchTab(tab) {
     addrNameCell.style.visibility = 'hidden';
     addrName.style.visibility = 'hidden';
     canvas.style.height = canvas_height + 51 + 'px';
-    canvas.style.width = canvas_width + 230 + 'px';
+    canvas.style.width = canvas_width + 228 + 'px';
   }
   thrPort.postMessage({cmd: 'switch_tab', id: tab});
 }
