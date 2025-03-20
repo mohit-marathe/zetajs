@@ -60,6 +60,8 @@ function copyVendors() {
   let stream = mergeStream();
 
   stream.add( gulp.src( 'node_modules/zetajs/source/zeta.js' ).pipe( gulp.dest( distDir + 'assets/vendor/zetajs/' ) ) );
+  stream.add( gulp.src( 'node_modules/zetajs/source/zeta_helper.js' ).pipe( gulp.dest( distDir + 'assets/vendor/zetajs/' ) ) );
+  stream.add( gulp.src( 'node_modules/zetajs/source/zeta_helper_worker.js' ).pipe( gulp.dest( distDir + 'assets/vendor/zetajs/' ) ) );
   stream.add( gulp.src( 'node_modules/w3-css/3/w3.css' ).pipe( gulp.dest( distDir + 'assets/vendor/w3/' ) ) );
 
   stream.add( gulp.src( 'Modern_business_letter_sans_serif.ott' ).pipe( gulp.dest( distDir + 'assets/' ) ) );

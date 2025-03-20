@@ -5,6 +5,8 @@
 // Switch the web worker in the browsers debug tab to debug this code.
 // It's the "em-pthread" web worker with the most memory usage, where "zetajs" is defined.
 
+importScripts('./assets/vendor/zetajs/zeta_helper_worker.js');
+
 'use strict';
 
 
@@ -14,6 +16,7 @@ let zetajs, css;
 // = global variables (some are global for easier debugging) =
 // common variables:
 let context, desktop, xModel, toolkit, topwin, ctrl;
+let zHW;
 
 
 function demo() {
@@ -39,8 +42,8 @@ function demo() {
   loadFile();
   // Turn off UI elements.
   // Permanant settings. Don't run again on a document reload.
-  dispatch('.uno:Sidebar');
-  dispatch('.uno:Ruler');
+  zHW.dispatch(ctrl, context, '.uno:Sidebar');
+  zHW.dispatch(ctrl, context, '.uno:Ruler');
 
   zetajs.mainPort.onmessage = function (e) {
     switch (e.data.cmd) {
@@ -54,7 +57,7 @@ function demo() {
       loadFile();
       break;
     case 'toggleFormat':
-      dispatch('.uno:' + e.data.id);
+      ZetaHelperWorker.dispatch(ctrl, context, '.uno:' + e.data.id);
       break;
     case 'insert_address':
       const recipient = e.data.recipient;
@@ -142,36 +145,22 @@ function loadFile() {
   ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
 
   for (const id of ['Bold', 'Italic', 'Underline']) {
-    const urlObj = transformUrl('.uno:' + id);
+    const urlObj = zHW.transformUrl(context, '.uno:' + id);
     const listener = zetajs.unoObject([css.frame.XStatusListener], {
       disposing: function(source) {},
       statusChanged: function(state) {
         zetajs.mainPort.postMessage({cmd: 'setFormat', id, state: zetajs.fromAny(state.State)});
       }
     });
-    queryDispatch(urlObj).addStatusListener(listener, urlObj);
+    zHW.queryDispatch(ctrl, urlObj).addStatusListener(listener, urlObj);
   }
-}
-
-function transformUrl(unoUrl) {
-  const ioparam = {val: new css.util.URL({Complete: unoUrl})};
-  css.util.URLTransformer.create(context).parseStrict(ioparam);
-  return ioparam.val;
-}
-
-function queryDispatch(urlObj) {
-  return ctrl.queryDispatch(urlObj, '_self', 0);
-}
-
-function dispatch(unoUrl) {
-  const urlObj = transformUrl(unoUrl);
-  queryDispatch(urlObj).dispatch(urlObj, []);
 }
 
 Module.zetajs.then(function(pZetajs) {
   // initializing zetajs environment:
   zetajs = pZetajs;
   css = zetajs.uno.com.sun.star;
+  zHW = new ZetaHelperWorker(zetajs);
   demo();  // launching demo
 });
 

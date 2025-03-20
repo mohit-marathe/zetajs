@@ -84,6 +84,7 @@
         </td>
       </tr>
     </table>
+    <script src="./assets/vendor/zetajs/zeta_helper.js"></script>
     <script type="text/javascript">
       'use strict';
 
@@ -91,7 +92,6 @@
       // Use an empty string if those files are in the same directory.
       let soffice_base_url = '<!-- soffice.js Base -->';
 
-      const canvas = document.getElementById('qtcanvas');
       const addrName = document.getElementById('addrName');
       const loadingInfo = document.getElementById('loadingInfo');
       const btnNamedAry = {
@@ -103,29 +103,11 @@
         Insert: document.getElementById('btnInsert'),
         Reload: document.getElementById('btnReload'),
       };
-
-      // Workaround initial canvas size +2 bug.
-      canvas.height -= 2;
-      canvas.width -= 2;
-
-
-      var Module = {
-        canvas,
-        uno_scripts: ['./assets/vendor/zetajs/zeta.js', './office_thread.js'],
-        locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
-      };
-      if (soffice_base_url !== '') {
-        // Must not be set when soffice.js is in the same directory.
-        Module.mainScriptUrlOrBlob = new Blob(
-            ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
-      }
-
-      let thrPort;     // zetajs thread communication
-      let lastDevicePixelRatio = window.devicePixelRatio;
+      const zHM = new ZetaHelperMain(soffice_base_url);
 
 
       function formatBtn(btnObj) {
-        thrPort.postMessage({
+        zHM.thrPort.postMessage({
           cmd: 'toggleFormat',
           id: btnObj.id.substring(3),
         });
@@ -133,42 +115,25 @@
       }
 
       function btnDownloadFunc(btnObj) {
-        thrPort.postMessage({cmd: 'download', id: btnObj.id});
+        zHM.thrPort.postMessage({cmd: 'download', id: btnObj.id});
       }
 
       function btnInsertFunc() {
         if (addrName.selectedIndex != -1) {
           const recipient = data[addrName.selectedIndex];
-          thrPort.postMessage({cmd: 'insert_address', recipient});
+          zHM.thrPort.postMessage({cmd: 'insert_address', recipient});
         }
       }
 
       function btnReloadFunc() {
         for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = true;
-        thrPort.postMessage({cmd: 'reload'});
+        zHM.thrPort.postMessage({cmd: 'reload'});
       }
 
       async function load_business_letter_sans() {
         const response = await fetch("./assets/Modern_business_letter_sans_serif.ott");
         return response.arrayBuffer();
       }
-
-      window.onresize = function() {
-        // Workaround to inform Qt5 about changed browser zoom.
-        setTimeout(function() {
-          if (lastDevicePixelRatio) {
-            if (lastDevicePixelRatio != window.devicePixelRatio) {
-              lastDevicePixelRatio = false;
-              canvas.style.width = parseInt(canvas.style.width) + 1 + 'px';
-              window.dispatchEvent(new Event('resize'));
-            }
-          } else {
-            lastDevicePixelRatio = window.devicePixelRatio
-            canvas.style.width = parseInt(canvas.style.width) - 1 + 'px';
-            window.dispatchEvent(new Event('resize'));
-          }
-        }, 100);
-      };
 
 
       const data = [
@@ -356,53 +321,43 @@
       }
 
 
-      const soffice_js = document.createElement("script");
-      soffice_js.src = soffice_base_url + "soffice.js";
-      // "onload" runs after the loaded script has run.
-      soffice_js.onload = function() {
-        console.log('PLUS: Configuring Module');
-        Module.uno_main.then(function(pThrPort) {
-          thrPort = pThrPort;
-          thrPort.onmessage = function(e) {
-            switch (e.data.cmd) {
-            case 'ready':
-              loadingInfo.style.display = 'none';
-              for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = false;
-              // Trigger resize of the embedded window to match the canvas size.
-              // May somewhen be obsoleted by:
-              //   https://gerrit.libreoffice.org/c/core/+/174040
-              window.dispatchEvent(new Event('resize'));
-              break;
-            case 'download':
-              const bytes = FS.readFile('/tmp/output');
-              const format = e.data.id === 'btnOdt' ? 'odt' : 'pdf';
-              const blob = new Blob([bytes], {type: 'application/' + format});
-              const link = document.createElement('a');
-              link.href = URL.createObjectURL(blob);
-              link.download = 'letter.' + format;
-              link.style = 'display:none';
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              URL.revokeObjectURL(link.href);
-              break;
-            case 'setFormat':
-              btnNamedAry[e.data.id].style.borderStyle = e.data.state ? 'inset' : '';
-              break;
-            default:
-              throw Error('Unknown message command ' + e.data.cmd);
-            }
-          };
+      zHM.start(function() {
+        zHM.thrPort.onmessage = function(e) {
+          switch (e.data.cmd) {
+          case 'ready':
+            loadingInfo.style.display = 'none';
+            for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = false;
+            // Trigger resize of the embedded window to match the canvas size.
+            // May somewhen be obsoleted by:
+            //   https://gerrit.libreoffice.org/c/core/+/174040
+            window.dispatchEvent(new Event('resize'));
+            break;
+          case 'download':
+            const bytes = FS.readFile('/tmp/output');
+            const format = e.data.id === 'btnOdt' ? 'odt' : 'pdf';
+            const blob = new Blob([bytes], {type: 'application/' + format});
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'letter.' + format;
+            link.style = 'display:none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+            break;
+          case 'setFormat':
+            btnNamedAry[e.data.id].style.borderStyle = e.data.state ? 'inset' : '';
+            break;
+          default:
+            throw Error('Unknown message command ' + e.data.cmd);
+          }
+        };
 
-          load_business_letter_sans().then(function(aryBuf) {
-            FS.writeFile('/tmp/Modern_business_letter_sans_serif.ott',
-                new Uint8Array(aryBuf));
-          });
+        load_business_letter_sans().then(function(aryBuf) {
+          FS.writeFile('/tmp/Modern_business_letter_sans_serif.ott',
+              new Uint8Array(aryBuf));
         });
-      };
-      console.log('Loading WASM binaries for ZetaJS from: ' + soffice_base_url);
-      // Hint: The global objects "canvas" and "Module" must exist before the next line.
-      document.body.appendChild(soffice_js);
+      });
     </script>
   </body>
 </html>

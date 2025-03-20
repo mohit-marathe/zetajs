@@ -1,14 +1,19 @@
 {
   "name": "zetajs",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Access ZetaOffice in the Browser from JavaScript via UNO",
-  "main": "source/zeta.js",
+  "exports": {
+    ".": "./source/zeta.js",
+    ".": "./source/zeta_helper.js",
+    ".": "./package.json"
+  },
   "directories": {
     "doc": "docs",
     "example": "examples",
     "test": "test"
   },
   "scripts": {
+    "build": "tsc",
     "test": "jest test/e2e/",
     "test:convertpdf": "cd examples/convertpdf && npm install && npm run start-nobrowser"
   },
@@ -29,9 +34,11 @@
   },
   "homepage": "https://github.com/allotropia/zetajs#readme",
   "devDependencies": {
+    "@types/node": "^22.13.10",
     "concurrently": "^9.1.0",
     "jest": "^29.7.0",
     "jest-puppeteer": "^11.0.0",
-    "puppeteer": "^23.11.1"
+    "puppeteer": "^23.11.1",
+    "typescript": "^5.8.2"
   }
 }
