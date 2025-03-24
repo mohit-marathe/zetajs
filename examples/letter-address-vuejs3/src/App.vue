@@ -21,13 +21,10 @@
 
 <template>
   <div id="app">
+    <h1>ZetaJS: Letter Address Tool</h1>
+
     <table class="main-table">
       <tbody>
-        <tr>
-          <td colspan="3">
-            <div><h1>ZetaJS: Letter Address Tool</h1></div>
-          </td>
-        </tr>
         <tr>
           <td rowspan="2" class="tab-buttons">
             <button class="w3-button active" id="btnLetter" onclick="btnSwitchTab('letter')" disabled>Letter</button>
