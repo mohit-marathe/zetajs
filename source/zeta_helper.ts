@@ -3,20 +3,20 @@
 
 
 
-class ZetaHelperMain {
+export class ZetaHelperMain {
   canvas: HTMLElement;
   Module: any;
   soffice_base_url: string;
   thrPort!: MessagePort;  // zetajs thread communication
 
 
-  constructor(soffice_base_url: string) {
+  constructor(soffice_base_url: string, import_scripts: string) {
     // Enable usage of LOWA builds with UI.
     const canvas = document.getElementById('qtcanvas')!;
 
     const Module: any = {
       canvas,
-      uno_scripts: ['./assets/vendor/zetajs/zeta.js', './office_thread.js'],
+      uno_scripts: ['./assets/vendor/zetajs/zeta.js', './assets/vendor/zetajs/zeta_helper_worker.js'],
       locateFile: function(path: string, prefix: string) { return (prefix || soffice_base_url) + path; },
     };
     if (soffice_base_url !== '') {

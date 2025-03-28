@@ -84,9 +84,8 @@
         </td>
       </tr>
     </table>
-    <script src="./assets/vendor/zetajs/zeta_helper.js"></script>
-    <script type="text/javascript">
-      'use strict';
+    <script type="module">
+      import { ZetaHelperMain } from './assets/vendor/zetajs/zeta_helper.js';
 
       // Set base URL to the soffice.* files.
       // Use an empty string if those files are in the same directory.
@@ -103,7 +102,7 @@
         Insert: document.getElementById('btnInsert'),
         Reload: document.getElementById('btnReload'),
       };
-      const zHM = new ZetaHelperMain(soffice_base_url);
+      const zHM = new ZetaHelperMain(soffice_base_url, ['./office_thread.js']);
 
 
       function formatBtn(btnObj) {

@@ -5,7 +5,7 @@
 // Switch the web worker in the browsers debug tab to debug this code.
 // It's the "em-pthread" web worker with the most memory usage, where "zetajs" is defined.
 
-importScripts('./assets/vendor/zetajs/zeta_helper_worker.js');
+import('./assets/vendor/zetajs/zeta_helper_worker.js');
 
 'use strict';
 
