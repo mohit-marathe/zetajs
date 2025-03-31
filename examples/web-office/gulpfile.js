@@ -38,7 +38,7 @@ function clean() {
 
 // Task: Compile HTML
 function compileHTML() {
-  let css_links ='<link href="assets/vendor/w3/w3.css" rel="stylesheet">';
+  let css_links ='<link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">';
 
   return gulp.src(['index.html'])
     .pipe( inject.replace('<!-- Vendor CSS Files -->', css_links) )
@@ -60,7 +60,7 @@ function copyVendors() {
   let stream = mergeStream();
 
   stream.add( gulp.src( 'node_modules/zetajs/source/zeta.js' ).pipe( gulp.dest( distDir + 'assets/vendor/zetajs/' ) ) );
-  stream.add( gulp.src( 'node_modules/w3-css/3/w3.css' ).pipe( gulp.dest( distDir + 'assets/vendor/w3/' ) ) );
+  stream.add( gulp.src( 'node_modules/bootstrap/dist/css/bootstrap.min.css' ).pipe( gulp.dest( distDir + 'assets/vendor/bootstrap/' ) ) );
 
   return stream;
 }
