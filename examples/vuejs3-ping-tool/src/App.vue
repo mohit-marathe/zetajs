@@ -27,8 +27,8 @@
   <div id="app" >
     <div class="container">
       <div class="row">
-        <div class="col-8 mt-3">
-          <h1>ZetaJS Ping Tool (Calc Demo with Vue.js-3)</h1>
+        <div class="col-12 mt-3">
+          <h1>ZetaJS Ping Tool</h1>
         </div>
       </div>
       <div class="row">
