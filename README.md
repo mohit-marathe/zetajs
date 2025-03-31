@@ -12,8 +12,8 @@ For a detailed description of zetajs, see the [Starting Points](docs/start.md) d
 
 (Technically, `zeta.js` provides a wrapper on top of the
 [Embind-based](https://blog.allotropia.de/2024/04/30/libreoffice-javascripted/) JavaScript scripting
-capabilities for LibreOffice.  But it aims to provide a nicer, more idiomatic JavaScript experience,
-and completely hides the underlying machinery.  In the future, it may even move away from that
+capabilities for LibreOffice. But it aims to provide a nicer, more idiomatic JavaScript experience,
+and completely hides the underlying machinery. In the future, it may even move away from that
 underlying Embind layer, in a backward-compatible way.)
 
 ## Demo
