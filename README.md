@@ -16,22 +16,20 @@ capabilities for LibreOffice. But it aims to provide a nicer, more idiomatic Jav
 and completely hides the underlying machinery. In the future, it may even move away from that
 underlying Embind layer, in a backward-compatible way.)
 
-## Demo
-
-To see a demo of zetajs in use, visit [zetaoffice.net/#tryit](https://zetaoffice.net/#tryit).
-
-![screenshots](screenshots.png)
-
-## Examples and test code
-
-Check out the examples in the [examples](https://github.com/allotropia/zetajs/tree/main/examples) folder. We recommend to start with the [standalone](https://github.com/allotropia/zetajs/tree/main/examples/standalone) example.
-
-Those examples are configured to run without requiring an own LibreOffice WASM (LOWA) build. They make use of the ZetaOffice CDN.
-
 ## Using ZetaOffice
 
 Visit [zetaoffice.net](https://zetaoffice.net) to learn more about ZetaOffice, its CDN and how to host ZetaOffice yourself.
 
+### Demo
+To see a demo of zetajs in use, visit [zetaoffice.net/#tryit](https://zetaoffice.net/#tryit).
+
+![screenshots](screenshots.png)
+
+### Examples and test code
+
+Check out the examples in the [examples](https://github.com/allotropia/zetajs/tree/main/examples) folder. We recommend to start with the [standalone](https://github.com/allotropia/zetajs/tree/main/examples/standalone) example.
+
+Those examples are configured to run without requiring an own LibreOffice WASM (LOWA) build. They make use of the ZetaOffice CDN.
 
 ## Why zetajs
 
