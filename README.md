@@ -32,7 +32,6 @@ Those examples are configured to run without requiring an own LibreOffice WASM (
 
 Visit [zetaoffice.net](https://zetaoffice.net) to learn more about ZetaOffice, its CDN and how to host ZetaOffice yourself.
 
-Using the official versions from [zetaoffice.net](https://zetaoffice.net) is the recommended way for most users. Only read on if you intend to build or debug LOWA itself.
 
 ## Why zetajs
 
@@ -67,7 +66,7 @@ See README.md in the individual folder of the example.
 
 ## Using with an own WASM build
 
-By default the examples load a precompiled ZetaOffice from https://cdn.zetaoffice.net/zetaoffice_latest/
+Using the official versions from [zetaoffice.net](https://zetaoffice.net) is the recommended way for most users. Only read on if you intend to build or debug LOWA itself.
 
 Please have a look into the respective config.sample.js file of each demo to use another WASM build.
 
