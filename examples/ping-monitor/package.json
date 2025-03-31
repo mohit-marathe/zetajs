@@ -20,8 +20,8 @@
     "yargs": "^17.7.2"
   },
   "dependencies": {
+    "bootstrap": "^5.3.3",
     "ping.js": "^0.3.0",
-    "w3-css": "^4.1.0",
     "zetajs": "file:../.."
   }
 }

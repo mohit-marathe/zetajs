@@ -34,8 +34,8 @@ Check out our examples. Each example has instructions how to run it in its respe
 | [standalone](https://github.com/allotropia/zetajs/tree/main/examples/standalone) | Standalone Writer document canvas with simple formatting options. *Simple code, easy to start with* | Bootstrap |https://zetaoffice.net/demos/standalone/ |
 | [letter-address-vuejs3](https://github.com/allotropia/zetajs/tree/main/examples/letter-address-vuejs3) | Web form letter demo | Vue, w3.css | https://zetaoffice.net/demos/letter-address-vuejs3/
 | [web-office](https://github.com/allotropia/zetajs/tree/main/examples/web-office) | Full office suite in the browser | Bootstrap | https://zetaoffice.net/demos/web-office/
-| [ping-monitor](https://github.com/allotropia/zetajs/tree/main/examples/ping-monitor) | Chart with values being added on the fly | w3.css, ping.js | https://zetaoffice.net/demos/ping-monitor/
-| [vuejs3-ping-tool](https://github.com/allotropia/zetajs/tree/main/examples/vuejs3-ping-tool) | Chart with values being added on the fly | Vue, ping.js | https://zetaoffice.net/demos/vuejs3-ping-tool/
+| [ping-monitor](https://github.com/allotropia/zetajs/tree/main/examples/ping-monitor) | Chart with values being added on the fly | Bootstrap, ping.js | https://zetaoffice.net/demos/ping-monitor/
+| [vuejs3-ping-tool](https://github.com/allotropia/zetajs/tree/main/examples/vuejs3-ping-tool) | Chart with values being added on the fly | Vue, Bootstrap, ping.js | https://zetaoffice.net/demos/vuejs3-ping-tool/
 | [convertpdf](https://github.com/allotropia/zetajs/tree/main/examples/convertpdf) | local file to PDF conversion service | Plain javascript | https://zetaoffice.net/demos/convertpdf/
 | [simple-examples](https://github.com/allotropia/zetajs/tree/main/examples/simple-examples) | small examples displaying various API features | Plain javascript
 

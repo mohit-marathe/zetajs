@@ -38,7 +38,7 @@ function clean() {
 
 // Task: Compile HTML
 function compileHTML() {
-  let css_links ='<link href="assets/vendor/w3/w3.css" rel="stylesheet">';
+  let css_links ='<link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">';
   let js_links ='<script src="assets/vendor/ping/ping.js" type="text/javascript"></script>';
 
   return gulp.src(['index.html'])
@@ -63,7 +63,7 @@ function copyVendors() {
 
   stream.add( gulp.src( 'node_modules/zetajs/source/zeta.js' ).pipe( gulp.dest( distDir + 'assets/vendor/zetajs/' ) ) );
   stream.add( gulp.src( 'node_modules/ping.js/dist/ping.js' ).pipe( gulp.dest( distDir + 'assets/vendor/ping/' ) ) );
-  stream.add( gulp.src( 'node_modules/w3-css/3/w3.css' ).pipe( gulp.dest( distDir + 'assets/vendor/w3/' ) ) );
+  stream.add( gulp.src( 'node_modules/bootstrap/dist/css/bootstrap.min.css' ).pipe( gulp.dest( distDir + 'assets/vendor/bootstrap/' ) ) );
 
   stream.add( gulp.src( 'pwa-icon-192x192.png' ).pipe( gulp.dest( distDir + 'assets/' ) ) );
   stream.add( gulp.src( 'pwa-manifest.json' ).pipe( gulp.dest( distDir + 'assets/' ) ) );

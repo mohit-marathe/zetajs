@@ -42,20 +42,20 @@
     <!-- Vendor JS Files -->
   </head>
   <body>
-    <h1>ZetaJS Demo: Ping Monitor</h1>
-    <table>
-      <tr>
-        <td style="width:70px;">
-          <button class="w3-button w3-round w3-theme" onclick="btnPing()">Ping</button>
-        </td>
-        <td>
-          <input class="w3-input w3-round w3-border" style="width:400px;" type="text" id="pingTarget" value="https://zetaoffice.net/" placeholder="https://zetaoffice.net/">
-        </td>
-      </tr>
-    </table><br>
-    <table style="width:1150px; border-spacing: 0px;">
-      <tr>
-        <td>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 mt-3 mb-2">
+          <h1>ZetaJS Demo: Ping Monitor</h1>
+        </div>
+        <div class="col-lg-4">
+          <div class="input-group mb-3">
+            <input type="text" id="pingTarget" class="form-control" value="https://zetaoffice.net" aria-label="Ping target" aria-describedby="btn_ping">
+            <button class="btn btn-dark" type="button" id="btn_ping" onclick="btnPing()">Ping</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
           <div style="position: relative">
             <!--  position: Makes the loading animation overlay the canvas.
                     Needs a surrounding table with fixed width to work properly. -->
@@ -78,9 +78,9 @@
               -->
             </canvas>
           </div>
-        </td>
-      </tr>
-    </table>
+        </div>
+      </div>
+    </div>
     <script type="text/javascript">
       'use strict';
 
