@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
-    "w3-css": "^4.1.0",
     "zetajs": "file:../.."
   }
 }
