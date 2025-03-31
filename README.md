@@ -29,7 +29,9 @@ To see a demo of zetajs in use, visit [zetaoffice.net/#tryit](https://zetaoffice
 
 Check out the examples in the [examples](https://github.com/allotropia/zetajs/tree/main/examples) folder. We recommend to start with the [standalone](https://github.com/allotropia/zetajs/tree/main/examples/standalone) example.
 
-Those examples are configured to run without requiring an own LibreOffice WASM (LOWA) build. They make use of the ZetaOffice CDN.
+Each example has a README.md in its respective folder with instructions how to run it.
+
+These examples are configured to run without requiring an own LibreOffice WASM (LOWA) build. They make use of the ZetaOffice CDN.
 
 ## Why zetajs
 
@@ -57,10 +59,6 @@ for (const xParagraph of xParaEnumeration) {
     xParagraph.setPropertyValue("CharColor", color);
 }
 ```
-
-## Running the examples.
-
-See README.md in the individual folder of the example.
 
 ## Using with an own WASM build
 
