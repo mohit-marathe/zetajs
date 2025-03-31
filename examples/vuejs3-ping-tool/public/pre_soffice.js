@@ -19,7 +19,6 @@ let lastDevicePixelRatio = window.devicePixelRatio;
 
 const loadingInfo = document.getElementById('loadingInfo');
 const canvas = document.getElementById('qtcanvas');
-const pingSection = document.getElementById("ping_section");
 const pingTarget = document.getElementById("ping_target");
 
 
@@ -65,9 +64,6 @@ function pingResult(url, err, data) {
   let output = data;
   // If /favicon.ico can't be loaded the result still represents the response time.
   if (err) output = hostname + ": " + output + " " + err;
-  console.log(output);
-  if (urls_ary_i === 0) pingSection.innerHTML = "";
-  pingSection.innerHTML = pingSection.innerHTML + hostname + ": " + data + "<br>";
   thrPort.postMessage({cmd: 'ping_result', id:{url, data} });
 }
 

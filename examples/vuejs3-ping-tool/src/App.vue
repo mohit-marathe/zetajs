@@ -2,6 +2,8 @@
 <script setup lang=ts>
   import ControlBar from '@/components/ControlBar.vue';
   import Ping from 'ping.js';
+  import "bootstrap/dist/css/bootstrap.min.css"
+  import "bootstrap"
 </script>
 
 <script lang=ts>
@@ -22,17 +24,25 @@
 </script>
 
 <template>
-  <div id="app">
-    <table style="width:1150px; border-spacing: 10px;">
-      <tr>
-        <td>
-          <div><h1>ZetaJS Ping Tool (Calc Demo with Vue.js-3)</h1></div>
+  <div id="app" >
+    <div class="container">
+      <div class="row">
+        <div class="col-8 mt-3">
+          <h1>ZetaJS Ping Tool (Calc Demo with Vue.js-3)</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4 mt-3">
+          <div class="input-group mb-3">
+            <input type="text" id="ping_target" class="form-control" placeholder="https://example.net" aria-label="Ping target" aria-describedby="btn_ping">
+            <button class="btn btn-dark" type="button" id="btn_ping" onclick="btnPing()">Ping</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-8">
           <ControlBar/>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <div onselectstart="event.preventDefault()" style="position: relative">
+          <div onselectstart="event.preventDefault()" style="position: relative" class="mt-1">
             <!--  position: Makes the loading animation overlay the canvas.
                     Needs a surrounding table with fixed width to work properly.
                   onselectstart: Prevents accidently selecting / highlighting the canvas.
@@ -51,18 +61,9 @@
               <!-- An outline is fine though. -->
             </canvas>
           </div>
-        </td>
-        <td style="vertical-align: top; width:250px">
-          <div>
-            <button onclick="btnPing()">Ping</button>&nbsp;
-              <input type="text" id="ping_target" name="ping_target" value="https://zetaoffice.net/">
-          </div>
-          <div>
-            <span id="ping_section">Loading ping tool...</span>
-          </div>
-        </td>
-      </tr>
-    </table>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -75,7 +76,7 @@
     width: 120px;
     height: 120px;
     position: relative;
-    left: 60px;  /* adjust to center */
+    left: 100px;  /* adjust to center */
     animation: spin 2s linear 30; /* 60 seconds */
   }
   @keyframes spin {
