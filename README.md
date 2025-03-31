@@ -1,6 +1,6 @@
 # zetajs: Access ZetaOffice in the Browser from JavaScript via UNO
 
-The `zeta.js` library provides the facilities to run an instance of ZetaOffice integrated in your
+The zetajs library provides the facilities to run an instance of ZetaOffice integrated in your
 web site, allowing you to control it with JavaScript code via the LibreOffice
 [UNO](https://wiki.documentfoundation.org/Documentation/DevGuide) technology.
 
@@ -10,7 +10,7 @@ site, to a headless zetajs instance that does document conversion in the backgro
 
 For a detailed description of zetajs, see the [Starting Points](docs/start.md) documentation.
 
-(Technically, `zeta.js` provides a wrapper on top of the
+(Technically, zetajs provides a wrapper on top of the
 [Embind-based](https://blog.allotropia.de/2024/04/30/libreoffice-javascripted/) JavaScript scripting
 capabilities for LibreOffice. But it aims to provide a nicer, more idiomatic JavaScript experience,
 and completely hides the underlying machinery. In the future, it may even move away from that
@@ -31,11 +31,11 @@ Check out the examples in the [examples](https://github.com/allotropia/zetajs/tr
 
 Each example has a README.md in its respective folder with instructions how to run it.
 
-These examples are configured to run without requiring an own LibreOffice WASM (LOWA) build. They make use of the ZetaOffice CDN.
+These examples use the ZetaOffice CDN to get you started quickly.
 
 ## Why zetajs
 
-See how zetajs makes scripting LibreOffice WASM easy:
+See how zetajs makes scripting ZetaOffice easy, building on the foundation of the LibreOffice UNO API:
 
 ### 1. Load a document
 
@@ -60,11 +60,9 @@ for (const xParagraph of xParaEnumeration) {
 }
 ```
 
-## Using with an own WASM build
+## Using with an own build
 
-Using the official versions from [zetaoffice.net](https://zetaoffice.net) is the recommended way for most users. Only read on if you intend to build or debug LOWA itself.
-
-Please have a look into the respective config.sample.js file of each demo to use another WASM build.
+Please have a look into the respective config.sample.js file of each demo to use another ZetaOffice build.
 
 You may also compile a custom [LOWA build](https://git.libreoffice.org/core/+/refs/heads/master/static/README.wasm.md). There the folder `workdir/installation/LibreOffice/emscripten/` will contain the files for the web root. If you host the WASM binary on another origin then the example code you will need to set a [CORS header](https://developer.mozilla.org/docs/Web/HTTP/CORS).
 
