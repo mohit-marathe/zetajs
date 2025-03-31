@@ -85,7 +85,10 @@ function pingExamples(err, data) {
 
 function btnPing() {
   // Using Ping callback interface.
-  const url = pingTarget.value;
+  let url = pingTarget.value;
+  if (!url.startsWith('http')) {
+    url = 'http://' + url;
+  }
   pingInst.ping(url, function(err, data) {
     pingResult(url, err, data);
   });
