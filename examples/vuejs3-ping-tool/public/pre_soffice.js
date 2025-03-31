@@ -128,7 +128,6 @@ const soffice_js = document.createElement("script");
 soffice_js.src = soffice_base_url + "soffice.js";
 // "onload" runs after the loaded script has run.
 soffice_js.onload = function() {
-  console.log('PLUS: Configuring Module');
   Module.uno_main.then(function(pThrPort) {
     // Should run after App.vue has set PingModule but before demo().
     // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
