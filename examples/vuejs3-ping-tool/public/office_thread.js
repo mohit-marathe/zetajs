@@ -86,7 +86,7 @@ function demo() {
       break;
     case 'ping_result':
       if (ping_line === undefined) {
-          ping_line = 1;  // overwrite example.org
+          ping_line = 1;  // start at line 1 (line 0 is the header)
       } else {
           ping_line = findEmptyRowInCol1(activeSheet);
       }
