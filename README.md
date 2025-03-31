@@ -27,9 +27,17 @@ To see a demo of zetajs in use, visit [zetaoffice.net/#tryit](https://zetaoffice
 
 ### Examples and test code
 
-Check out the examples in the [examples](https://github.com/allotropia/zetajs/tree/main/examples) folder. We recommend to start with the [standalone](https://github.com/allotropia/zetajs/tree/main/examples/standalone) example.
+Check out our examples. Each example has instructions how to run it in its respective folder.
 
-Each example has a README.md in its respective folder with instructions how to run it.
+| Example | Description | Toolkits/Libraries | Online Demo |
+| --- | --- | --- | --- |
+| [standalone](https://github.com/allotropia/zetajs/tree/main/examples/standalone) | Standalone Writer document canvas with simple formatting options. *Simple code, easy to start with* | Bootstrap |https://zetaoffice.net/demos/standalone/ |
+| [letter-address-vuejs3](https://github.com/allotropia/zetajs/tree/main/examples/letter-address-vuejs3) | Web form letter demo | Vue, w3.css | https://zetaoffice.net/demos/letter-address-vuejs3/
+| [web-office](https://github.com/allotropia/zetajs/tree/main/examples/web-office) | Full office suite in the browser | Vue, w3.css | https://zetaoffice.net/demos/web-office/
+| [ping-monitor](https://github.com/allotropia/zetajs/tree/main/examples/ping-monitor) | Chart with values being added on the fly | w3.css, ping.js | https://zetaoffice.net/demos/ping-monitor/
+| [vuejs3-ping-tool](https://github.com/allotropia/zetajs/tree/main/examples/vuejs3-ping-tool) | Chart with values being added on the fly | Vue, ping.js | https://zetaoffice.net/demos/vuejs3-ping-tool/
+| [convertpdf](https://github.com/allotropia/zetajs/tree/main/examples/convertpdf) | local file to PDF conversion service | Plain javascript | https://zetaoffice.net/demos/convertpdf/
+| [simple-examples](https://github.com/allotropia/zetajs/tree/main/examples/simple-examples) | small examples displaying various API features | Plain javascript
 
 These examples use the ZetaOffice CDN to get you started quickly.
 
