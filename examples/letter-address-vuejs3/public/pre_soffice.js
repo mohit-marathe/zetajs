@@ -54,7 +54,6 @@ if (soffice_base_url !== '') {
 function jsPassCtrlBar(pTbDataJs) {
   tbDataJs = pTbDataJs;
   disabledElementsAry.push(tbDataJs);
-  console.log('PLUS: assigned tbDataJs');
 }
 
 function toggleFormatting(id, value) {
@@ -161,7 +160,6 @@ const soffice_js = document.createElement("script");
 soffice_js.src = soffice_base_url + "soffice.js";
 // "onload" runs after the loaded script has run.
 soffice_js.onload = function() {
-  console.log('PLUS: Configuring Module');
   Module.uno_main.then(function(pThrPort) {
     thrPort = pThrPort;
     thrPort.onmessage = function(e) {
