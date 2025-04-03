@@ -230,7 +230,7 @@ function loadFile(fileTab) {
         // Storing the getContainerWindow() result is unstable.
         letterCtrl.getFrame().getContainerWindow().setPosSize(-1000,-1000,500,500,15);
         letterCtrl.getFrame().getContainerWindow().FullScreen = true;
-        
+
         // Get font list for toolbar.
         const fontsUrlObj = transformUrl('.uno:FontNameList');
         const fontsDispatcher = queryDispatch(letterCtrl, fontsUrlObj);

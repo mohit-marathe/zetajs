@@ -77,28 +77,20 @@ function btnSwitchTab(tab) {
     letterForeground = true;
     btnLetter.classList.add('active');
     btnTable.classList.remove('active');
-    controlbar_row.style.display = null;
+    controlbar.style.display = null;
     btnUpload.accept = '.odt';
     btnInsert.disabled = false;
-    canvasCell.colSpan = 2;
-    canvasCell.classList.remove('tab-address');
     addrNameCell.style.visibility = null;
     addrName.style.visibility = null;
-    canvas.style.height = canvas_height + 'px';
-    canvas.style.width = canvas_width + 'px';
   } else {  // table
     letterForeground = false;
     btnLetter.classList.remove('active');
     btnTable.classList.add('active');
-    controlbar_row.style.display = 'none';
+    controlbar.style.display = 'none';
     btnUpload.accept = '.ods';
     btnInsert.disabled = true;
-    canvasCell.colSpan = 3;
-    canvasCell.classList.add('tab-address');
     addrNameCell.style.visibility = 'hidden';
     addrName.style.visibility = 'hidden';
-    canvas.style.height = canvas_height + 51 + 'px';
-    canvas.style.width = canvas_width + 228 + 'px';
   }
   thrPort.postMessage({cmd: 'switch_tab', id: tab});
 }
