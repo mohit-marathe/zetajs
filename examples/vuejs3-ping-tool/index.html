@@ -6,9 +6,8 @@
     <script type="text/javascript">
       // Relative URLs break if the main URL's last directory has no slash.
       // Some web servers don't add that / as "Apache DirectorySlash" does.
-      if (!window.location.pathname.endsWith('/') && !window.location.pathname.endsWith('.html')) {
-        window.location.replace(window.location.pathname +
-          '/' + window.location.search + window.location.hash);
+      if (!location.pathname.endsWith('/') && !location.pathname.endsWith('.html')) {
+        location.replace(location.pathname + '/' + location.search + location.hash);
       }
     </script>
     <link rel="icon" href="/favicon.ico">
