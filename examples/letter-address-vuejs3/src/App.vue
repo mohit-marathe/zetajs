@@ -24,7 +24,7 @@ export default {
     <div class="container">
       <div class="row">
         <div class="col mt-3 mb-2">
-          <h1>ZetaJS: Letter Address Tool</h1>
+          <h1>ZetaJS: Letter Address Vue.js-3</h1>
         </div>
       </div>
       <div class="row">
