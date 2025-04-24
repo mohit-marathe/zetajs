@@ -21,7 +21,7 @@ export default {
 
 <template>
   <div id="app">
-    <div class="container">
+    <div class="container-fluid p-0">
       <div class="row">
         <div class="col mt-3 mb-2">
           <h1>ZetaJS: Letter Address Vue.js-3</h1>
