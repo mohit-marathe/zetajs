@@ -5,35 +5,33 @@
 // Switch the web worker in the browsers debug tab to debug this code.
 // It's the "em-pthread" web worker with the most memory usage, where "zetajs" is defined.
 
-'use strict';
+// JS mode: module
+import { ZetaHelperThread } from './assets/vendor/zetajs/zetaHelper.js';
 
 
 // global variables - zetajs environment:
-let zetajs, css;
+const zHT = new ZetaHelperThread();
+const zetajs = zHT.zetajs;
+const css = zHT.css;
+const context = zHT.context;
+const desktop = zHT.desktop;
+const toolkit = zHT.toolkit;
 
-// = global variables (some are global for easier debugging) =
+// = global variables =
 // common variables:
-let context, desktop, xModel, toolkit, topwin, ctrl;
+let xModel, topwin, ctrl;
 // example specific:
 let unoUrlsAry, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell;
 
+// export variables for debugging
+// Available for debugging via:
+//   globalThis.zetajsStore.threadJsContext
+export { zHT, xModel, topwin, ctrl, unoUrlsAry, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell };
+
 
 function demo() {
-  context = zetajs.getUnoComponentContext();
+  zHT.configDisableToolbars(["Calc"]);
 
-  // Turn off toolbars:
-  const config = css.configuration.ReadWriteAccess.create(context, 'en-US');
-  const uielems = config.getByHierarchicalName(
-    '/org.openoffice.Office.UI.CalcWindowState/UIElements/States');
-  for (const i of uielems.getElementNames()) {
-    const uielem = uielems.getByName(i);
-    if (uielem.getByName('Visible')) {
-      uielem.setPropertyValue('Visible', false);
-    }
-  }
-  config.commitChanges();
-
-  toolkit = css.awt.Toolkit.create(context);
   // css.awt.XExtendedToolkit::getActiveTopWindow only becomes non-null asynchronously, so wait
   // for it if necessary.
   // addTopWindowListener only works as intended when the following loadComponentFromURL sets
@@ -50,13 +48,12 @@ function demo() {
         if (!topwin) {
           topwin = toolkit.getActiveTopWindow();
           topwin.FullScreen = true;
-          zetajs.mainPort.postMessage({cmd: 'ready'});
+          zHT.thrPort.postMessage({cmd: 'ui_ready'});
         }
       },
       windowDeactivated(e) {},
     }));
 
-  desktop = css.frame.Desktop.create(context);
   xModel = desktop.loadComponentFromURL('file:///tmp/calc_ping_example.ods', '_default', 0, []);
   ctrl = xModel.getCurrentController();
   xComponent = ctrl.getModel();
@@ -67,8 +64,8 @@ function demo() {
     queryKey('@', charLocale, false);
 
   // Turn off UI elements:
-  dispatch('.uno:Sidebar');
-  dispatch('.uno:InputLineVisible');  // FormulaBar at the top
+  zHT.dispatch(ctrl, context, '.uno:Sidebar');
+  zHT.dispatch(ctrl, context, '.uno:InputLineVisible');  // FormulaBar at the top
   ctrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
   // topwin.setMenuBar(null) has race conditions on fast networks like localhost.
   ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
@@ -79,10 +76,10 @@ function demo() {
   button('underline', '.uno:Underline');
 
   activeSheet = ctrl.getActiveSheet();
-  zetajs.mainPort.onmessage = function (e) {
+  zHT.thrPort.onmessage = function (e) {
     switch (e.data.cmd) {
     case 'toggle':
-      dispatch(unoUrlsAry[e.data.id]);
+      zHT.dispatch(ctrl, context, unoUrlsAry[e.data.id]);
       break;
     case 'ping_result':
       if (ping_line === undefined) {
@@ -125,37 +122,17 @@ function findEmptyRowInCol1(activeSheet) {
 
 function button(id, unoUrl) {
   unoUrlsAry[id] = unoUrl;
-  const urlObj = transformUrl(unoUrl);
+  const urlObj = zHT.transformUrl(context, unoUrl);
   const listener = zetajs.unoObject([css.frame.XStatusListener], {
     disposing: function(source) {},
     statusChanged: function(state) {
-      zetajs.mainPort.postMessage({cmd: 'state', id, state: zetajs.fromAny(state.State)});
+      zHT.thrPort.postMessage({cmd: 'state', id, state: zetajs.fromAny(state.State)});
     }
   });
-  queryDispatch(urlObj).addStatusListener(listener, urlObj);
-  zetajs.mainPort.postMessage({cmd: 'enable', id});
+  zHT.queryDispatch(ctrl, urlObj).addStatusListener(listener, urlObj);
+  zHT.thrPort.postMessage({cmd: 'enable', id});
 }
 
-function transformUrl(unoUrl) {
-  const ioparam = {val: new css.util.URL({Complete: unoUrl})};
-  css.util.URLTransformer.create(context).parseStrict(ioparam);
-  return ioparam.val;
-}
-
-function queryDispatch(urlObj) {
-  return ctrl.queryDispatch(urlObj, '_self', 0);
-}
-
-function dispatch(unoUrl) {
-  const urlObj = transformUrl(unoUrl);
-  queryDispatch(urlObj).dispatch(urlObj, []);
-}
-
-Module.zetajs.then(function(pZetajs) {
-  // initializing zetajs environment:
-  zetajs = pZetajs;
-  css = zetajs.uno.com.sun.star;
-  demo();  // launching demo
-});
+demo();  // launching demo
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

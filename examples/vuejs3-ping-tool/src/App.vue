@@ -13,6 +13,7 @@
       config_js.src = "./config.js";
       document.body.appendChild(config_js);  // May fail. config.js is optional.
       const pre_soffice_js = document.createElement("script");
+      pre_soffice_js.type = "module";
       pre_soffice_js.src = "./pre_soffice.js";
       pre_soffice_js.onload = function() {
         PingModule = Ping;  // pass Ping module to plain JS
@@ -34,8 +35,8 @@
       <div class="row">
         <div class="col-4 mt-3">
           <div class="input-group mb-3">
-            <input type="text" id="ping_target" class="form-control" placeholder="https://example.net" aria-label="Ping target" aria-describedby="btn_ping">
-            <button class="btn btn-dark" type="button" id="btn_ping" onclick="btnPing()">Ping</button>
+            <input type="text" id="ping_target" class="form-control" placeholder="https://example.net" aria-label="Ping target" aria-describedby="btnPing">
+            <button class="btn btn-dark" type="button" id="btnPing">Ping</button>
           </div>
         </div>
       </div>

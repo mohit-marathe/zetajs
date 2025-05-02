@@ -1,45 +1,36 @@
 /* -*- Mode: JS; tab-width: 2; indent-tabs-mode: nil; js-indent-level: 2; fill-column: 100 -*- */
 // SPDX-License-Identifier: MIT
 
-'use strict';
+import { ZetaHelperMain } from './assets/vendor/zetajs/zetaHelper.js';
+
 
 // IMPORTANT:
 // Set base URL to the soffice.* files.
 // Use an empty string if those files are in the same directory.
-let soffice_base_url = 'https://cdn.zetaoffice.net/zetaoffice_latest/';
+let soffice_base_url;
 try {
   soffice_base_url = config_soffice_base_url; // May fail. config.js is optional.
 } catch {}
 
 
-let thrPort;     // zetajs thread communication
-let tbDataJs;    // toolbar dataset passed from vue.js for plain JS
-let PingModule;  // Ping module passed from vue.js for plain JS
+let thrPort;               // zetajs thread communication
+let tbDataJs;              // toolbar dataset passed from vue.js for plain JS
+window.PingModule = null;  // Ping module passed from vue.js for plain JS
 let lastDevicePixelRatio = window.devicePixelRatio;
 
 const loadingInfo = document.getElementById('loadingInfo');
 const canvas = document.getElementById('qtcanvas');
 const pingTarget = document.getElementById("ping_target");
+const btnPing = document.getElementById("btnPing");
 
-
-// Debugging note:
-// Switch the web worker in the browsers debug tab to debug code inside uno_scripts.
-var Module = {
-  canvas,
-  uno_scripts: ['./zeta.js', './office_thread.js'],
-  locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
-};
-if (soffice_base_url !== '') {
-  // Must not be set when soffice.js is in the same directory.
-  Module.mainScriptUrlOrBlob = new Blob(
-    ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
-}
+const zHM = new ZetaHelperMain('office_thread.js', {threadJsMode: 'module', soffice_base_url});
 
 
 function jsPassCtrlBar(pTbDataJs) {
   tbDataJs = pTbDataJs;
   console.log('PLUS: assigned tbDataJs');
 }
+window.jsPassCtrlBar = jsPassCtrlBar;  // make it accessible to vue.js
 
 function toggleFormatting(id) {
   setToolbarActive(id, !tbDataJs.active[id]);
@@ -83,7 +74,7 @@ function pingExamples(err, data) {
   }
 }
 
-function btnPing() {
+function btnPingFunc() {
   // Using Ping callback interface.
   let url = pingTarget.value;
   if (!url.startsWith('http')) {
@@ -95,9 +86,10 @@ function btnPing() {
 }
 pingTarget.addEventListener ("keyup", (evt) => {
   if(evt.key === 'Enter') {
-    btnPing();
+    btnPingFunc();
   }
 });
+btnPing.onclick = btnPingFunc;
 
 
 async function get_calc_ping_example_ods() {
@@ -124,18 +116,14 @@ window.onresize = function() {
 };
 
 
-const soffice_js = document.createElement("script");
-soffice_js.src = soffice_base_url + "soffice.js";
-// "onload" runs after the loaded script has run.
-soffice_js.onload = function() {
-  Module.uno_main.then(function(pThrPort) {
+zHM.start(function() {
     // Should run after App.vue has set PingModule but before demo().
     // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
     //   acutally having CORP on foreign origins.
     //   Also 'credentialless' isn't supported by Safari-18 as of 2024-09.
-    pingInst = new PingModule();
+    pingInst = new window.PingModule();
 
-    thrPort = pThrPort;
+    thrPort = zHM.thrPort;
     thrPort.onmessage = function(e) {
       switch (e.data.cmd) {
       case 'enable':
@@ -144,7 +132,7 @@ soffice_js.onload = function() {
       case 'state':
         setToolbarActive(e.data.id, e.data.state);
         break;
-      case 'ready':
+      case 'ui_ready':
         loadingInfo.style.display = 'none';
         // Trigger resize of the embedded window to match the canvas size.
         // May somewhen be obsoleted by:
@@ -157,7 +145,7 @@ soffice_js.onload = function() {
             pingInst.ping(urls_ary[urls_ary_i], function(err, data) {
               pingExamples(err, data);
             });
-          }, 1000);  // milliseconds
+          }, 6000);  // milliseconds
         });
         break;
       default:
@@ -167,12 +155,8 @@ soffice_js.onload = function() {
 
     get_calc_ping_example_ods().then(function(aryBuf) {
       calc_ping_example_ods = aryBuf;
-      FS.writeFile('/tmp/calc_ping_example.ods', new Uint8Array(calc_ping_example_ods));
+      zHM.FS.writeFile('/tmp/calc_ping_example.ods', new Uint8Array(calc_ping_example_ods));
     });
-  });
-};
-console.log('Loading WASM binaries for ZetaJS from: ' + soffice_base_url);
-// Hint: The global objects "canvas" and "Module" must exist before the next line.
-document.body.appendChild(soffice_js);
+});
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

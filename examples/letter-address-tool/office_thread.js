@@ -5,6 +5,7 @@
 // Switch the web worker in the browsers debug tab to debug this code.
 // It's the "em-pthread" web worker with the most memory usage, where "zetajs" is defined.
 
+// JS mode: script
 'use strict';
 
 
@@ -13,37 +14,24 @@ let zetajs, css;
 
 // = global variables (some are global for easier debugging) =
 // common variables:
-let context, desktop, xModel, toolkit, topwin, ctrl;
+let zHT, context, desktop, xModel, toolkit, topwin, ctrl;
 
 
 function demo() {
-  context = zetajs.getUnoComponentContext();
   const bean_overwrite = new css.beans.PropertyValue({Name: 'Overwrite', Value: true});
   const bean_odt_export = new css.beans.PropertyValue({Name: 'FilterName', Value: 'writer8'});
   const bean_pdf_export = new css.beans.PropertyValue({Name: 'FilterName', Value: 'writer_pdf_Export'});
+  zHT.configDisableToolbars(["Writer"]);
 
-  // Turn off toolbars:
-  const config = css.configuration.ReadWriteAccess.create(context, 'en-US');
-  const uielems = config.getByHierarchicalName(
-    '/org.openoffice.Office.UI.WriterWindowState/UIElements/States');
-  for (const i of uielems.getElementNames()) {
-    const uielem = uielems.getByName(i);
-    if (uielem.getByName('Visible')) {
-      uielem.setPropertyValue('Visible', false);
-    }
-  }
-  config.commitChanges();
-
-  toolkit = css.awt.Toolkit.create(context);
-  desktop = css.frame.Desktop.create(context);
-  loadFile();
-  // Turn off UI elements.
-  // Permanant settings. Don't run again on a document reload.
-  dispatch('.uno:Sidebar');
-  dispatch('.uno:Ruler');
-
-  zetajs.mainPort.onmessage = function (e) {
+  zHT.thrPort.onmessage = function (e) {
     switch (e.data.cmd) {
+    case 'file_provided':
+      loadFile();
+      // Turn off UI elements.
+      // Permanant settings. Don't run again on a document reload.
+      zHT.dispatch(ctrl, context, '.uno:Sidebar');
+      zHT.dispatch(ctrl, context, '.uno:Ruler');
+      break;
     case 'download':
       const format = e.data.id === 'btnOdt' ? bean_odt_export : bean_pdf_export;
       xModel.storeToURL( 'file:///tmp/output', [bean_overwrite, format]);
@@ -54,7 +42,7 @@ function demo() {
       loadFile();
       break;
     case 'toggleFormat':
-      dispatch('.uno:' + e.data.id);
+      zHT.dispatch(ctrl, context, '.uno:' + e.data.id);
       break;
     case 'insert_address':
       const recipient = e.data.recipient;
@@ -106,6 +94,8 @@ function demo() {
       throw Error('Unknonwn message command ' + e.data.cmd);
     }
   }
+
+  zHT.thrPort.postMessage({cmd: 'thr_running'});
 }
 
 function loadFile() {
@@ -126,7 +116,7 @@ function loadFile() {
         if (!topwin) {
           topwin = toolkit.getActiveTopWindow();
           topwin.FullScreen = true;
-          zetajs.mainPort.postMessage({cmd: 'ready'});
+          zetajs.mainPort.postMessage({cmd: 'ui_ready'});
         }
       },
       windowDeactivated(e) {},
@@ -142,36 +132,25 @@ function loadFile() {
   ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
 
   for (const id of ['Bold', 'Italic', 'Underline']) {
-    const urlObj = transformUrl('.uno:' + id);
+    const urlObj = zHT.transformUrl(context, '.uno:' + id);
     const listener = zetajs.unoObject([css.frame.XStatusListener], {
       disposing: function(source) {},
       statusChanged: function(state) {
         zetajs.mainPort.postMessage({cmd: 'setFormat', id, state: zetajs.fromAny(state.State)});
       }
     });
-    queryDispatch(urlObj).addStatusListener(listener, urlObj);
+    zHT.queryDispatch(ctrl, urlObj).addStatusListener(listener, urlObj);
   }
 }
 
-function transformUrl(unoUrl) {
-  const ioparam = {val: new css.util.URL({Complete: unoUrl})};
-  css.util.URLTransformer.create(context).parseStrict(ioparam);
-  return ioparam.val;
-}
 
-function queryDispatch(urlObj) {
-  return ctrl.queryDispatch(urlObj, '_self', 0);
-}
-
-function dispatch(unoUrl) {
-  const urlObj = transformUrl(unoUrl);
-  queryDispatch(urlObj).dispatch(urlObj, []);
-}
-
-Module.zetajs.then(function(pZetajs) {
-  // initializing zetajs environment:
-  zetajs = pZetajs;
-  css = zetajs.uno.com.sun.star;
+import('./assets/vendor/zetajs/zetaHelper.js').then(zetaHelper => {
+  zHT = new zetaHelper.ZetaHelperThread();
+  zetajs = zHT.zetajs;
+  css = zHT.css;
+  context = zHT.context;
+  desktop = zHT.desktop;
+  toolkit = zHT.toolkit;
   demo();  // launching demo
 });
 
