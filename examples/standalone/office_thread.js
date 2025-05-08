@@ -77,7 +77,7 @@ function demo() {
       dispatch(unoUrlsAry[e.data.id]);
       break;
     default:
-      throw Error('Unknonwn message command ' + e.data.cmd);
+      throw Error('Unknown message command: ' + e.data.cmd);
     }
   }
 }

@@ -34,7 +34,7 @@ function demo() {
       zetajs.mainPort.postMessage({cmd: 'download', id: e.data.id});
       break;
     default:
-      throw Error('Unknonwn message command ' + e.data.cmd);
+      throw Error('Unknown message command: ' + e.data.cmd);
     }
   }
 }

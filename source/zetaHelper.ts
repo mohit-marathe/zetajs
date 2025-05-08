@@ -95,7 +95,7 @@ export class ZetaHelperMain {
             app_init();
             break;
           default:
-            throw Error('Unknown message command AAAAAAAA ' + e.data.cmd);
+            throw Error('Unknown message command: ' + e.data.cmd);
           };
         }
       });

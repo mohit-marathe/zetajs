@@ -150,7 +150,7 @@
               elements[e.data.id].checked = e.data.state;
               break;
             default:
-              throw Error('Unknonwn message command ' + e.data.cmd);
+              throw Error('Unknown message command: ' + e.data.cmd);
             }
           };
         });

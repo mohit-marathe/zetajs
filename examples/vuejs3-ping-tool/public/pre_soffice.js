@@ -149,7 +149,7 @@ zHM.start(function() {
         });
         break;
       default:
-        throw Error('Unknown message command ' + e.data.cmd);
+        throw Error('Unknown message command: ' + e.data.cmd);
       }
     };
 

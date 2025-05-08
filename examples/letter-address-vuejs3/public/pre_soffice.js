@@ -197,7 +197,7 @@ soffice_js.onload = function() {
         URL.revokeObjectURL(link.href);
         break;
       default:
-        throw Error('Unknown message command ' + e.data.cmd);
+        throw Error('Unknown message command: ' + e.data.cmd);
       }
     };
 

@@ -359,7 +359,7 @@
             btnNamedAry[e.data.id].style.borderStyle = e.data.state ? 'inset' : '';
             break;
           default:
-            throw Error('Unknown message command ' + e.data.cmd);
+            throw Error('Unknown message command: ' + e.data.cmd);
           }
         };
       });
