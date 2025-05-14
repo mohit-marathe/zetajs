@@ -32,7 +32,7 @@ function jsPassCtrlBar(pTbDataJs) {
 }
 window.jsPassCtrlBar = jsPassCtrlBar;  // make it accessible to vue.js
 
-function toggleFormatting(id) {
+window.toggleFormatting = function(id) {  // make it accessible to vue.js
   setToolbarActive(id, !tbDataJs.active[id]);
   thrPort.postMessage({cmd: 'toggle', id});
   // Give focus to the LO canvas to avoid issues with
