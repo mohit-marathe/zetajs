@@ -23,8 +23,7 @@ let xModel, topwin, ctrl;
 // example specific:
 let unoUrlsAry, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell;
 
-// export variables for debugging
-// Available for debugging via:
+// Export variables for debugging. Available for debugging via:
 //   globalThis.zetajsStore.threadJsContext
 export { zHT, xModel, topwin, ctrl, unoUrlsAry, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell };
 

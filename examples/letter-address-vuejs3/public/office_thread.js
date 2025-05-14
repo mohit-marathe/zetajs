@@ -142,6 +142,7 @@ function demo() {
   }
 }
 
+
 function tableToHtml() {
   const activeSheet = tableCtrl.getActiveSheet();
   const data = [];
@@ -165,9 +166,8 @@ function tableToHtml() {
   zetajs.mainPort.postMessage({cmd: 'addrData', data});
 }
 
+
 function windowActivated(ctrl, callback) {
-  // css.awt.XExtendedToolkit::getActiveTopWindow only becomes non-null asynchronously, so wait
-  // for it if necessary.
   ctrl.getFrame().getContainerWindow().addTopWindowListener(
     zetajs.unoObject([css.awt.XTopWindowListener], {
       disposing(Source) {},
@@ -181,8 +181,9 @@ function windowActivated(ctrl, callback) {
     }));
 }
 
+
 function loadFile(fileTab) {
-  if (fileTab != 'letter') {
+  if (fileTab != 'letter') {  // table or both
     tableXModel = desktop.loadComponentFromURL('file:///tmp/table.ods', '_default', 0, []);
     tableCtrl = tableXModel.getCurrentController();
     if (!calcModuleConfigured) {
@@ -210,7 +211,7 @@ function loadFile(fileTab) {
     });
   }
 
-  if (fileTab != 'table') {
+  if (fileTab != 'table') {  // letter or both
     letterXModel = desktop.loadComponentFromURL('file:///tmp/letter.odt', '_default', 0, []);
     letterCtrl = letterXModel.getCurrentController();
     if (!writerModuleConfigured) {
@@ -271,6 +272,7 @@ function loadFile(fileTab) {
     });
   }
 }
+
 
 function startupReady(startupStep) {
   readyList[startupStep] = true;
