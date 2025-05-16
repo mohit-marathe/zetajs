@@ -23,15 +23,14 @@ function demo() {
   const bean_pdf_export = new css.beans.PropertyValue({Name: 'FilterName', Value: 'writer_pdf_Export'});
   zHT.configDisableToolbars(["Writer"]);
 
+  loadFile();
+  // Turn off UI elements.
+  // Permanant settings. Don't run again on a document reload.
+  zHT.dispatch(ctrl, context, '.uno:Sidebar');
+  zHT.dispatch(ctrl, context, '.uno:Ruler');
+
   zHT.thrPort.onmessage = function (e) {
     switch (e.data.cmd) {
-    case 'file_provided':
-      loadFile();
-      // Turn off UI elements.
-      // Permanant settings. Don't run again on a document reload.
-      zHT.dispatch(ctrl, context, '.uno:Sidebar');
-      zHT.dispatch(ctrl, context, '.uno:Ruler');
-      break;
     case 'download':
       const format = e.data.id === 'btnOdt' ? bean_odt_export : bean_pdf_export;
       xModel.storeToURL( 'file:///tmp/output', [bean_overwrite, format]);
@@ -94,8 +93,6 @@ function demo() {
       throw Error('Unknown message command: ' + e.data.cmd);
     }
   }
-
-  zHT.thrPort.postMessage({cmd: 'thr_running'});
 }
 
 function loadFile() {

@@ -327,13 +327,6 @@
       zHM.start(function() {
         zHM.thrPort.onmessage = function(e) {
           switch (e.data.cmd) {
-          case 'thr_running':
-            load_business_letter_sans().then(function(aryBuf) {
-              zHM.FS.writeFile('/tmp/Modern_business_letter_sans_serif.ott',
-                  new Uint8Array(aryBuf));
-              zHM.thrPort.postMessage({cmd: 'file_provided'});
-            });
-            break;
           case 'ui_ready':
             loadingInfo.style.display = 'none';
             for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = false;
@@ -362,6 +355,10 @@
             throw Error('Unknown message command: ' + e.data.cmd);
           }
         };
+
+        load_business_letter_sans().then(function(aryBuf) {
+          zHM.FS.writeFile('/tmp/Modern_business_letter_sans_serif.ott', new Uint8Array(aryBuf));
+        });
       });
     </script>
   </body>
