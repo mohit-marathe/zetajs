@@ -51,7 +51,8 @@ export default {
                       <h2>ZetaOffice is loading...</h2>
                     </div>
                     <canvas id="qtcanvas" contenteditable="true" oncontextmenu="event.preventDefault()"
-                      onkeydown="event.preventDefault()" style="width:100%; height:500px;" class="qt-canvas">
+                      onkeydown="event.preventDefault()" style="width:100%; height:500px; visibility:hidden;"
+                      class="qt-canvas">
                       <!-- Qt requires the canvas to have the ID "qtcanvas". -->
                       <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
                       <!-- An outline is fine though. -->

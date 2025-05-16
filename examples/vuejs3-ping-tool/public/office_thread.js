@@ -15,46 +15,25 @@ const zetajs = zHT.zetajs;
 const css = zHT.css;
 const context = zHT.context;
 const desktop = zHT.desktop;
-const toolkit = zHT.toolkit;
 
 // = global variables =
 // common variables:
-let xModel, topwin, ctrl;
+let xModel, ctrl;
 // example specific:
 let unoUrlsAry, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell;
 
 // Export variables for debugging. Available for debugging via:
 //   globalThis.zetajsStore.threadJsContext
-export { zHT, xModel, topwin, ctrl, unoUrlsAry, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell };
+export { zHT, xModel, ctrl, unoUrlsAry, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell };
 
 
 function demo() {
   zHT.configDisableToolbars(["Calc"]);
 
-  // css.awt.XExtendedToolkit::getActiveTopWindow only becomes non-null asynchronously, so wait
-  // for it if necessary.
-  // addTopWindowListener only works as intended when the following loadComponentFromURL sets
-  // '_default' as target and no other document is already open.
-  toolkit.addTopWindowListener(
-    zetajs.unoObject([css.awt.XTopWindowListener], {
-      disposing(Source) {},
-      windowOpened(e) {},
-      windowClosing(e) {},
-      windowClosed(e) {},
-      windowMinimized(e) {},
-      windowNormalized(e) {},
-      windowActivated(e) {
-        if (!topwin) {
-          topwin = toolkit.getActiveTopWindow();
-          topwin.FullScreen = true;
-          zHT.thrPort.postMessage({cmd: 'ui_ready'});
-        }
-      },
-      windowDeactivated(e) {},
-    }));
-
   xModel = desktop.loadComponentFromURL('file:///tmp/calc_ping_example.ods', '_default', 0, []);
   ctrl = xModel.getCurrentController();
+  ctrl.getFrame().getContainerWindow().FullScreen = true;
+
   xComponent = ctrl.getModel();
   charLocale = xComponent.getPropertyValue('CharLocale');
   formatNumber = xComponent.getNumberFormats().
@@ -66,7 +45,6 @@ function demo() {
   zHT.dispatch(ctrl, context, '.uno:Sidebar');
   zHT.dispatch(ctrl, context, '.uno:InputLineVisible');  // FormulaBar at the top
   ctrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
-  // topwin.setMenuBar(null) has race conditions on fast networks like localhost.
   ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
 
   unoUrlsAry = {};
@@ -107,6 +85,7 @@ function demo() {
       throw Error('Unknown message command: ' + e.data.cmd);
     }
   }
+  zHT.thrPort.postMessage({cmd: 'ui_ready'});
 }
 
 function findEmptyRowInCol1(activeSheet) {

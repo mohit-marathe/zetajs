@@ -13,7 +13,7 @@ let zetajs, css;
 
 // = global variables (some are global for easier debugging) =
 // common variables:
-let context, desktop, xModel, toolkit, topwin, ctrl;
+let context, desktop, xModel, ctrl;
 // example specific:
 let unoUrlsAry;
 
@@ -33,34 +33,11 @@ function demo() {
   }
   config.commitChanges();
 
-  toolkit = css.awt.Toolkit.create(context);
-  // css.awt.XExtendedToolkit::getActiveTopWindow only becomes non-null asynchronously, so wait
-  // for it if necessary.
-  // addTopWindowListener only works as intended when the following loadComponentFromURL sets
-  // '_default' as target and no other document is already open.
-  toolkit.addTopWindowListener(
-    zetajs.unoObject([css.awt.XTopWindowListener], {
-      disposing(Source) {},
-      windowOpened(e) {},
-      windowClosing(e) {},
-      windowClosed(e) {},
-      windowMinimized(e) {},
-      windowNormalized(e) {},
-      windowActivated(e) {
-        if (!topwin) {
-          topwin = toolkit.getActiveTopWindow();
-          topwin.FullScreen = true;
-          zetajs.mainPort.postMessage({cmd: 'ready'});
-        }
-      },
-      windowDeactivated(e) {},
-    }));
-
   desktop = css.frame.Desktop.create(context);
   xModel = desktop.loadComponentFromURL('private:factory/swriter', '_default', 0, [])
   ctrl = xModel.getCurrentController();
+  ctrl.getFrame().getContainerWindow().FullScreen = true;
 
-  // topwin.setMenuBar(null) has race conditions on fast networks like localhost.
   ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
 
   // Turn off sidebar:
@@ -80,6 +57,7 @@ function demo() {
       throw Error('Unknown message command: ' + e.data.cmd);
     }
   }
+  zetajs.mainPort.postMessage({cmd: 'ui_ready'});
 }
 
 function button(id, unoUrl) {

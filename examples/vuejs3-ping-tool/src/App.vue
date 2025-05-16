@@ -56,7 +56,7 @@
             <canvas
               id="qtcanvas" contenteditable="true"
               oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
-              style="border: 0px none; padding: 0; outline: 1px solid #cccccc; width:900px; height:450px;">
+              style="border: 0px none; padding: 0; outline: 1px solid #cccccc; width:900px; height:450px; visibility:hidden;">
               <!-- QT requires the canvas to have the ID "qtcanvas". -->
               <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
               <!-- An outline is fine though. -->

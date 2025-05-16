@@ -61,7 +61,7 @@
           <canvas
             id="qtcanvas" contenteditable="true"
             oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
-            style="border: 0px none; padding: 0; height: 100%; width: 100%; outline: 1px solid #cccccc;">
+            style="border: 0px none; padding: 0; height: 100%; width: 100%; outline: 1px solid #cccccc; visibility:hidden;">
             <!-- QT requires the canvas to have the ID "qtcanvas". -->
             <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
             <!-- An outline is fine though. -->
@@ -136,12 +136,15 @@
           button('underline');
           port.onmessage = function(e) {
             switch (e.data.cmd) {
-            case 'ready':
-              loadingInfo.style.display = 'none';
+            case 'ui_ready':
               // Trigger resize of the embedded window to match the canvas size.
               // May somewhen be obsoleted by:
               //   https://gerrit.libreoffice.org/c/core/+/174040
               window.dispatchEvent(new Event('resize'));
+              setTimeout(function() {  // display Office UI properly
+                loadingInfo.style.display = 'none';
+                canvas.style.visibility = null;
+              }, 1000);  // milliseconds
               break;
             case 'enable':
               elements[e.data.id].disabled = false;

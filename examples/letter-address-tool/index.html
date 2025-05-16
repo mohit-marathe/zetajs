@@ -62,7 +62,7 @@
             <canvas
               id="qtcanvas" contenteditable="true"
               oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
-              style="border: 0px none; padding: 0; outline: 1px solid #cccccc; width:850px; height:450px;">
+              style="border: 0px none; padding: 0; outline: 1px solid #cccccc; width:850px; height:450px; visibility:hidden;">
               <!-- QT requires the canvas to have the ID "qtcanvas". -->
               <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
               <!-- An outline is fine though. -->
@@ -92,6 +92,7 @@
 
       const addrName = document.getElementById('addrName');
       const loadingInfo = document.getElementById('loadingInfo');
+      const canvas = document.getElementById('qtcanvas');
       const btnNamedAry = {
         Bold: document.getElementById('btnBold'),
         Italic: document.getElementById('btnItalic'),
@@ -328,12 +329,15 @@
         zHM.thrPort.onmessage = function(e) {
           switch (e.data.cmd) {
           case 'ui_ready':
-            loadingInfo.style.display = 'none';
-            for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = false;
             // Trigger resize of the embedded window to match the canvas size.
             // May somewhen be obsoleted by:
             //   https://gerrit.libreoffice.org/c/core/+/174040
             window.dispatchEvent(new Event('resize'));
+            setTimeout(function() {  // display Office UI properly
+              loadingInfo.style.display = 'none';
+              canvas.style.visibility = null;
+              for (const [_, btn] of Object.entries(btnNamedAry)) btn.disabled = false;
+            }, 1000);  // milliseconds
             break;
           case 'download':
             const bytes = zHM.FS.readFile('/tmp/output');

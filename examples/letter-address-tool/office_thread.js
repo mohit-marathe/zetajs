@@ -14,7 +14,7 @@ let zetajs, css;
 
 // = global variables (some are global for easier debugging) =
 // common variables:
-let zHT, context, desktop, xModel, toolkit, topwin, ctrl;
+let zHT, context, desktop, xModel, ctrl;
 
 
 function demo() {
@@ -96,37 +96,16 @@ function demo() {
 }
 
 function loadFile() {
-  topwin = false;
-  // css.awt.XExtendedToolkit::getActiveTopWindow only becomes non-null asynchronously, so wait
-  // for it if necessary.
-  // addTopWindowListener only works as intended when the following loadComponentFromURL sets
-  // '_default' as target and no other document is already open.
-  toolkit.addTopWindowListener(
-    zetajs.unoObject([css.awt.XTopWindowListener], {
-      disposing(Source) {},
-      windowOpened(e) {},
-      windowClosing(e) {},
-      windowClosed(e) {},
-      windowMinimized(e) {},
-      windowNormalized(e) {},
-      windowActivated(e) {
-        if (!topwin) {
-          topwin = toolkit.getActiveTopWindow();
-          topwin.FullScreen = true;
-          zetajs.mainPort.postMessage({cmd: 'ui_ready'});
-        }
-      },
-      windowDeactivated(e) {},
-    }));
-
   const in_path = 'file:///tmp/Modern_business_letter_sans_serif.ott'
   xModel = desktop.loadComponentFromURL(in_path, '_default', 0, []);
   ctrl = xModel.getCurrentController();
+  const frame = ctrl.getFrame();
 
   // Turn off UI elements (idempotent operations):
-  ctrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
-  // topwin.setMenuBar(null) has race conditions on fast networks like localhost.
-  ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
+  frame.LayoutManager.hideElement("private:resource/statusbar/statusbar");
+  frame.LayoutManager.hideElement("private:resource/menubar/menubar");
+
+  frame.getContainerWindow().FullScreen = true;
 
   for (const id of ['Bold', 'Italic', 'Underline']) {
     const urlObj = zHT.transformUrl(context, '.uno:' + id);
@@ -138,6 +117,7 @@ function loadFile() {
     });
     zHT.queryDispatch(ctrl, urlObj).addStatusListener(listener, urlObj);
   }
+  zetajs.mainPort.postMessage({cmd: 'ui_ready'});
 }
 
 
@@ -147,7 +127,6 @@ import('./assets/vendor/zetajs/zetaHelper.js').then(zetaHelper => {
   css = zHT.css;
   context = zHT.context;
   desktop = zHT.desktop;
-  toolkit = zHT.toolkit;
   demo();  // launching demo
 });
 

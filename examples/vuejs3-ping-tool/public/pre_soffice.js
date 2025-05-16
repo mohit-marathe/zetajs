@@ -133,20 +133,23 @@ zHM.start(function() {
         setToolbarActive(e.data.id, e.data.state);
         break;
       case 'ui_ready':
-        loadingInfo.style.display = 'none';
         // Trigger resize of the embedded window to match the canvas size.
         // May somewhen be obsoleted by:
         //   https://gerrit.libreoffice.org/c/core/+/174040
         window.dispatchEvent(new Event('resize'));
-        // Using Ping callback interface.
-        pingInst.ping(urls_ary[urls_ary_i], function() {
-          setTimeout(function() {  // small delay to make the demo more interesting
+        setTimeout(function() {  // display Office UI properly
+          loadingInfo.style.display = 'none';
+          canvas.style.visibility = null;
+          // Using Ping callback interface.
+          pingInst.ping(urls_ary[urls_ary_i], function() {
             // Continue after first ping, which is often exceptionally slow.
-            pingInst.ping(urls_ary[urls_ary_i], function(err, data) {
-              pingExamples(err, data);
-            });
-          }, 6000);  // milliseconds
-        });
+            setTimeout(function() {  // small delay to make the demo more interesting
+              pingInst.ping(urls_ary[urls_ary_i], function(err, data) {
+                pingExamples(err, data);
+              });
+            }, 1000);  // milliseconds
+          });
+        }, 1000);  // milliseconds
         break;
       default:
         throw Error('Unknown message command: ' + e.data.cmd);

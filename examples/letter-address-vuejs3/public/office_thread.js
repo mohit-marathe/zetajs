@@ -15,12 +15,9 @@ let zetajs, css;
 // common variables:
 let context, desktop, tableXModel, letterXModel, tableCtrl, letterCtrl;
 // example specific:
-let canvas_height, canvas_width;
-let letterWindowConfigured=false, tableWindowConfigured=false;
 let writerModuleConfigured=false, calcModuleConfigured=false;
 const readyList = {Fonts: false, Window: false};
-const dataEmun = 'title name street postal_code city state'.split();
-let fontsList, switchVals, topWinNum = 0;
+let letterFrame, tableFrame, fontsList, switchVals;
 // switchVals needed globally in case the user switches tabs rapidly.
 
 
@@ -62,10 +59,8 @@ function demo() {
         tableToHtml();
       } else switchVals = [false, true];  // table
       function setVals() {
-        // Swapping both windows FullScreen setting triggers windowActivated
-        // of the foreground window.
-        letterCtrl.getFrame().getContainerWindow().FullScreen = switchVals[0];
-        tableCtrl.getFrame().getContainerWindow().FullScreen = switchVals[1];
+        letterFrame.getContainerWindow().FullScreen = switchVals[0];
+        tableFrame.getContainerWindow().FullScreen = switchVals[1];
         zetajs.mainPort.postMessage({cmd: 'resizeEvt'});
       }
       setVals();  // sometimes needed twice to apply resize
@@ -167,21 +162,6 @@ function tableToHtml() {
 }
 
 
-function windowActivated(ctrl, callback) {
-  ctrl.getFrame().getContainerWindow().addTopWindowListener(
-    zetajs.unoObject([css.awt.XTopWindowListener], {
-      disposing(Source) {},
-      windowOpened(e) {},
-      windowClosing(e) {},
-      windowClosed(e) {},
-      windowMinimized(e) {},
-      windowNormalized(e) {},
-      windowActivated(e) { callback(); },
-      windowDeactivated(e) {},
-    }));
-}
-
-
 function loadFile(fileTab) {
   if (fileTab != 'letter') {  // table or both
     tableXModel = desktop.loadComponentFromURL('file:///tmp/table.ods', '_default', 0, []);
@@ -192,23 +172,16 @@ function loadFile(fileTab) {
       dispatch(tableCtrl, '.uno:Sidebar', []);
       dispatch(tableCtrl, '.uno:InputLineVisible', []); // FormulaBar at the top
     }
-    tableWindowConfigured = false;
-    windowActivated(tableCtrl, function() {
-      if (!tableWindowConfigured) {
-        tableWindowConfigured = true;
-        // Turn off UI elements (idempotent operations):
-        tableCtrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
-        // getTopwin.setMenuBar(null) has race conditions on fast networks like localhost.
-        tableCtrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
-        tableCtrl.setPropertyValue('SheetTabs', false);
-        if (fileTab == 'table') {
-          // Storing the getContainerWindow() result is unstable.
-          tableCtrl.getFrame().getContainerWindow().setPosSize(-1000,-1000,500,500,15);
-          tableCtrl.getFrame().getContainerWindow().FullScreen = true;
-          zetajs.mainPort.postMessage({cmd: 'ready', fontsList});
-        }
-      }
-    });
+    tableFrame = tableCtrl.getFrame();
+    // Turn off UI elements (idempotent operations):
+    tableFrame.LayoutManager.hideElement("private:resource/statusbar/statusbar");
+    tableFrame.LayoutManager.hideElement("private:resource/menubar/menubar");
+    tableCtrl.setPropertyValue('SheetTabs', false);
+    if (fileTab == 'table') {
+      // Storing the getContainerWindow() result is unstable.
+      tableFrame.getContainerWindow().setPosSize(-1000,-1000,500,500,15);
+      tableFrame.getContainerWindow().FullScreen = true;
+    }
   }
 
   if (fileTab != 'table') {  // letter or both
@@ -220,64 +193,58 @@ function loadFile(fileTab) {
       dispatch(letterCtrl, '.uno:Sidebar', []);
       dispatch(letterCtrl, '.uno:Ruler', []);
     }
-    letterWindowConfigured = false;
-    windowActivated(letterCtrl, function() {
-      if (!letterWindowConfigured) {
-        letterWindowConfigured = true;
-        // Turn off UI elements (idempotent operations):
-        letterCtrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
-        // topwin.setMenuBar(null) has race conditions on fast networks like localhost.
-        letterCtrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
-        // Storing the getContainerWindow() result is unstable.
-        letterCtrl.getFrame().getContainerWindow().setPosSize(-1000,-1000,500,500,15);
-        letterCtrl.getFrame().getContainerWindow().FullScreen = true;
+    letterFrame = letterCtrl.getFrame();
+    // Turn off UI elements (idempotent operations):
+    letterFrame.LayoutManager.hideElement("private:resource/statusbar/statusbar");
+    letterFrame.LayoutManager.hideElement("private:resource/menubar/menubar");
+    // Storing the getContainerWindow() result is unstable.
+    letterFrame.getContainerWindow().setPosSize(-1000,-1000,500,500,15);
+    letterFrame.getContainerWindow().FullScreen = true;
 
-        // Get font list for toolbar.
-        const fontsUrlObj = transformUrl('.uno:FontNameList');
-        const fontsDispatcher = queryDispatch(letterCtrl, fontsUrlObj);
-        const fontsDispatchNotifier = css.frame.XDispatch.constructor(fontsDispatcher)
-        const fontListener = zetajs.unoObject(
-          [css.frame.XStatusListener],
-          { statusChanged(e) {
-            fontsDispatchNotifier.removeStatusListener(fontListener, fontsUrlObj);
-            fontsList = e.State.val;
-            startupReady('Fonts');
-          }});
-        fontsDispatchNotifier.addStatusListener(fontListener, fontsUrlObj);
+    // Get font list for toolbar.
+    const fontsUrlObj = transformUrl('.uno:FontNameList');
+    const fontsDispatcher = queryDispatch(letterCtrl, fontsUrlObj);
+    const fontsDispatchNotifier = css.frame.XDispatch.constructor(fontsDispatcher)
+    const fontListener = zetajs.unoObject(
+      [css.frame.XStatusListener],
+      { statusChanged(e) {
+        fontsDispatchNotifier.removeStatusListener(fontListener, fontsUrlObj);
+        fontsList = e.State.val;
+        startupReady('Fonts');
+      }});
+    fontsDispatchNotifier.addStatusListener(fontListener, fontsUrlObj);
 
-        for (const id of [
-            'Bold', 'Italic', 'Underline',
-            'Overline', 'Strikeout', 'Shadowed', 'Color', 'CharBackColor',
-            'LeftPara', 'CenterPara', 'RightPara', 'JustifyPara', 'DefaultBullet',
-            'FontHeight', 'CharFontName'
-            ]) {
-          const urlObj = transformUrl('.uno:' + id);
-          const listener = zetajs.unoObject([css.frame.XStatusListener], {
-            disposing: function(source) {},
-            statusChanged: function(state) {
-              state = zetajs.fromAny(state.State);
-              if (id == 'FontHeight') state = Math.round(state.Height * 10) / 10;
-              if (id == 'CharFontName') state = state.Name;
-              if (id == 'Color' && state == -1) state = 0x000000;
-              if (id == 'CharBackColor' && state == -1) state = 0xFFFFFF;
-              if (['Color', 'CharBackColor'].includes(id))  // int to #RRGGBB
-                state = '#' + (0x1000000 + state).toString(16).substring(1, 7);
-              zetajs.mainPort.postMessage({cmd: 'setFormat', id, state});
-            }
-          });
-          queryDispatch(letterCtrl, urlObj).addStatusListener(listener, urlObj);
+    for (const id of [
+        'Bold', 'Italic', 'Underline',
+        'Overline', 'Strikeout', 'Shadowed', 'Color', 'CharBackColor',
+        'LeftPara', 'CenterPara', 'RightPara', 'JustifyPara', 'DefaultBullet',
+        'FontHeight', 'CharFontName'
+        ]) {
+      const urlObj = transformUrl('.uno:' + id);
+      const listener = zetajs.unoObject([css.frame.XStatusListener], {
+        disposing: function(source) {},
+        statusChanged: function(state) {
+          state = zetajs.fromAny(state.State);
+          if (id == 'FontHeight') state = Math.round(state.Height * 10) / 10;
+          if (id == 'CharFontName') state = state.Name;
+          if (id == 'Color' && state == -1) state = 0x000000;
+          if (id == 'CharBackColor' && state == -1) state = 0xFFFFFF;
+          if (['Color', 'CharBackColor'].includes(id))  // int to #RRGGBB
+            state = '#' + (0x1000000 + state).toString(16).substring(1, 7);
+          zetajs.mainPort.postMessage({cmd: 'setFormat', id, state});
         }
-        zetajs.mainPort.postMessage({cmd: 'ready', fontsList});
-      }
-    });
+      });
+      queryDispatch(letterCtrl, urlObj).addStatusListener(listener, urlObj);
+    }
   }
+  startupReady('Window');
 }
 
 
 function startupReady(startupStep) {
   readyList[startupStep] = true;
   if (Object.values(readyList).indexOf(false) == -1) {
-    zetajs.mainPort.postMessage({cmd: 'ready', fontsList});
+    zetajs.mainPort.postMessage({cmd: 'ui_ready', fontsList});
   }
 }
 

@@ -156,17 +156,19 @@ soffice_js.onload = function() {
     thrPort = pThrPort;
     thrPort.onmessage = function(e) {
       switch (e.data.cmd) {
-      case 'ready':
-        loadingInfo.style.display = 'none';
-        canvas.style.visibility = null;
-        tbDataJs.font_name_list = e.data.fontsList;
-        for (const elem of disabledElementsAry) elem.disabled = false;
-        lblUpload.classList.remove('w3-disabled');
-        btnInsert.disabled = !letterForeground;
+      case 'ui_ready':
         // Trigger resize of the embedded window to match the canvas size.
         // May somewhen be obsoleted by:
         //   https://gerrit.libreoffice.org/c/core/+/174040
         window.dispatchEvent(new Event('resize'));
+        setTimeout(function() {  // display Office UI properly
+          loadingInfo.style.display = 'none';
+          canvas.style.visibility = null;
+          tbDataJs.font_name_list = e.data.fontsList;
+          for (const elem of disabledElementsAry) elem.disabled = false;
+          lblUpload.classList.remove('w3-disabled');
+          btnInsert.disabled = !letterForeground;
+        }, 1000);  // milliseconds
         break;
       case 'resizeEvt':
         window.dispatchEvent(new Event('resize'));

@@ -62,7 +62,7 @@
             <canvas
               id="qtcanvas" class="disable-mouse-input"
               oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
-              style="border: 0px none; padding: 0; outline: 1px solid #cccccc; width:1150px; height:500px;">
+              style="border: 0px none; padding: 0; outline: 1px solid #cccccc; width:1150px; height:500px; visibility:hidden;">
               <!-- QT requires the canvas to have the ID "qtcanvas". -->
               <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
               <!-- An outline is fine though. -->
@@ -154,22 +154,25 @@
           thrPort = pThrPort;
           thrPort.onmessage = function(e) {
             switch (e.data.cmd) {
-            case 'ready':
-              loadingInfo.style.display = 'none';
+            case 'ui_ready':
               // Trigger resize of the embedded window to match the canvas size.
               // May somewhen be obsoleted by:
               //   https://gerrit.libreoffice.org/c/core/+/174040
               window.dispatchEvent(new Event('resize'));
-              // Using Ping callback interface.
-              // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
-              //   acutally having CORP on foreign origins.
-              //   Also 'credentialless' isn't supported by Safari-18 as of 2024-09.
-              pingInst.ping(pingTarget, function() {
-                // Continue after first ping, which is often exceptionally slow.
-                setInterval(function() {
-                    doPing();
-                  }, 1000);  // milliseconds
-              });
+              setTimeout(function() {  // display Office UI properly
+                loadingInfo.style.display = 'none';
+                canvas.style.visibility = null;
+                // Using Ping callback interface.
+                // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
+                //   acutally having CORP on foreign origins.
+                //   Also 'credentialless' isn't supported by Safari-18 as of 2024-09.
+                pingInst.ping(pingTarget, function() {
+                  // Continue after first ping, which is often exceptionally slow.
+                  setInterval(function() {
+                      doPing();
+                    }, 1000);  // milliseconds
+                });
+              }, 1000);  // milliseconds
               break;
             default:
               throw Error('Unknown message command: ' + e.data.cmd);
