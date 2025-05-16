@@ -154,7 +154,6 @@ export class ZetaHelperThread {
   css: any;
   desktop: any;
   thrPort: MessagePort;
-  toolkit: any;
   zetajs: any;
   zJsModule: any;
 
@@ -167,7 +166,6 @@ export class ZetaHelperThread {
     this.thrPort = this.zetajs.mainPort;
     this.css = this.zetajs.uno.com.sun.star;
     this.context = this.zetajs.getUnoComponentContext();
-    this.toolkit = this.css.awt.Toolkit.create(this.context);
     this.desktop = this.css.frame.Desktop.create(this.context);
     this.config = this.css.configuration.ReadWriteAccess.create(this.context, 'en-US');
   }
