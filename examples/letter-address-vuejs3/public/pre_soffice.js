@@ -101,7 +101,7 @@ function btnDownloadFunc(btnId) {
 
 function btnUploadFunc(btnId) {
   for (const elem of disabledElementsAry) elem.disabled = true;
-  lblUpload.classList.add('w3-disabled');
+  lblUpload.classList.add('disabled');
   const filename = letterForeground ? 'letter.odt' : 'table.ods';
   btnUpload.files[0].arrayBuffer().then(aryBuf => {
     FS.writeFile('/tmp/' + filename, new Uint8Array(aryBuf));
@@ -111,7 +111,7 @@ function btnUploadFunc(btnId) {
 
 function btnReloadFunc() {
   for (const elem of disabledElementsAry) elem.disabled = true;
-  lblUpload.classList.add('w3-disabled');
+  lblUpload.classList.add('disabled');
   loadingInfo.style.display = null;
   canvas.style.visibility = 'hidden';
   thrPort.postMessage({cmd: 'reload', id: letterForeground});
@@ -166,7 +166,7 @@ soffice_js.onload = function() {
           canvas.style.visibility = null;
           tbDataJs.font_name_list = e.data.fontsList;
           for (const elem of disabledElementsAry) elem.disabled = false;
-          lblUpload.classList.remove('w3-disabled');
+          lblUpload.classList.remove('disabled');
           btnInsert.disabled = !letterForeground;
         }, 1000);  // milliseconds
         break;

@@ -32,11 +32,11 @@ export default {
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" role="presentation">
               <button class="nav-link active" id="btnLetter" onclick="btnSwitchTab('letter')" type="button" role="tab"
-                aria-controls="home-tab-pane" aria-selected="true">Editor</button>
+                aria-controls="home-tab-pane" aria-selected="true" disabled>Editor</button>
             </li>
             <li class="nav-item" role="presentation">
               <button class="nav-link" id="btnTable" onclick="btnSwitchTab('table')" type="button" role="tab"
-                aria-controls="profile-tab-pane" aria-selected="false">Addresses</button>
+                aria-controls="profile-tab-pane" aria-selected="false" disabled>Addresses</button>
             </li>
           </ul>
           <div class="tab-content p-1" id="tabContent">
@@ -61,9 +61,9 @@ export default {
                 </div>
                 <div class="col-lg-3">
                   <h4 class="mt-3">Document</h4>
-                  <label class="btn btn-light btn-sm" id="lblUpload">
+                  <label class="btn btn-light btn-sm disabled" id="lblUpload">
                     Upload new file
-                    <input accept=".odt" class="file-input" type="file" id="btnUpload" onchange="btnUploadFunc()">
+                    <input accept=".odt" class="file-input" type="file" id="btnUpload" onchange="btnUploadFunc()" disabled>
                   </label>
                   <button class="btn btn-light btn-sm ms-2" id="btnReload" onclick="btnReloadFunc()" disabled>Reload
                     file</button>
