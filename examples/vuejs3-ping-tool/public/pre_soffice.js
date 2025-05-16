@@ -97,7 +97,6 @@ async function get_calc_ping_example_ods() {
   const response = await fetch("./calc_ping_example.ods");
   return response.arrayBuffer();
 }
-let calc_ping_example_ods;
 
 window.onresize = function() {
   // Workaround to inform Qt5 about changed browser zoom.
@@ -155,8 +154,7 @@ zHM.start(function() {
     };
 
     get_calc_ping_example_ods().then(function(aryBuf) {
-      calc_ping_example_ods = aryBuf;
-      zHM.FS.writeFile('/tmp/calc_ping_example.ods', new Uint8Array(calc_ping_example_ods));
+      zHM.FS.writeFile('/tmp/calc_ping_example.ods', new Uint8Array(aryBuf));
     });
 });
 
