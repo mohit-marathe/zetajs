@@ -242,8 +242,8 @@ export class ZetaHelperThread {
     return ctrl.queryDispatch(urlObj, '_self', 0);
   }
 
-  dispatch(ctrl: any, unoUrl: string) {
+  dispatch(ctrl: any, unoUrl: string, params: any[] = []) {
     const urlObj = this.transformUrl(unoUrl);
-    this.queryDispatch(ctrl, urlObj).dispatch(urlObj, []);
+    this.queryDispatch(ctrl, urlObj).dispatch(urlObj, params);
   }
 }
