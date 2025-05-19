@@ -26,13 +26,14 @@ const btnPing = document.getElementById("btnPing");
 const zHM = new ZetaHelperMain('office_thread.js', {threadJsMode: 'module', soffice_base_url});
 
 
-function jsPassCtrlBar(pTbDataJs) {
+// Functions stored below window.* are usually accessed from vue.js.
+
+window.jsPassCtrlBar = function(pTbDataJs) {
   tbDataJs = pTbDataJs;
   console.log('PLUS: assigned tbDataJs');
 }
-window.jsPassCtrlBar = jsPassCtrlBar;  // make it accessible to vue.js
 
-window.toggleFormatting = function(id) {  // make it accessible to vue.js
+window.toggleFormatting = function(id) {
   setToolbarActive(id, !tbDataJs.active[id]);
   thrPort.postMessage({cmd: 'toggle', id});
   // Give focus to the LO canvas to avoid issues with
