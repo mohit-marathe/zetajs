@@ -173,6 +173,11 @@
         URL.revokeObjectURL(link.href);
       }
 
+      // Scroll only the canvas while the mouse cursor is above it.
+      canvas.addEventListener('wheel', (event) => {
+        event.preventDefault();
+      }, {passive: false});
+
       window.onresize = function() {
         // Workaround to inform Qt5 about changed browser zoom.
         setTimeout(function() {

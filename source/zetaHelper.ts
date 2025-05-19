@@ -14,7 +14,11 @@ export class ZetaHelperMain {
 
   constructor(
       threadJs: string | URL | null,
-      options: {threadJsMode: string | null, soffice_base_url: string | URL | null}) {
+      options: {
+        threadJsMode: string | null,
+        soffice_base_url: string | URL | null,
+        blockPageScroll: boolean  // default: true
+      }) {
     // Enable usage of LOWA builds with UI.
     const canvas = document.getElementById('qtcanvas')!;
 
@@ -60,6 +64,12 @@ export class ZetaHelperMain {
         }
       }, 100);
     };
+
+    // Scroll only the canvas while the mouse cursor is above it.
+    if (options.blockPageScroll != false)
+      canvas.addEventListener('wheel', (event) => {
+        event.preventDefault();
+      }, {passive: false});
 
     (window as any).Module = Module;  // window.* is global
     this.canvas = canvas;
