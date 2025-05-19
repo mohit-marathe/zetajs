@@ -48,7 +48,7 @@ export class ZetaHelperMain {
       {type: 'text/javascript'});
 
     let lastDevicePixelRatio = window.devicePixelRatio;
-    window.onresize = function() {
+    addEventListener('resize', () => {
       // Workaround to inform Qt5 about changed browser zoom.
       setTimeout(function() {
         if (lastDevicePixelRatio != -1) {
@@ -63,7 +63,7 @@ export class ZetaHelperMain {
           window.dispatchEvent(new Event('resize'));
         }
       }, 100);
-    };
+    });
 
     // Scroll only the canvas while the mouse cursor is above it.
     if (options.blockPageScroll != false)
