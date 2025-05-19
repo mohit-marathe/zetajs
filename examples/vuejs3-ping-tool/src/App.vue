@@ -35,7 +35,7 @@
       <div class="row">
         <div class="col-4 mt-3">
           <div class="input-group mb-3">
-            <input type="text" id="ping_target" class="form-control" placeholder="https://example.net" aria-label="Ping target" aria-describedby="btnPing">
+            <input type="text" id="ping_target" class="form-control" value="https://zetaoffice.net/" aria-label="Ping target" aria-describedby="btnPing">
             <button class="btn btn-dark" type="button" id="btnPing" disabled>Ping</button>
           </div>
         </div>
