@@ -190,9 +190,12 @@ export class ZetaHelperThread {
     this.config.commitChanges();
   }
 
-  transformUrl(context: any, unoUrl: string) {
-    const ioparam = {val: new this.css.util.URL({Complete: unoUrl})};
-    this.css.util.URLTransformer.create(context).parseStrict(ioparam);
+  /**
+   * @param unoUrl - string following ".uno:" (e.g. "Bold")
+   */
+  transformUrl(unoUrl: string) {
+    const ioparam = {val: new this.css.util.URL({Complete: '.uno:' + unoUrl})};
+    this.css.util.URLTransformer.create(this.context).parseStrict(ioparam);
     return ioparam.val;
   }
 
@@ -200,8 +203,8 @@ export class ZetaHelperThread {
     return ctrl.queryDispatch(urlObj, '_self', 0);
   }
 
-  dispatch(ctrl: any, context: any, unoUrl: string) {
-    const urlObj = this.transformUrl(context, unoUrl);
+  dispatch(ctrl: any, unoUrl: string) {
+    const urlObj = this.transformUrl(unoUrl);
     this.queryDispatch(ctrl, urlObj).dispatch(urlObj, []);
   }
 }

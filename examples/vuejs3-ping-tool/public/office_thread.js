@@ -13,7 +13,6 @@ import { ZetaHelperThread } from './assets/vendor/zetajs/zetaHelper.js';
 const zHT = new ZetaHelperThread();
 const zetajs = zHT.zetajs;
 const css = zHT.css;
-const context = zHT.context;
 const desktop = zHT.desktop;
 
 // = global variables =
@@ -42,13 +41,13 @@ function demo() {
     queryKey('@', charLocale, false);
 
   // Turn off UI elements:
-  zHT.dispatch(ctrl, context, '.uno:Sidebar');
-  zHT.dispatch(ctrl, context, '.uno:InputLineVisible');  // FormulaBar at the top
+  zHT.dispatch(ctrl, 'Sidebar');
+  zHT.dispatch(ctrl, 'InputLineVisible');  // FormulaBar at the top
   ctrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
   ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
 
   for (const id of 'Bold Italic Underline'.split(' ')) {
-    const urlObj = zHT.transformUrl(context, '.uno:' + id);
+    const urlObj = zHT.transformUrl(id);
     const listener = zetajs.unoObject([css.frame.XStatusListener], {
       disposing: function(source) {},
       statusChanged: function(state) {
@@ -65,7 +64,7 @@ function demo() {
   zHT.thrPort.onmessage = function (e) {
     switch (e.data.cmd) {
     case 'toggleFormatting':
-      zHT.dispatch(ctrl, context, '.uno:' + e.data.id);
+      zHT.dispatch(ctrl, e.data.id);
       break;
     case 'ping_result':
       if (ping_line === undefined) {

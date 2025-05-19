@@ -14,7 +14,7 @@ let zetajs, css;
 
 // = global variables (some are global for easier debugging) =
 // common variables:
-let zHT, context, desktop, xModel, ctrl;
+let zHT, desktop, xModel, ctrl;
 
 
 function demo() {
@@ -26,8 +26,8 @@ function demo() {
   loadFile();
   // Turn off UI elements.
   // Permanant settings. Don't run again on a document reload.
-  zHT.dispatch(ctrl, context, '.uno:Sidebar');
-  zHT.dispatch(ctrl, context, '.uno:Ruler');
+  zHT.dispatch(ctrl, 'Sidebar');
+  zHT.dispatch(ctrl, 'Ruler');
 
   zHT.thrPort.onmessage = function (e) {
     switch (e.data.cmd) {
@@ -41,7 +41,7 @@ function demo() {
       loadFile();
       break;
     case 'toggleFormat':
-      zHT.dispatch(ctrl, context, '.uno:' + e.data.id);
+      zHT.dispatch(ctrl, e.data.id);
       break;
     case 'insert_address':
       const recipient = e.data.recipient;
@@ -108,7 +108,7 @@ function loadFile() {
   frame.getContainerWindow().FullScreen = true;
 
   for (const id of 'Bold Italic Underline'.split(' ')) {
-    const urlObj = zHT.transformUrl(context, '.uno:' + id);
+    const urlObj = zHT.transformUrl(id);
     const listener = zetajs.unoObject([css.frame.XStatusListener], {
       disposing: function(source) {},
       statusChanged: function(state) {
@@ -128,7 +128,6 @@ import('./assets/vendor/zetajs/zetaHelper.js').then(zetaHelper => {
   zHT = new zetaHelper.ZetaHelperThread();
   zetajs = zHT.zetajs;
   css = zHT.css;
-  context = zHT.context;
   desktop = zHT.desktop;
   demo();  // launching demo
 });
