@@ -69,10 +69,12 @@ export default {
                   <button class="btn btn-light btn-sm ms-2" id="btnReload" onclick="btnReloadFunc()" disabled>
                     Reload file</button>
                   <div id="addrNameCell">
-                    <h4 class="mt-3">Recipient</h4>
-                    <select class="form-select" id="addrName" name="addrName" autofocus disabled></select>
-                    <button class="btn btn-primary btn-sm mb-2 mt-2" id="btnInsert" onclick="btnInsertFunc()"
-                      disabled>Insert Address</button>
+                    <div class="d-flex justify-content-between">
+                      <h4 class="mt-3">Recipient</h4>
+                      <button class="btn btn-primary btn-sm mb-2 mt-3" id="btnInsert"
+                        onclick="btnInsertFunc()" disabled>Insert Address</button>
+                    </div>
+                    <select class="form-select" id="addrName" size="17" autofocus disabled></select>
                   </div>
                 </div>
               </div>
