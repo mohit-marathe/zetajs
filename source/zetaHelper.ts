@@ -6,7 +6,7 @@ export class ZetaHelperMain {
   canvas: HTMLElement;
   Module: any;
   threadJs: string | null;   // JavaScript code to run in the office web worker.
-  threadJsMode = 'classic';  // 'classic' || 'module'
+  threadJsType = 'classic';  // 'classic' || 'module'
   soffice_base_url: string;
   thrPort!: MessagePort;  // zetajs thread communication
   FS!: any;  // Emscripten Unix like virtual file system
@@ -15,7 +15,7 @@ export class ZetaHelperMain {
   constructor(
       threadJs: string | URL | null,
       options: {
-        threadJsMode: string | null,
+        threadJsType: string | null,
         soffice_base_url: string | URL | null,
         blockPageScroll: boolean  // default: true
       }) {
@@ -75,7 +75,7 @@ export class ZetaHelperMain {
     this.canvas = canvas;
     this.Module = Module;
     this.threadJs = threadJs?.toString() || null;
-    if (options.threadJsMode === 'module') this.threadJsMode = 'module';
+    if (options.threadJsType === 'module') this.threadJsType = 'module';
     this.soffice_base_url = soffice_base_url;
   }
 
@@ -100,7 +100,7 @@ export class ZetaHelperMain {
             zHM.thrPort.postMessage({
               cmd: 'ZetaHelper::run_thr_script',
               threadJs: zHM.threadJs,
-              threadJsMode: zHM.threadJsMode
+              threadJsType: zHM.threadJsType
             });
             app_init();
             break;
@@ -131,7 +131,7 @@ export function zetaHelperWrapThread() {
         globalThis.zetajsStore = {zetajs, zJsModule};
         let threadJs = e.data.threadJs;
         if (threadJs) {
-          if (e.data.threadJsMode === 'module') {
+          if (e.data.threadJsType === 'module') {
             console.log('zetaHelper: Loading threadJs as module from: ' + threadJs);
             import(threadJs).then(module => {
               // Make exports of threadJs accessible for debugging.

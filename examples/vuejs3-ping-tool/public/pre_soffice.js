@@ -23,7 +23,7 @@ const pingTarget = document.getElementById("ping_target");
 const btnPing = document.getElementById("btnPing");
 const disabledElementsAry = [btnPing];
 
-const zHM = new ZetaHelperMain('office_thread.js', {threadJsMode: 'module', soffice_base_url});
+const zHM = new ZetaHelperMain('office_thread.js', {threadJsType: 'module', soffice_base_url});
 
 
 // Functions stored below window.* are usually accessed from vue.js.
