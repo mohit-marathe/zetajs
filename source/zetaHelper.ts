@@ -2,16 +2,34 @@
 
 
 
+/**
+ * Helper for code in the browsers main thread.
+ * @beta
+ */
 export class ZetaHelperMain {
   canvas: HTMLElement;
   Module: any;
-  threadJs: string | null;   // JavaScript code to run in the office web worker.
-  threadJsType = 'classic';  // 'classic' || 'module'
+  threadJs: string | null;
+  threadJsType = 'classic';
   soffice_base_url: string;
-  thrPort!: MessagePort;  // zetajs thread communication
-  FS!: any;  // Emscripten Unix like virtual file system
+  /** zetajs thread communication */
+  thrPort!: MessagePort;
+  /** Emscripten Unix like virtual file system */
+  FS!: any;
 
 
+  /**
+   * Use absolute URLs or URLs relative to the root HTML document (location.href).
+   * @param threadJs - URL for JS code file running inside the office thread (web worker).
+   * @param options.threadJsType - 'classic' or 'module' (ES2015)
+   *   see: https://developer.mozilla.org/docs/Web/API/Worker/Worker#type
+   * @param options.soffice_base_url - From where to load WASM binaries.
+   *   Defaults an externally provided binaries.
+   *   If choosen manually, the WASM binary version must be compatible with the
+   *   zeta.js version.
+   * @param options.blockPageScroll - Don't scroll the HTML page while the cursor is above
+   *   the canvas. (default: true)
+   */
   constructor(
       threadJs: string | URL | null,
       options: {
@@ -119,7 +137,12 @@ export class ZetaHelperMain {
 
 
 
-/* Initializes zetajs in the office thread. */
+/**
+ * Initializes zetajs in the office thread (web worker).
+ * Will be called by ZetaHelperMain.
+ * NOT MEANT FOR DIRECT USE
+ * @beta
+ */
 export function zetaHelperWrapThread() {
   const zJsModule = (globalThis as any).Module;
   zJsModule.zetajs.then(function(zetajs: any) {
@@ -158,9 +181,14 @@ export function zetaHelperWrapThread() {
 
 
 
+/**
+ * Helper for inside the office thread (web worker).
+ * @beta
+ */
 export class ZetaHelperThread {
   config: any;
   context: any;
+  /** com.sun.star */
   css: any;
   desktop: any;
   thrPort: MessagePort;
@@ -181,8 +209,9 @@ export class ZetaHelperThread {
   }
 
 
-  /* Turn off toolbars.
-   * officeModules: ["Base", "Calc", "Draw", "Impress", "Math", "Writer"];
+  /**
+   * Turn off toolbars.
+   * @param officeModules - ["Base", "Calc", "Draw", "Impress", "Math", "Writer"];
    */
   configDisableToolbars(officeModules: string[]) {
     for (const mod of officeModules) {
