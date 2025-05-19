@@ -35,7 +35,7 @@ window.jsPassCtrlBar = function(pTbDataJs) {
 
 window.toggleFormatting = function(id) {
   setToolbarActive(id, !tbDataJs.active[id]);
-  thrPort.postMessage({cmd: 'toggle', id});
+  thrPort.postMessage({cmd: 'toggleFormatting', id});
   // Give focus to the LO canvas to avoid issues with
   // <https://bugs.documentfoundation.org/show_bug.cgi?id=162291> "Setting Bold is
   // undone when clicking into non-empty document" when the user would need to click
@@ -126,10 +126,7 @@ zHM.start(function() {
     thrPort = zHM.thrPort;
     thrPort.onmessage = function(e) {
       switch (e.data.cmd) {
-      case 'enable':
-        setToolbarActive(e.data.id, true);
-        break;
-      case 'state':
+      case 'setFormat':
         setToolbarActive(e.data.id, e.data.state);
         break;
       case 'ui_ready':

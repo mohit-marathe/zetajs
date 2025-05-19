@@ -107,7 +107,7 @@ function loadFile() {
 
   frame.getContainerWindow().FullScreen = true;
 
-  for (const id of ['Bold', 'Italic', 'Underline']) {
+  for (const id of 'Bold Italic Underline'.split(' ')) {
     const urlObj = zHT.transformUrl(context, '.uno:' + id);
     const listener = zetajs.unoObject([css.frame.XStatusListener], {
       disposing: function(source) {},

@@ -9,9 +9,9 @@ export default {
   data() {
     return {
       active: {
-        bold: false,
-        italic: false,
-        underline: false
+        Bold: false,
+        Italic: false,
+        Underline: false
       },
     };
   },
@@ -22,18 +22,18 @@ export default {
       return [
         {
           icon: "format_bold", title: "Bold",
-          click: () => toggleFormatting('bold'),
-          active: this.active['bold'],
+          click: () => toggleFormatting('Bold'),
+          active: this.active['Bold'],
         },
         {
           icon: "format_italic", title: "Italic",
-          click: () => toggleFormatting('italic'),
-          active: this.active['italic'],
+          click: () => toggleFormatting('Italic'),
+          active: this.active['Italic'],
         },
         {
           icon: "format_underline", title: "Underline",
-          click: () => toggleFormatting('underline'),
-          active: this.active['underline'],
+          click: () => toggleFormatting('Underline'),
+          active: this.active['Underline'],
         },
       ];
     },

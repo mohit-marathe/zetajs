@@ -37,14 +37,14 @@
           <h1 class="mt-5">Writer Document canvas</h1>
           <p class="lead">An example of a stripped-down, standalone Writer document canvas without any surrounding menubars, toolbars, side panels, etc.</p>
           <div class="btn-group" role="group" aria-label="Text formatting">
-            <input type="checkbox" class="btn-check" id="bold" disabled autocomplete="off" >
-            <label class="btn btn-outline-primary" for="bold">Bold</label>
+            <input type="checkbox" class="btn-check" id="Bold" disabled autocomplete="off" >
+            <label class="btn btn-outline-primary" for="Bold">Bold</label>
 
-            <input type="checkbox" class="btn-check" id="italic" disabled autocomplete="off" >
-            <label class="btn btn-outline-primary" for="italic">Italic</label>
+            <input type="checkbox" class="btn-check" id="Italic" disabled autocomplete="off" >
+            <label class="btn btn-outline-primary" for="Italic">Italic</label>
 
-            <input type="checkbox" class="btn-check" id="underline" disabled autocomplete="off" >
-            <label class="btn btn-outline-primary" for="underline">Underline</label>
+            <input type="checkbox" class="btn-check" id="Underline" disabled autocomplete="off" >
+            <label class="btn btn-outline-primary" for="Underline">Underline</label>
           </div>
         </div>
       </div>
@@ -80,6 +80,8 @@
       const canvasContainer = document.getElementById('qtcanvas');
       const canvas = document.getElementById('qtcanvas');
       const loadingInfo = document.getElementById('loadingInfo');
+      const fmtBtnsList = Object.fromEntries(Array.from(document.querySelectorAll(
+        'div[role="group"] input')).map(b=>[b.id,b]));  // {Bold: <BTN>, Italic: ...}
 
 
       var Module = {
@@ -118,22 +120,18 @@
       // "onload" runs after the loaded script has run.
       soffice_js.onload = function() {
         Module.uno_main.then(function(port) {
-          const elements = {};
-          function button(id) {
-            const element = document.getElementById(id);
-            element.onchange = function() {
-              port.postMessage({cmd: 'toggle', id});
+          for (const id of Object.keys(fmtBtnsList)) {
+            const btn = document.getElementById(id);
+            btn.onchange = function() {
+              port.postMessage({cmd: 'toggleFormatting', id});
               // Give focus to the LO canvas to avoid issues with
               // <https://bugs.documentfoundation.org/show_bug.cgi?id=162291> "Setting Bold is
               // undone when clicking into non-empty document" when the user would need to click
               // into the canvas to give back focus to it:
               canvas.focus();
             }
-            elements[id] = element;
-          };
-          button('bold');
-          button('italic');
-          button('underline');
+            fmtBtnsList[id] = btn;
+          }
           port.onmessage = function(e) {
             switch (e.data.cmd) {
             case 'ui_ready':
@@ -144,13 +142,11 @@
               setTimeout(function() {  // display Office UI properly
                 loadingInfo.style.display = 'none';
                 canvas.style.visibility = null;
+                for (const btn of Object.values(fmtBtnsList)) btn.disabled = false;
               }, 1000);  // milliseconds
               break;
-            case 'enable':
-              elements[e.data.id].disabled = false;
-              break;
-            case 'state':
-              elements[e.data.id].checked = e.data.state;
+            case 'setFormat':
+              fmtBtnsList[e.data.id].checked = e.data.state;
               break;
             default:
               throw Error('Unknown message command: ' + e.data.cmd);

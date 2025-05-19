@@ -14,8 +14,6 @@ let zetajs, css;
 // = global variables (some are global for easier debugging) =
 // common variables:
 let context, desktop, xModel, ctrl;
-// example specific:
-let unoUrlsAry;
 
 
 function demo() {
@@ -43,34 +41,27 @@ function demo() {
   // Turn off sidebar:
   dispatch('.uno:Sidebar');
 
-  unoUrlsAry = {};
-  button('bold', '.uno:Bold');
-  button('italic', '.uno:Italic');
-  button('underline', '.uno:Underline');
+  for (const id of 'Bold Italic Underline'.split(' ')) {
+    const urlObj = transformUrl('.uno:' + id);
+    const listener = zetajs.unoObject([css.frame.XStatusListener], {
+      disposing: function(source) {},
+      statusChanged: function(state) {
+        zetajs.mainPort.postMessage({cmd: 'setFormat', id, state: zetajs.fromAny(state.State)});
+      }
+    });
+    queryDispatch(urlObj).addStatusListener(listener, urlObj);
+  }
 
   zetajs.mainPort.onmessage = function (e) {
     switch (e.data.cmd) {
-    case 'toggle':
-      dispatch(unoUrlsAry[e.data.id]);
+    case 'toggleFormatting':
+      dispatch('.uno:' + e.data.id);
       break;
     default:
       throw Error('Unknown message command: ' + e.data.cmd);
     }
   }
   zetajs.mainPort.postMessage({cmd: 'ui_ready'});
-}
-
-function button(id, unoUrl) {
-  unoUrlsAry[id] = unoUrl;
-  const urlObj = transformUrl(unoUrl);
-  const listener = zetajs.unoObject([css.frame.XStatusListener], {
-    disposing: function(source) {},
-    statusChanged: function(state) {
-      zetajs.mainPort.postMessage({cmd: 'state', id, state: zetajs.fromAny(state.State)});
-    }
-  });
-  queryDispatch(urlObj).addStatusListener(listener, urlObj);
-  zetajs.mainPort.postMessage({cmd: 'enable', id});
 }
 
 function transformUrl(unoUrl) {

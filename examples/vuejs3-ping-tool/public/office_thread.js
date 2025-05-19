@@ -20,11 +20,11 @@ const desktop = zHT.desktop;
 // common variables:
 let xModel, ctrl;
 // example specific:
-let unoUrlsAry, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell;
+let ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell;
 
 // Export variables for debugging. Available for debugging via:
 //   globalThis.zetajsStore.threadJsContext
-export { zHT, xModel, ctrl, unoUrlsAry, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell };
+export { zHT, xModel, ctrl, ping_line, xComponent, charLocale, formatNumber, formatText, activeSheet, cell };
 
 
 function demo() {
@@ -47,16 +47,22 @@ function demo() {
   ctrl.getFrame().LayoutManager.hideElement("private:resource/statusbar/statusbar");
   ctrl.getFrame().LayoutManager.hideElement("private:resource/menubar/menubar");
 
-  unoUrlsAry = {};
-  button('bold', '.uno:Bold');
-  button('italic', '.uno:Italic');
-  button('underline', '.uno:Underline');
+  for (const id of 'Bold Italic Underline'.split(' ')) {
+    const urlObj = zHT.transformUrl(context, '.uno:' + id);
+    const listener = zetajs.unoObject([css.frame.XStatusListener], {
+      disposing: function(source) {},
+      statusChanged: function(state) {
+        zetajs.mainPort.postMessage({cmd: 'setFormat', id, state: zetajs.fromAny(state.State)});
+      }
+    });
+    zHT.queryDispatch(ctrl, urlObj).addStatusListener(listener, urlObj);
+  }
 
   activeSheet = ctrl.getActiveSheet();
   zHT.thrPort.onmessage = function (e) {
     switch (e.data.cmd) {
-    case 'toggle':
-      zHT.dispatch(ctrl, context, unoUrlsAry[e.data.id]);
+    case 'toggleFormatting':
+      zHT.dispatch(ctrl, context, '.uno:' + e.data.id);
       break;
     case 'ping_result':
       if (ping_line === undefined) {
@@ -96,19 +102,6 @@ function findEmptyRowInCol1(activeSheet) {
     str = activeSheet.getCellByPosition(0, line).getString();
   }
   return line;
-}
-
-function button(id, unoUrl) {
-  unoUrlsAry[id] = unoUrl;
-  const urlObj = zHT.transformUrl(context, unoUrl);
-  const listener = zetajs.unoObject([css.frame.XStatusListener], {
-    disposing: function(source) {},
-    statusChanged: function(state) {
-      zHT.thrPort.postMessage({cmd: 'state', id, state: zetajs.fromAny(state.State)});
-    }
-  });
-  zHT.queryDispatch(ctrl, urlObj).addStatusListener(listener, urlObj);
-  zHT.thrPort.postMessage({cmd: 'enable', id});
 }
 
 demo();  // launching demo
