@@ -46,7 +46,10 @@ function demo() {
     const listener = zetajs.unoObject([css.frame.XStatusListener], {
       disposing: function(source) {},
       statusChanged: function(state) {
-        zetajs.mainPort.postMessage({cmd: 'setFormat', id, state: zetajs.fromAny(state.State)});
+        state = zetajs.fromAny(state.State);
+        // Behave like desktop UI if a non uniformly formatted area is selected.
+        if (typeof state !== 'boolean') state = false;  // like desktop UI
+        zetajs.mainPort.postMessage({cmd: 'setFormat', id, state});
       }
     });
     queryDispatch(urlObj).addStatusListener(listener, urlObj);

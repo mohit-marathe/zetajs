@@ -223,15 +223,23 @@ function loadFile(fileTab) {
       const urlObj = transformUrl('.uno:' + id);
       const listener = zetajs.unoObject([css.frame.XStatusListener], {
         disposing: function(source) {},
-        statusChanged: function(state) {
-          state = zetajs.fromAny(state.State);
-          if (id == 'FontHeight') state = Math.round(state.Height * 10) / 10;
-          if (id == 'CharFontName') state = state.Name;
-          if (id == 'Color' && state == -1) state = 0x000000;
-          if (id == 'CharBackColor' && state == -1) state = 0xFFFFFF;
-          if (['Color', 'CharBackColor'].includes(id))  // int to #RRGGBB
-            state = '#' + (0x1000000 + state).toString(16).substring(1, 7);
-          zetajs.mainPort.postMessage({cmd: 'setFormat', id, state});
+        statusChanged: function(rawSt) {  // rawState
+          rawSt = zetajs.fromAny(rawSt.State);
+          // If a non uniformly formatted area is selected, state may contain an invalid value.
+          let state;
+          if (id === 'FontHeight') {
+            if (typeof rawSt.Height === 'number') state = Math.round(rawSt.Height * 10) / 10;
+          } else if (id === 'CharFontName') {
+            if (typeof rawSt.Name === 'string') state = rawSt.Name;
+          } else if (['Color', 'CharBackColor'].includes(id)) {
+            if (typeof rawSt === 'number') {
+              if (id === 'Color' && rawSt === -1) rawSt = 0x000000;
+              else if (id === 'CharBackColor' && rawSt === -1) rawSt = 0xFFFFFF;
+              state = '#' + (0x1000000 + rawSt).toString(16).substring(1, 7);  // int to #RRGGBB
+            }
+          } else if (typeof rawSt === 'boolean') state = rawSt;
+          else state = false;  // Behave like desktop UI if a non uniformly formatted area is selected.
+          if (typeof state !== 'undefined') zetajs.mainPort.postMessage({cmd: 'setFormat', id, state});
         }
       });
       queryDispatch(letterCtrl, urlObj).addStatusListener(listener, urlObj);
