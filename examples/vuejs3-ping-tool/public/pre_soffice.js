@@ -16,7 +16,6 @@ try {
 let thrPort;               // zetajs thread communication
 let tbDataJs;              // toolbar dataset passed from vue.js for plain JS
 window.PingModule = null;  // Ping module passed from vue.js for plain JS
-let lastDevicePixelRatio = window.devicePixelRatio;
 
 const loadingInfo = document.getElementById('loadingInfo');
 const canvas = document.getElementById('qtcanvas');
@@ -93,23 +92,6 @@ async function get_calc_ping_example_ods() {
   const response = await fetch("./calc_ping_example.ods");
   return response.arrayBuffer();
 }
-
-window.onresize = function() {
-  // Workaround to inform Qt5 about changed browser zoom.
-  setTimeout(function() {
-    if (lastDevicePixelRatio) {
-      if (lastDevicePixelRatio != window.devicePixelRatio) {
-        lastDevicePixelRatio = false;
-        canvas.style.width = parseInt(canvas.style.width) + 1 + 'px';
-        window.dispatchEvent(new Event('resize'));
-      }
-    } else {
-      lastDevicePixelRatio = window.devicePixelRatio
-      canvas.style.width = parseInt(canvas.style.width) - 1 + 'px';
-      window.dispatchEvent(new Event('resize'));
-    }
-  }, 100);
-};
 
 
 zHM.start(function() {
