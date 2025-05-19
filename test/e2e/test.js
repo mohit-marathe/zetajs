@@ -7,7 +7,15 @@ describe("convert", () => {
 
   it('should convert an odt file to pdf', async () => {
     // Wait for zetaoffice to load
-    await page.evaluate("Module.uno_main");
+    await new Promise(r => {
+      const waitFunc = async () => {
+        const success = await page.evaluate(() => {
+          return document.querySelector('input').disabled === false;
+        });
+        success ? r() : setTimeout(waitFunc, 1000);
+      };
+      waitFunc();
+    });
 
     // Convert test/test.odt to pdf and make sure it opens in new tab
     const download = await page.$("#download");

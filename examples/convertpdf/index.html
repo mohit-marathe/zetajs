@@ -19,78 +19,63 @@
     <label><input type=checkbox id="download"/> Download</label>
     <iframe id="frame"></iframe>
     <canvas id="qtcanvas" style="display: none"></canvas>
-    <script type="text/javascript">
-      'use strict';
-
-      // Set base URL to the soffice.* files.
-      // Use an empty string if those files are in the same directory.
-      let soffice_base_url = '<!-- soffice.js Base -->';
+    <script type="module">
+      import { ZetaHelperMain } from './assets/vendor/zetajs/zetaHelper.js';
 
       // Enable usage of LOWA builds with UI.
       const canvas = document.getElementById('qtcanvas');
+      const input = document.getElementById('input');
 
-      var Module = {
-        canvas,
-        uno_scripts: ['./assets/vendor/zetajs/zeta.js', './office_thread.js'],
-        locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
-      };
-      if (soffice_base_url !== '') {
-        // Must not be set when soffice.js is in the same directory.
-        Module.mainScriptUrlOrBlob = new Blob(
-          ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
-      }
+      // Set base URL to the soffice.* files.
+      // Use an empty string if those files are in the same directory.
+      let wasmPkg = '<!-- soffice.js Base -->';
+      wasmPkg = wasmPkg !== null ? 'url:' + wasmPkg : null;
+      const zHM = new ZetaHelperMain('office_thread.js', {threadJsType: 'module', wasmPkg});
 
-      const soffice_js = document.createElement("script");
-      soffice_js.src = soffice_base_url + "soffice.js";
-      // "onload" runs after the loaded script has run.
-      soffice_js.onload = function() {
-        Module.uno_main.then(function(port) {
-          const input = document.getElementById('input');
-          input.onchange = function() {
-            input.disabled = true;
-            const file = input.files[0];
-            let name = file.name;
-            // Use a canonical /tmp/input pathname so that it cannot clash with whatever relevant
-            // files might already be present there (which should not be named "input"), but
-            // append the original file name extension so that LO's type detection can use it to
-            // determine the input file type:
-            let from = '/tmp/input';
-            const n = name.lastIndexOf('.');
-            if (n > 0) {
-              from += name.substring(n);
-              name = name.substring(0, n);
-            }
-            file.arrayBuffer().then(data => {
-              FS.writeFile(from, new Uint8Array(data));
-              port.postMessage({cmd: 'convert', name, from, to: '/tmp/output'});
-            });
-          };
-          port.onmessage = function(e) {
-            switch (e.data.cmd) {
-            case 'converted':
-              try { FS.unlink(e.data.from); } catch {}  // for easier debugging
-              const data = FS.readFile(e.data.to);
-              const blob = new Blob([data], {type: 'application/pdf'});
-              const url = URL.createObjectURL(blob);
-              document.getElementById('frame').contentWindow.open(url, '_self');
-              if (document.getElementById("download").checked) {
-                window.open(url);
-              }
-              try { FS.unlink(e.data.to); } catch {}  // for easier debugging
-              URL.revokeObjectURL(url);
-              // fallthrough
-            case 'start':
-              input.disabled = false;
-              break;
-            default:
-              throw Error('Unknown message command: ' + e.data.cmd);
-            }
-          };
+      // Functions stored below window.* are usually accessed from HTML.
+      input.onchange = () => {
+        input.disabled = true;
+        const file = input.files[0];
+        let name = file.name;
+        // Use a canonical /tmp/input pathname so that it cannot clash with whatever relevant
+        // files might already be present there (which should not be named "input"), but
+        // append the original file name extension so that LO's type detection can use it to
+        // determine the input file type:
+        let from = '/tmp/input';
+        const n = name.lastIndexOf('.');
+        if (n > 0) {
+          from += name.substring(n);
+          name = name.substring(0, n);
+        }
+        file.arrayBuffer().then(data => {
+          FS.writeFile(from, new Uint8Array(data));
+          zHM.thrPort.postMessage({cmd: 'convert', name, from, to: '/tmp/output'});
         });
       };
-      console.log('Loading WASM binaries for ZetaJS from: ' + soffice_base_url);
-      // Hint: The global objects "canvas" and "Module" must exist before the next line.
-      document.body.appendChild(soffice_js);
+
+      zHM.start(() => {
+        zHM.thrPort.onmessage = (e) => {
+          switch (e.data.cmd) {
+          case 'converted':
+            try { FS.unlink(e.data.from); } catch {}  // for easier debugging
+            const data = FS.readFile(e.data.to);
+            const blob = new Blob([data], {type: 'application/pdf'});
+            const url = URL.createObjectURL(blob);
+            document.getElementById('frame').contentWindow.open(url, '_self');
+            if (document.getElementById("download").checked) {
+              window.open(url);
+            }
+            try { FS.unlink(e.data.to); } catch {}  // for easier debugging
+            URL.revokeObjectURL(url);
+            // fallthrough
+          case 'start':
+            input.disabled = false;
+            break;
+          default:
+            throw Error('Unknown message command: ' + e.data.cmd);
+          }
+        };
+      });
     </script>
   </body>
 </html>

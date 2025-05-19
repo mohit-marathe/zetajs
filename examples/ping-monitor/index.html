@@ -76,39 +76,31 @@
         </div>
       </div>
     </div>
-    <script type="text/javascript">
-      'use strict';
-
-      // Set base URL to the soffice.* files.
-      // Use an empty string if those files are in the same directory.
-      let soffice_base_url = '<!-- soffice.js Base -->';
+    <script type="module">
+      import { ZetaHelperMain } from './assets/vendor/zetajs/zetaHelper.js';
 
       const canvas = document.getElementById('qtcanvas');
       const pingTarget = document.getElementById('pingTarget');
       const loadingInfo = document.getElementById('loadingInfo');
 
+      // Set base URL to the soffice.* files.
+      // Use an empty string if those files are in the same directory.
+      let wasmPkg = '<!-- soffice.js Base -->';
+      wasmPkg = wasmPkg !== null ? 'url:' + wasmPkg : null;
+      const zHM = new ZetaHelperMain('office_thread.js', {
+        blockPageScroll: false, threadJsType: 'module', wasmPkg});
 
-      var Module = {
-        canvas,
-        uno_scripts: ['./assets/vendor/zetajs/zeta.js', './office_thread.js'],
-        locateFile: function(path, prefix) { return (prefix || soffice_base_url) + path; },
-      };
-      if (soffice_base_url !== '') {
-        // Must not be set when soffice.js is in the same directory.
-        Module.mainScriptUrlOrBlob = new Blob(
-          ["importScripts('"+soffice_base_url+"soffice.js');"], {type: 'text/javascript'});
-      }
-
-      let thrPort;     // zetajs thread communication
       const pingInst = new Ping();
       let url = pingTarget.value;
       let lastDevicePixelRatio = window.devicePixelRatio;
 
 
-      function btnPing() {
+      // Functions stored below window.* are usually accessed from vue.js.
+
+      window.btnPing = () => {
         url = pingTarget.value;
       }
-      pingTarget.addEventListener ("keyup", (evt) => {
+      window.pingTarget.addEventListener ('keyup', (evt) => {
         if(evt.key === 'Enter') btnPing();
       });
 
@@ -123,71 +115,44 @@
           pingInst.ping(url, function(err, ping_value) {
             // err: In /favicon.ico can't be loaded the result still represents the response time.
             console.log({url, ping_value});
-            thrPort.postMessage({cmd: 'ping_result', url, ping_value});
+            zHM.thrPort.postMessage({cmd: 'ping_result', url, ping_value});
           });
         }
       }
 
-      window.onresize = function() {
-        // Workaround to inform Qt5 about changed browser zoom.
-        setTimeout(function() {
-          if (lastDevicePixelRatio) {
-            if (lastDevicePixelRatio != window.devicePixelRatio) {
-              lastDevicePixelRatio = false;
-              canvas.style.width = parseInt(canvas.style.width) + 1 + 'px';
-              window.dispatchEvent(new Event('resize'));
-            }
-          } else {
-            lastDevicePixelRatio = window.devicePixelRatio
-            canvas.style.width = parseInt(canvas.style.width) - 1 + 'px';
+      zHM.start(() => {
+        zHM.thrPort.onmessage = (e) => {
+          switch (e.data.cmd) {
+          case 'ui_ready':
+            // Trigger resize of the embedded window to match the canvas size.
+            // May somewhen be obsoleted by:
+            //   https://gerrit.libreoffice.org/c/core/+/174040
             window.dispatchEvent(new Event('resize'));
+            setTimeout(function() {  // display Office UI properly
+              loadingInfo.style.display = 'none';
+              canvas.style.visibility = null;
+              // Using Ping callback interface.
+              // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
+              //   acutally having CORP on foreign origins.
+              //   Also 'credentialless' isn't supported by Safari-18 as of 2024-09.
+              pingInst.ping(pingTarget, function() {
+                // Continue after first ping, which is often exceptionally slow.
+                setInterval(function() {
+                    doPing();
+                  }, 1000);  // milliseconds
+              });
+            }, 1000);  // milliseconds
+            break;
+          default:
+            throw Error('Unknown message command: ' + e.data.cmd);
           }
-        }, 100);
-      };
-
-      const soffice_js = document.createElement("script");
-      soffice_js.src = soffice_base_url + "soffice.js";
-      // "onload" runs after the loaded script has run.
-      soffice_js.onload = function() {
-        console.log('PLUS: Configuring Module');
-        Module.uno_main.then(function(pThrPort) {
-          thrPort = pThrPort;
-          thrPort.onmessage = function(e) {
-            switch (e.data.cmd) {
-            case 'ui_ready':
-              // Trigger resize of the embedded window to match the canvas size.
-              // May somewhen be obsoleted by:
-              //   https://gerrit.libreoffice.org/c/core/+/174040
-              window.dispatchEvent(new Event('resize'));
-              setTimeout(function() {  // display Office UI properly
-                loadingInfo.style.display = 'none';
-                canvas.style.visibility = null;
-                // Using Ping callback interface.
-                // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
-                //   acutally having CORP on foreign origins.
-                //   Also 'credentialless' isn't supported by Safari-18 as of 2024-09.
-                pingInst.ping(pingTarget, function() {
-                  // Continue after first ping, which is often exceptionally slow.
-                  setInterval(function() {
-                      doPing();
-                    }, 1000);  // milliseconds
-                });
-              }, 1000);  // milliseconds
-              break;
-            default:
-              throw Error('Unknown message command: ' + e.data.cmd);
-            }
-          };
-
-          load_ping_monitor_ods().then(function(aryBuf) {
-            ping_monitor_ods = aryBuf;
-            FS.writeFile('/tmp/ping_monitor.ods', new Uint8Array(ping_monitor_ods));
-          });
+        };
+  
+        load_ping_monitor_ods().then(function(aryBuf) {
+          ping_monitor_ods = aryBuf;
+          FS.writeFile('/tmp/ping_monitor.ods', new Uint8Array(ping_monitor_ods));
         });
-      };
-      console.log('Loading WASM binaries for ZetaJS from: ' + soffice_base_url);
-      // Hint: The global objects "canvas" and "Module" must exist before the next line.
-      document.body.appendChild(soffice_js);
+      });
     </script>
   </body>
 </html>

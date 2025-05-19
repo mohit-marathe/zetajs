@@ -5,63 +5,52 @@
 // Switch the web worker in the browsers debug tab to debug this code.
 // It's the "em-pthread" web worker with the most memory usage, where "zetajs" is defined.
 
-'use strict';
+// JS mode: module
+import { ZetaHelperThread } from './assets/vendor/zetajs/zetaHelper.js';
 
 
 // global variables - zetajs environment:
-let zetajs, css;
+const zHT = new ZetaHelperThread();
+const zetajs = zHT.zetajs;
+const css = zHT.css;
+const desktop = zHT.desktop;
 
 // = global variables (some are global for easier debugging) =
 // common variables:
-let context, desktop, tableXModel, letterXModel, tableCtrl, letterCtrl;
+let tableXModel, letterXModel, tableCtrl, letterCtrl;
 // example specific:
 let writerModuleConfigured=false, calcModuleConfigured=false;
 const readyList = {Fonts: false, Window: false};
 let letterFrame, tableFrame, fontsList, switchVals;
 // switchVals needed globally in case the user switches tabs rapidly.
+let bean_overwrite, bean_odt_export, bean_pdf_export;
+
+// Export variables for debugging. Available for debugging via:
+//   globalThis.zetajsStore.threadJsContext
+export { zHT, tableXModel, letterXModel, tableCtrl, letterCtrl,
+  bean_overwrite, bean_odt_export, bean_pdf_export };
 
 
 function demo() {
-  context = zetajs.getUnoComponentContext();
-  const bean_overwrite = new css.beans.PropertyValue({Name: 'Overwrite', Value: true});
-  const bean_odt_export = new css.beans.PropertyValue({Name: 'FilterName', Value: 'writer8'});
-  const bean_pdf_export = new css.beans.PropertyValue({Name: 'FilterName', Value: 'writer_pdf_Export'});
+  bean_overwrite = new css.beans.PropertyValue({Name: 'Overwrite', Value: true});
+  bean_odt_export = new css.beans.PropertyValue({Name: 'FilterName', Value: 'writer8'});
+  bean_pdf_export = new css.beans.PropertyValue({Name: 'FilterName', Value: 'writer_pdf_Export'});
 
-  // Turn off toolbars:
-  const config = css.configuration.ReadWriteAccess.create(context, 'en-US');
-  const writerUiElems = config.getByHierarchicalName(
-    '/org.openoffice.Office.UI.WriterWindowState/UIElements/States');
-  for (const i of writerUiElems.getElementNames()) {
-    const uielem = writerUiElems.getByName(i);
-    if (uielem.getByName('Visible')) {
-      uielem.setPropertyValue('Visible', false);
-    }
-  }
-  const calcUiElems = config.getByHierarchicalName(
-    '/org.openoffice.Office.UI.CalcWindowState/UIElements/States');
-  for (const i of calcUiElems.getElementNames()) {
-    const uielem = calcUiElems.getByName(i);
-    if (uielem.getByName('Visible')) {
-      uielem.setPropertyValue('Visible', false);
-    }
-  }
-  config.commitChanges();
-
-  desktop = css.frame.Desktop.create(context);
+  zHT.configDisableToolbars(['Writer', 'Calc']);
   loadFile('both');
   tableToHtml();
 
-  zetajs.mainPort.onmessage = function (e) {
+  zHT.thrPort.onmessage = (e) => {
     switch (e.data.cmd) {
     case 'switch_tab':
       if (e.data.id === 'letter') {
         switchVals = [true, false];
         tableToHtml();
       } else switchVals = [false, true];  // table
-      function setVals() {
+      const setVals = () => {
         letterFrame.getContainerWindow().FullScreen = switchVals[0];
         tableFrame.getContainerWindow().FullScreen = switchVals[1];
-        zetajs.mainPort.postMessage({cmd: 'resizeEvt'});
+        zHT.thrPort.postMessage({cmd: 'resizeEvt'});
       }
       setVals();  // sometimes needed twice to apply resize
       setTimeout(() => { setVals(); }, 500);
@@ -69,7 +58,7 @@ function demo() {
     case 'download':
       const format = e.data.id === 'btnOdt' ? bean_odt_export : bean_pdf_export;
       letterXModel.storeToURL( 'file:///tmp/output', [bean_overwrite, format]);
-      zetajs.mainPort.postMessage({cmd: 'download', id: e.data.id});
+      zHT.thrPort.postMessage({cmd: 'download', id: e.data.id});
       break;
     case 'reload':
       const letterForeground = e.data.id;
@@ -83,7 +72,7 @@ function demo() {
       for (let i = 0; i < value.length; i++) {
         params[i] = new css.beans.PropertyValue({Name: value[i][0], Value: value[i][1]});
       }
-      dispatch(letterCtrl, '.uno:' + e.data.id, params);
+      zHT.dispatch(letterCtrl, e.data.id, params);
       break;
     case 'insertAddress':
       const recipient = e.data.recipient;
@@ -158,7 +147,7 @@ function tableToHtml() {
     if (local_row > 0) local_row = 0;
     row_10 += 1;
   }
-  zetajs.mainPort.postMessage({cmd: 'addrData', data});
+  zHT.thrPort.postMessage({cmd: 'addrData', data});
 }
 
 
@@ -169,8 +158,8 @@ function loadFile(fileTab) {
     if (!calcModuleConfigured) {
       calcModuleConfigured = true;
       // Permanant Calc module toggles. Don't run again on a document reload.
-      dispatch(tableCtrl, '.uno:Sidebar', []);
-      dispatch(tableCtrl, '.uno:InputLineVisible', []); // FormulaBar at the top
+      zHT.dispatch(tableCtrl, 'Sidebar', []);
+      zHT.dispatch(tableCtrl, 'InputLineVisible', []); // FormulaBar at the top
     }
     tableFrame = tableCtrl.getFrame();
     // Turn off UI elements (idempotent operations):
@@ -190,8 +179,8 @@ function loadFile(fileTab) {
     if (!writerModuleConfigured) {
       writerModuleConfigured = true;
       // Permanant Writer module toggles. Don't run again on a document reload.
-      dispatch(letterCtrl, '.uno:Sidebar', []);
-      dispatch(letterCtrl, '.uno:Ruler', []);
+      zHT.dispatch(letterCtrl, 'Sidebar', []);
+      zHT.dispatch(letterCtrl, 'Ruler', []);
     }
     letterFrame = letterCtrl.getFrame();
     // Turn off UI elements (idempotent operations):
@@ -202,8 +191,8 @@ function loadFile(fileTab) {
     letterFrame.getContainerWindow().FullScreen = true;
 
     // Get font list for toolbar.
-    const fontsUrlObj = transformUrl('.uno:FontNameList');
-    const fontsDispatcher = queryDispatch(letterCtrl, fontsUrlObj);
+    const fontsUrlObj = zHT.transformUrl('FontNameList');
+    const fontsDispatcher = zHT.queryDispatch(letterCtrl, fontsUrlObj);
     const fontsDispatchNotifier = css.frame.XDispatch.constructor(fontsDispatcher)
     const fontListener = zetajs.unoObject(
       [css.frame.XStatusListener],
@@ -220,10 +209,10 @@ function loadFile(fileTab) {
         'LeftPara', 'CenterPara', 'RightPara', 'JustifyPara', 'DefaultBullet',
         'FontHeight', 'CharFontName'
         ]) {
-      const urlObj = transformUrl('.uno:' + id);
+      const urlObj = zHT.transformUrl(id);
       const listener = zetajs.unoObject([css.frame.XStatusListener], {
-        disposing: function(source) {},
-        statusChanged: function(rawSt) {  // rawState
+        disposing: (source) => {},
+        statusChanged: (rawSt) => {  // rawState
           rawSt = zetajs.fromAny(rawSt.State);
           // If a non uniformly formatted area is selected, state may contain an invalid value.
           let state;
@@ -242,7 +231,7 @@ function loadFile(fileTab) {
           if (typeof state !== 'undefined') zetajs.mainPort.postMessage({cmd: 'setFormat', id, state});
         }
       });
-      queryDispatch(letterCtrl, urlObj).addStatusListener(listener, urlObj);
+      zHT.queryDispatch(letterCtrl, urlObj).addStatusListener(listener, urlObj);
     }
   }
   startupReady('Window');
@@ -251,31 +240,10 @@ function loadFile(fileTab) {
 
 function startupReady(startupStep) {
   readyList[startupStep] = true;
-  if (Object.values(readyList).indexOf(false) == -1) {
-    zetajs.mainPort.postMessage({cmd: 'ui_ready', fontsList});
-  }
+  if (Object.values(readyList).indexOf(false) == -1)
+    zHT.thrPort.postMessage({cmd: 'ui_ready', fontsList});
 }
 
-function transformUrl(unoUrl) {
-  const ioparam = {val: new css.util.URL({Complete: unoUrl})};
-  css.util.URLTransformer.create(context).parseStrict(ioparam);
-  return ioparam.val;
-}
-
-function queryDispatch(ctrl, urlObj) {
-  return ctrl.queryDispatch(urlObj, '_self', 0);
-}
-
-function dispatch(ctrl, unoUrl, params) {
-  const urlObj = transformUrl(unoUrl);
-  queryDispatch(ctrl, urlObj).dispatch(urlObj, params);
-}
-
-Module.zetajs.then(function(pZetajs) {
-  // initializing zetajs environment:
-  zetajs = pZetajs;
-  css = zetajs.uno.com.sun.star;
-  demo();  // launching demo
-});
+demo();  // launching demo
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */

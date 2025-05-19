@@ -10,6 +10,7 @@ export default {
     config_js.src = "./config.js";
     document.body.appendChild(config_js);  // May fail. config.js is optional.
     const pre_soffice_js = document.createElement("script");
+    pre_soffice_js.type = "module";
     pre_soffice_js.src = "./pre_soffice.js";
     pre_soffice_js.onload = function () {
       ControlBar.init_control_bar();

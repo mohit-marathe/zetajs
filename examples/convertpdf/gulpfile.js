@@ -22,8 +22,6 @@ const distDir = './public/';
 // Overwrites in config.js have priority over command line arguments.
 
 var soffice_base_url = argv.soffice_base_url;
-// Set "" for same server. But empty strings are falsy, so check "undefined".
-if (typeof soffice_base_url === "undefined") soffice_base_url = 'https://cdn.zetaoffice.net/zetaoffice_latest/';
 
 var custom_browser = argv.browser;  // else use default system browser
 var custom_listen = argv.listen || '127.0.0.1';
@@ -41,9 +39,13 @@ function clean() {
 
 // Task: Compile HTML
 function compileHTML() {
+  // Set "" for same server. But empty strings are falsy, so check "undefined".
+  // If undefined, it's set to null without quotes to let zetaHelper set the URL.
+  let quoted_url = null;  // null, prevents additional quoting on "npm run start" reloads
+  if (typeof soffice_base_url !== "undefined") quoted_url = "'" + soffice_base_url + "'";
 
   return gulp.src(['index.html'])
-    .pipe( inject.replace('<!-- soffice.js Base -->', soffice_base_url) )
+    .pipe( inject.replace("'<!-- soffice.js Base -->'", quoted_url) )
     .pipe(gulp.dest(distDir))
     .pipe(browserSync.stream());
 }
@@ -63,6 +65,7 @@ function copyVendors() {
   let stream = mergeStream();
 
   stream.add( gulp.src( 'node_modules/zetajs/source/zeta.js' ).pipe( gulp.dest( distDir + 'assets/vendor/zetajs/' ) ) );
+  stream.add( gulp.src( 'node_modules/zetajs/source/zetaHelper.js' ).pipe( gulp.dest( distDir + 'assets/vendor/zetajs/' ) ) );
 
   return stream;
 }
