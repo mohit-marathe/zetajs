@@ -29,60 +29,58 @@ export default {
         </div>
       </div>
       <div class="row">
-        <div class="col">
-          <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="btnLetter" onclick="btnSwitchTab('letter')" type="button" role="tab"
-                aria-controls="home-tab-pane" aria-selected="true" disabled>Editor</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="btnTable" onclick="btnSwitchTab('table')" type="button" role="tab"
-                aria-controls="profile-tab-pane" aria-selected="false" disabled>Addresses</button>
-            </li>
-          </ul>
-          <div class="tab-content p-1" id="tabContent">
-            <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="btnLetter"
-              tabindex="0">
-              <div class="row">
-                <div id="canvasCell" class="col-lg-9">
-                  <ControlBar id="controlbar" class="mt-1 mb-1" />
-                  <div class="canvas-container" onselectstart="event.preventDefault()">
-                    <div id="loadingInfo" class="loading-info">
-                      <div class="spinner"></div><br>
-                      <h2>ZetaOffice is loading...</h2>
-                    </div>
-                    <canvas id="qtcanvas" contenteditable="true" oncontextmenu="event.preventDefault()"
-                      onkeydown="event.preventDefault()" style="width:100%; height:500px; visibility:hidden;"
-                      class="qt-canvas">
-                      <!-- Qt requires the canvas to have the ID "qtcanvas". -->
-                      <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
-                      <!-- An outline is fine though. -->
-                    </canvas>
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="btnLetter" onclick="btnSwitchTab('letter')" type="button" role="tab"
+              aria-controls="home-tab-pane" aria-selected="true" disabled>Editor</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="btnTable" onclick="btnSwitchTab('table')" type="button" role="tab"
+              aria-controls="profile-tab-pane" aria-selected="false" disabled>Addresses</button>
+          </li>
+        </ul>
+        <div class="tab-content p-1" id="tabContent">
+          <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="btnLetter"
+            tabindex="0">
+            <div class="row">
+              <div id="canvasCell" class="col-lg-9">
+                <ControlBar id="controlbar" class="mt-1 mb-1" />
+                <div class="canvas-container" onselectstart="event.preventDefault()">
+                  <div id="loadingInfo" class="loading-info">
+                    <div class="spinner"></div><br>
+                    <h2>ZetaOffice is loading...</h2>
                   </div>
-                </div>
-                <div class="col-lg-3">
-                  <h4 class="mt-3">Document</h4>
-                  <label class="btn btn-light btn-sm disabled" id="lblUpload">
-                    Upload new file
-                    <input accept=".odt" class="file-input" type="file" id="btnUpload" onchange="btnUploadFunc()" disabled>
-                  </label>
-                  <button class="btn btn-light btn-sm ms-2" id="btnReload" onclick="btnReloadFunc()" disabled>
-                    Reload file</button>
-                  <div id="addrNameCell">
-                    <div class="d-flex justify-content-between">
-                      <h4 class="mt-3">Recipient</h4>
-                      <button class="btn btn-primary btn-sm mb-2 mt-3" id="btnInsert"
-                        onclick="btnInsertFunc()" disabled>Insert Address</button>
-                    </div>
-                    <select class="form-select" id="addrName" size="17" autofocus disabled></select>
-                  </div>
+                  <canvas id="qtcanvas" contenteditable="true" oncontextmenu="event.preventDefault()"
+                    onkeydown="event.preventDefault()" style="width:100%; height:500px; visibility:hidden;"
+                    class="qt-canvas">
+                    <!-- Qt requires the canvas to have the ID "qtcanvas". -->
+                    <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
+                    <!-- An outline is fine though. -->
+                  </canvas>
                 </div>
               </div>
-
+              <div class="col-lg-3">
+                <h4 class="mt-3">Document</h4>
+                <label class="btn btn-light btn-sm disabled" id="lblUpload">
+                  Upload new file
+                  <input accept=".odt" class="file-input" type="file" id="btnUpload" onchange="btnUploadFunc()" disabled>
+                </label>
+                <button class="btn btn-light btn-sm ms-2" id="btnReload" onclick="btnReloadFunc()" disabled>
+                  Reload file</button>
+                <div id="addrNameCell">
+                  <div class="d-flex justify-content-between">
+                    <h4 class="mt-3">Recipient</h4>
+                    <button class="btn btn-primary btn-sm mb-2 mt-3" id="btnInsert"
+                      onclick="btnInsertFunc()" disabled>Insert Address</button>
+                  </div>
+                  <select class="form-select" id="addrName" size="17" autofocus disabled></select>
+                </div>
+              </div>
             </div>
-          </div>
 
+          </div>
         </div>
+
       </div>
     </div>
   </div>
