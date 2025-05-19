@@ -13,6 +13,7 @@ export default {
         Italic: false,
         Underline: false
       },
+      disabled: true,  // startup default
     };
   },
 
@@ -24,16 +25,19 @@ export default {
           icon: "format_bold", title: "Bold",
           click: () => toggleFormatting('Bold'),
           active: this.active['Bold'],
+          disabled: this.disabled,
         },
         {
           icon: "format_italic", title: "Italic",
           click: () => toggleFormatting('Italic'),
           active: this.active['Italic'],
+          disabled: this.disabled,
         },
         {
           icon: "format_underline", title: "Underline",
           click: () => toggleFormatting('Underline'),
           active: this.active['Underline'],
+          disabled: this.disabled,
         },
       ];
     },

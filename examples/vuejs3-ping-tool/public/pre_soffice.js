@@ -22,6 +22,7 @@ const loadingInfo = document.getElementById('loadingInfo');
 const canvas = document.getElementById('qtcanvas');
 const pingTarget = document.getElementById("ping_target");
 const btnPing = document.getElementById("btnPing");
+const disabledElementsAry = [btnPing];
 
 const zHM = new ZetaHelperMain('office_thread.js', {threadJsMode: 'module', soffice_base_url});
 
@@ -30,7 +31,7 @@ const zHM = new ZetaHelperMain('office_thread.js', {threadJsMode: 'module', soff
 
 window.jsPassCtrlBar = function(pTbDataJs) {
   tbDataJs = pTbDataJs;
-  console.log('PLUS: assigned tbDataJs');
+  disabledElementsAry.push(tbDataJs);
 }
 
 window.toggleFormatting = function(id) {
@@ -85,11 +86,6 @@ function btnPingFunc() {
     pingResult(url, err, data);
   });
 }
-pingTarget.addEventListener ("keyup", (evt) => {
-  if(evt.key === 'Enter') {
-    btnPingFunc();
-  }
-});
 btnPing.onclick = btnPingFunc;
 
 
@@ -137,6 +133,10 @@ zHM.start(function() {
         setTimeout(function() {  // display Office UI properly
           loadingInfo.style.display = 'none';
           canvas.style.visibility = null;
+          for (const elem of disabledElementsAry) elem.disabled = false;
+          pingTarget.addEventListener ("keyup", (evt) => {
+            if(evt.key === 'Enter') btnPingFunc();
+          });
           // Using Ping callback interface.
           pingInst.ping(urls_ary[urls_ary_i], function() {
             // Continue after first ping, which is often exceptionally slow.
