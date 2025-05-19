@@ -31,11 +31,13 @@ var custom_port = argv.port || 3000;
 var clean_disabled = argv.clean_disabled;
 var no_browser = argv.nobrowser;
 
+
 // Clean up the dist folder before running any task
 function clean() {
   if (clean_disabled) return Promise.resolve();
   return del(distDir + '**/*');
 }
+
 
 // Task: Compile HTML
 function compileHTML() {
@@ -46,6 +48,7 @@ function compileHTML() {
     .pipe(browserSync.stream());
 }
 
+
 // Task: Compile JS
 function compileJS() {
   return gulp.src( './office_thread.js') //
@@ -53,6 +56,7 @@ function compileJS() {
     .pipe(gulp.dest(distDir))
     .pipe(browserSync.stream());
 }
+
 
 // Task: Copy Vendors
 function copyVendors() {
@@ -62,6 +66,7 @@ function copyVendors() {
 
   return stream;
 }
+
 
 // Init live server browser sync
 function initBrowserSync(done) {
@@ -84,16 +89,19 @@ function initBrowserSync(done) {
   done();
 }
 
+
 // Watch files
 function watchFiles() {
   gulp.watch('*.html', compileHTML);
   gulp.watch('*.js', compileJS);
 }
 
+
 function setDebug(done) {
   soffice_base_url = '';
   done();
 }
+
 
 // Export tasks
 const dist = gulp.series(clean, gulp.parallel(compileHTML, compileJS, copyVendors) );

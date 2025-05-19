@@ -208,9 +208,9 @@ function loadFile(fileTab) {
     const fontListener = zetajs.unoObject(
       [css.frame.XStatusListener],
       { statusChanged(e) {
-        fontsDispatchNotifier.removeStatusListener(fontListener, fontsUrlObj);
-        fontsList = e.State.val;
-        startupReady('Fonts');
+          fontsDispatchNotifier.removeStatusListener(fontListener, fontsUrlObj);
+          fontsList = e.State.val;
+          startupReady('Fonts');
       }});
     fontsDispatchNotifier.addStatusListener(fontListener, fontsUrlObj);
 

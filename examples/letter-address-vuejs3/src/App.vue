@@ -65,8 +65,8 @@ export default {
                     Upload new file
                     <input accept=".odt" class="file-input" type="file" id="btnUpload" onchange="btnUploadFunc()" disabled>
                   </label>
-                  <button class="btn btn-light btn-sm ms-2" id="btnReload" onclick="btnReloadFunc()" disabled>Reload
-                    file</button>
+                  <button class="btn btn-light btn-sm ms-2" id="btnReload" onclick="btnReloadFunc()" disabled>
+                    Reload file</button>
                   <div id="addrNameCell">
                     <h4 class="mt-3">Recipient</h4>
                     <select class="form-select" id="addrName" name="addrName" autofocus disabled></select>

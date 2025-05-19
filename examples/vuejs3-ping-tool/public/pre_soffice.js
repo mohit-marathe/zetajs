@@ -113,49 +113,49 @@ window.onresize = function() {
 
 
 zHM.start(function() {
-    // Should run after App.vue has set PingModule but before demo().
-    // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
-    //   acutally having CORP on foreign origins.
-    //   Also 'credentialless' isn't supported by Safari-18 as of 2024-09.
-    pingInst = new window.PingModule();
+  // Should run after App.vue has set PingModule but before demo().
+  // 'Cross-Origin-Embedder-Policy': Ping seems to work with 'require-corp' without
+  //   acutally having CORP on foreign origins.
+  //   Also 'credentialless' isn't supported by Safari-18 as of 2024-09.
+  pingInst = new window.PingModule();
 
-    thrPort = zHM.thrPort;
-    thrPort.onmessage = function(e) {
-      switch (e.data.cmd) {
-      case 'setFormat':
-        setToolbarActive(e.data.id, e.data.state);
-        break;
-      case 'ui_ready':
-        // Trigger resize of the embedded window to match the canvas size.
-        // May somewhen be obsoleted by:
-        //   https://gerrit.libreoffice.org/c/core/+/174040
-        window.dispatchEvent(new Event('resize'));
-        setTimeout(function() {  // display Office UI properly
-          loadingInfo.style.display = 'none';
-          canvas.style.visibility = null;
-          for (const elem of disabledElementsAry) elem.disabled = false;
-          pingTarget.addEventListener ("keyup", (evt) => {
-            if(evt.key === 'Enter') btnPingFunc();
-          });
-          // Using Ping callback interface.
-          pingInst.ping(urls_ary[urls_ary_i], function() {
-            // Continue after first ping, which is often exceptionally slow.
-            setTimeout(function() {  // small delay to make the demo more interesting
-              pingInst.ping(urls_ary[urls_ary_i], function(err, data) {
-                pingExamples(err, data);
-              });
-            }, 1000);  // milliseconds
-          });
-        }, 1000);  // milliseconds
-        break;
-      default:
-        throw Error('Unknown message command: ' + e.data.cmd);
-      }
-    };
+  thrPort = zHM.thrPort;
+  thrPort.onmessage = function(e) {
+    switch (e.data.cmd) {
+    case 'setFormat':
+      setToolbarActive(e.data.id, e.data.state);
+      break;
+    case 'ui_ready':
+      // Trigger resize of the embedded window to match the canvas size.
+      // May somewhen be obsoleted by:
+      //   https://gerrit.libreoffice.org/c/core/+/174040
+      window.dispatchEvent(new Event('resize'));
+      setTimeout(function() {  // display Office UI properly
+        loadingInfo.style.display = 'none';
+        canvas.style.visibility = null;
+        for (const elem of disabledElementsAry) elem.disabled = false;
+        pingTarget.addEventListener ("keyup", (evt) => {
+          if(evt.key === 'Enter') btnPingFunc();
+        });
+        // Using Ping callback interface.
+        pingInst.ping(urls_ary[urls_ary_i], function() {
+          // Continue after first ping, which is often exceptionally slow.
+          setTimeout(function() {  // small delay to make the demo more interesting
+            pingInst.ping(urls_ary[urls_ary_i], function(err, data) {
+              pingExamples(err, data);
+            });
+          }, 1000);  // milliseconds
+        });
+      }, 1000);  // milliseconds
+      break;
+    default:
+      throw Error('Unknown message command: ' + e.data.cmd);
+    }
+  };
 
-    get_calc_ping_example_ods().then(function(aryBuf) {
-      zHM.FS.writeFile('/tmp/calc_ping_example.ods', new Uint8Array(aryBuf));
-    });
+  get_calc_ping_example_ods().then(function(aryBuf) {
+    zHM.FS.writeFile('/tmp/calc_ping_example.ods', new Uint8Array(aryBuf));
+  });
 });
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
