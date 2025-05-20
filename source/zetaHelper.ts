@@ -7,6 +7,11 @@
  * @beta
  */
 export class ZetaHelperMain {
+  static wasmUrls: Record<string, any> = {
+    free: 'https://cdn.zetaoffice.net/zetaoffice_latest/',
+    business: 'https://business-cdn.zetaoffice.net/zetaoffice_latest/',
+  };
+
   canvas: HTMLElement;
   Module: any;
   threadJs: string | null;
@@ -23,10 +28,8 @@ export class ZetaHelperMain {
    * @param threadJs - URL for JS code file running inside the office thread (web worker).
    * @param options.threadJsType - 'classic' or 'module' (ES2015)
    *   see: https://developer.mozilla.org/docs/Web/API/Worker/Worker#type
-   * @param options.soffice_base_url - From where to load WASM binaries.
-   *   Defaults an externally provided binaries.
-   *   If choosen manually, the WASM binary version must be compatible with the
-   *   zeta.js version.
+   * @param options.wasmPkg - Which WASM binaries to use. Possible options:
+   *   'free', 'business', 'url:YOUR_CUSTOM_URL'
    * @param options.blockPageScroll - Don't scroll the HTML page while the cursor is above
    *   the canvas. (default: true)
    */
@@ -34,7 +37,7 @@ export class ZetaHelperMain {
       threadJs: string | URL | null,
       options: {
         threadJsType: string | null,
-        soffice_base_url: string | URL | null,
+        wasmPkg: string | null,  // default: 'free'
         blockPageScroll: boolean  // default: true
       }) {
     // Enable usage of LOWA builds with UI.
@@ -48,13 +51,11 @@ export class ZetaHelperMain {
     const zetajsScript = modUrlDir + 'zeta.js';
     const threadWrapScript = 'data:text/javascript;charset=UTF-8,' +
       'import("' + import.meta.url + '").then(m => {m.zetaHelperWrapThread();});';
-    let soffice_base_url = options.soffice_base_url;
-    if (soffice_base_url == null) {
-      soffice_base_url = 'https://cdn.zetaoffice.net/zetaoffice_latest/';
-    } else {
-      if (soffice_base_url === '') soffice_base_url = './';
-      soffice_base_url = (new URL(soffice_base_url, location.href)).toString();
-    }
+    const wasmPkg = options.wasmPkg || 'free';
+    let soffice_base_url = ZetaHelperMain.wasmUrls[wasmPkg] || ZetaHelperMain.wasmUrls['free'];
+    if (wasmPkg?.substring(0,4) === 'url:') soffice_base_url = wasmPkg.substring(4, wasmPkg.length);
+    if (soffice_base_url === '') soffice_base_url = './';
+    soffice_base_url = (new URL(soffice_base_url, location.href)).toString();
     const Module: any = {
       canvas,
       uno_scripts: [zetajsScript, threadWrapScript],

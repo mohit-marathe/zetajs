@@ -4,15 +4,6 @@
 import { ZetaHelperMain } from './assets/vendor/zetajs/zetaHelper.js';
 
 
-// IMPORTANT:
-// Set base URL to the soffice.* files.
-// Use an empty string if those files are in the same directory.
-let soffice_base_url;
-try {
-  soffice_base_url = config_soffice_base_url; // May fail. config.js is optional.
-} catch {}
-
-
 let thrPort;               // zetajs thread communication
 let tbDataJs;              // toolbar dataset passed from vue.js for plain JS
 window.PingModule = null;  // Ping module passed from vue.js for plain JS
@@ -23,7 +14,14 @@ const pingTarget = document.getElementById("ping_target");
 const btnPing = document.getElementById("btnPing");
 const disabledElementsAry = [btnPing];
 
-const zHM = new ZetaHelperMain('office_thread.js', {threadJsType: 'module', soffice_base_url});
+// IMPORTANT:
+// Set base URL to the soffice.* files.
+// Use an empty string if those files are in the same directory.
+let wasmPkg;
+try {
+  wasmPkg = 'url:' + config_soffice_base_url; // May fail. config.js is optional.
+} catch {}
+const zHM = new ZetaHelperMain('office_thread.js', {threadJsType: 'module', wasmPkg});
 
 
 // Functions stored below window.* are usually accessed from vue.js.

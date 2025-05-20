@@ -86,10 +86,6 @@
     <script type="module">
       import { ZetaHelperMain } from './assets/vendor/zetajs/zetaHelper.js';
 
-      // Set base URL to the soffice.* files.
-      // Use an empty string if those files are in the same directory.
-      let soffice_base_url = '<!-- soffice.js Base -->';
-
       const addrName = document.getElementById('addrName');
       const loadingInfo = document.getElementById('loadingInfo');
       const canvas = document.getElementById('qtcanvas');
@@ -102,7 +98,12 @@
         Insert: document.getElementById('btnInsert'),
         Reload: document.getElementById('btnReload'),
       };
-      const zHM = new ZetaHelperMain('office_thread.js', {soffice_base_url});
+
+      // Set base URL to the soffice.* files.
+      // Use an empty string if those files are in the same directory.
+      let wasmPkg = '<!-- soffice.js Base -->';
+      wasmPkg = wasmPkg !== null ? 'url:' + wasmPkg : null;
+      const zHM = new ZetaHelperMain('office_thread.js', {wasmPkg});
 
 
       function formatBtnFunc(btnObj) {
