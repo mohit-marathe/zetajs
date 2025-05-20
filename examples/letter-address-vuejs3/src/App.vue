@@ -22,7 +22,7 @@ export default {
 
 <template>
   <div id="app">
-    <div class="container-fluid p-0">
+    <div class="container-fluid p-0" style="width:1150px; margin:auto;">
       <div class="row">
         <div class="col mt-3 mb-2">
           <h1>ZetaJS: Letter Address Vue.js-3</h1>
@@ -43,15 +43,16 @@ export default {
           <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="btnLetter"
             tabindex="0">
             <div class="row">
+              <!-- The ControlBar may extend horizontally if the selected font family has a long name. -->
+              <ControlBar id="controlbar" class="mt-1 mb-1" />
               <div id="canvasCell" class="col-lg-9">
-                <ControlBar id="controlbar" class="mt-1 mb-1" />
                 <div class="canvas-container" onselectstart="event.preventDefault()">
                   <div id="loadingInfo" class="loading-info">
                     <div class="spinner"></div><br>
                     <h2>ZetaOffice is loading...</h2>
                   </div>
                   <canvas id="qtcanvas" contenteditable="true" oncontextmenu="event.preventDefault()"
-                    onkeydown="event.preventDefault()" style="width:100%; height:500px; visibility:hidden;"
+                    onkeydown="event.preventDefault()" style="width:870px; height:500px; visibility:hidden;"
                     class="qt-canvas">
                     <!-- Qt requires the canvas to have the ID "qtcanvas". -->
                     <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
@@ -59,8 +60,8 @@ export default {
                   </canvas>
                 </div>
               </div>
-              <div class="col-lg-3">
-                <h4 class="mt-3">Document</h4>
+              <div id="controlCell" class="col-lg-3">
+                <h4>Document</h4>
                 <label class="btn btn-light btn-sm disabled" id="lblUpload">
                   Upload new file
                   <input accept=".odt" class="file-input" type="file" id="btnUpload" onchange="btnUploadFunc()" disabled>
@@ -73,7 +74,8 @@ export default {
                     <button class="btn btn-primary btn-sm mb-2 mt-3" id="btnInsert"
                       onclick="btnInsertFunc()" disabled>Insert Address</button>
                   </div>
-                  <select class="form-select" id="addrName" size="17" autofocus disabled></select>
+                  <!-- size: Somehow needs about 3 rows more space when deployed on the website. -->
+                  <select class="form-select" id="addrName" size="13" autofocus disabled></select>
                 </div>
               </div>
             </div>

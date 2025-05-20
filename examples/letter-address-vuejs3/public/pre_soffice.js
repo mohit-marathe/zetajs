@@ -12,6 +12,7 @@ let data = [];
 const loadingInfo = document.getElementById('loadingInfo');
 const canvas = document.getElementById('qtcanvas');
 const controlbar = document.getElementById('controlbar');
+const controlCell = document.getElementById('controlCell');
 const addrNameCell = document.getElementById('addrNameCell');
 const canvasCell = document.getElementById('canvasCell');
 const btnLetter = document.getElementById('btnLetter');
@@ -66,18 +67,38 @@ window.btnSwitchTab = (tab) => {  // window....: make it accessible to vue.js
     btnTable.classList.remove('active');
     controlbar.style.display = null;
     btnUpload.accept = '.odt';
+    lblUpload.classList.remove('btn-primary');
+    lblUpload.classList.add('btn-light');
     btnInsert.disabled = false;
-    addrNameCell.style.visibility = null;
+    addrNameCell.style.display = null;
     addrName.style.visibility = null;
+    btnReload.classList.remove('mt-2');
+    btnReload.classList.add('ms-2');
+    canvasCell.classList.remove('col-lg-10');
+    canvasCell.classList.add('col-lg-9');
+    controlCell.classList.remove('col-lg-2');
+    controlCell.classList.add('col-lg-3');
+    canvas.style.height = canvas_height + 'px';
+    canvas.style.width = canvas_width + 'px';
   } else {  // table
     letterForeground = false;
     btnLetter.classList.remove('active');
     btnTable.classList.add('active');
     controlbar.style.display = 'none';
     btnUpload.accept = '.ods';
+    lblUpload.classList.add('btn-primary');
+    lblUpload.classList.remove('btn-light');
     btnInsert.disabled = true;
-    addrNameCell.style.visibility = 'hidden';
+    addrNameCell.style.display = 'none';
     addrName.style.visibility = 'hidden';
+    btnReload.classList.remove('ms-2');
+    btnReload.classList.add('mt-2');
+    canvasCell.classList.remove('col-lg-9');
+    canvasCell.classList.add('col-lg-10');
+    controlCell.classList.remove('col-lg-3');
+    controlCell.classList.add('col-lg-2');
+    canvas.style.height = canvas_height + 46 + 'px';
+    canvas.style.width = canvas_width + 100 + 'px';
   }
   zHM.thrPort.postMessage({cmd: 'switch_tab', id: tab});
 }
