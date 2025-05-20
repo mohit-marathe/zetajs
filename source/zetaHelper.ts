@@ -121,13 +121,13 @@ export function zetaHelperWrapThread() {
         globalThis.zetajsStore = {zetajs, zJsModule};
         let threadJs = e.data.threadJs;
         if (threadJs) {
-          if (e.data.threadJsMode) {
+          if (e.data.threadJsMode === 'module') {
             console.log('zetaHelper: Loading threadJs as module from: ' + threadJs);
             import(threadJs).then(module => {
               // Make exports of threadJs accessible for debugging.
               globalThis.zetajsStore.threadJsContext = module;
             });
-          } else {
+          } else {  // classic
             console.log('zetaHelper: Loading threadJs as script from: ' + threadJs);
             importScripts(threadJs);
           }
