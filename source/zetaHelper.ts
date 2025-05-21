@@ -73,12 +73,12 @@ export class ZetaHelperMain {
         if (lastDevicePixelRatio != -1) {
           if (lastDevicePixelRatio != window.devicePixelRatio) {
             lastDevicePixelRatio = -1;
-            canvas.style.width = parseInt(canvas.style.width) + 1 + 'px';
+            this.widthPxAdd(canvas.style, +1);
             window.dispatchEvent(new Event('resize'));
           }
         } else {
           lastDevicePixelRatio = window.devicePixelRatio
-          canvas.style.width = parseInt(canvas.style.width) - 1 + 'px';
+          this.widthPxAdd(canvas.style, -1);
           window.dispatchEvent(new Event('resize'));
         }
       }, 100);
@@ -132,6 +132,12 @@ export class ZetaHelperMain {
     console.log('zetaHelper: Loading WASM binaries for ZetaJS from: ' + zHM.soffice_base_url);
     // Hint: The global objects "canvas" and "Module" must exist before the next line.
     document.body.appendChild(soffice_js);
+  }
+
+  private widthPxAdd(obj: CSSStyleDeclaration, value: number) {
+    if (/\A\d+px\z/.test(obj.width)) {
+      obj.width = parseInt(obj.width) + value + 'px';
+    }
   }
 }
 

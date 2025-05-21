@@ -184,12 +184,10 @@
           if (lastDevicePixelRatio) {
             if (lastDevicePixelRatio != window.devicePixelRatio) {
               lastDevicePixelRatio = false;
-              canvas.style.width = parseInt(canvas.style.width) + 1 + 'px';
               window.dispatchEvent(new Event('resize'));
             }
           } else {
             lastDevicePixelRatio = window.devicePixelRatio
-            canvas.style.width = parseInt(canvas.style.width) - 1 + 'px';
             window.dispatchEvent(new Event('resize'));
           }
         }, 100);
