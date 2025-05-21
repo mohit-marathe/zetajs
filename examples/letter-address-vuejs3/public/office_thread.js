@@ -209,7 +209,7 @@ function loadFile(fileTab) {
       [css.frame.XStatusListener],
       { statusChanged(e) {
           fontsDispatchNotifier.removeStatusListener(fontListener, fontsUrlObj);
-          fontsList = e.State.val;
+          fontsList = zetajs.fromAny(e.State);
           startupReady('Fonts');
       }});
     fontsDispatchNotifier.addStatusListener(fontListener, fontsUrlObj);
