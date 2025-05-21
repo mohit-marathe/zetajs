@@ -59,7 +59,7 @@ export class ZetaHelperMain {
     const Module: any = {
       canvas,
       uno_scripts: [zetajsScript, threadWrapScript],
-      locateFile: function(path: string, prefix: string) { return (prefix || soffice_base_url) + path; },
+      locateFile: (path: string, prefix: string) => { return (prefix || soffice_base_url) + path; },
       modUrlDir,
     };
     Module.mainScriptUrlOrBlob = new Blob(
@@ -69,7 +69,7 @@ export class ZetaHelperMain {
     let lastDevicePixelRatio = window.devicePixelRatio;
     addEventListener('resize', () => {
       // Workaround to inform Qt5 about changed browser zoom.
-      setTimeout(function() {
+      setTimeout(() => {
         if (lastDevicePixelRatio != -1) {
           if (lastDevicePixelRatio != window.devicePixelRatio) {
             lastDevicePixelRatio = -1;
@@ -104,12 +104,12 @@ export class ZetaHelperMain {
     const soffice_js = document.createElement("script");
     soffice_js.src = zHM.soffice_base_url + "soffice.js";
     // "onload" runs after the loaded script has run.
-    soffice_js.onload = function() {
+    soffice_js.onload = () => {
       console.log('zetaHelper: Configuring Module');
-      zHM.Module.uno_main.then(function(pThrPort: MessagePort) {
+      zHM.Module.uno_main.then((pThrPort: MessagePort) => {
         zHM.thrPort = pThrPort;
         zHM.FS = (window as any).FS;
-        zHM.thrPort.onmessage = function(e: any) {
+        zHM.thrPort.onmessage = (e: any) => {
           switch (e.data.cmd) {
           case 'ZetaHelper::thr_started':
             // Trigger resize of the embedded window to match the canvas size.
@@ -146,9 +146,9 @@ export class ZetaHelperMain {
  */
 export function zetaHelperWrapThread() {
   const zJsModule = (globalThis as any).Module;
-  zJsModule.zetajs.then(function(zetajs: any) {
+  zJsModule.zetajs.then((zetajs: any) => {
     const port: MessagePort = zetajs.mainPort;
-    port.onmessage = function(e) {
+    port.onmessage = (e) => {
       switch (e.data.cmd) {
       case 'ZetaHelper::run_thr_script':
         port.onmessage = null;
