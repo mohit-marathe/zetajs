@@ -32,7 +32,7 @@
   </head>
   <body>
     <div class="container-fluid p-0">
-      <div class="row">
+      <div class="row" style="width: 100%;">
         <div class="col">
           <h1 class="mt-5">Writer Document canvas</h1>
           <p class="lead">An example of a stripped-down, standalone Writer document canvas without any surrounding menubars, toolbars, side panels, etc.</p>
@@ -48,7 +48,7 @@
           </div>
         </div>
       </div>
-      <div class="row mt-1">
+      <div class="row mt-1" style="width: 100%;">
         <div class="col" onselectstart="event.preventDefault()" style="position: relative">
           <!--  position: Makes the loading animation overlay the canvas.
                 onselectstart: Prevents accidently selecting / highlighting the canvas.
@@ -61,7 +61,7 @@
           <canvas
             id="qtcanvas" contenteditable="true"
             oncontextmenu="event.preventDefault()" onkeydown="event.preventDefault()"
-            style="border: 0px none; padding: 0; height: 100%; width: 100%; outline: 1px solid #cccccc; visibility:hidden;">
+            style="border: 0px none; padding: 0; height:calc(100vh - 220px); width: 100%; outline: 1px solid #cccccc; visibility:hidden;">
             <!-- QT requires the canvas to have the ID "qtcanvas". -->
             <!-- The canvas *must not* have any border or padding, or mouse coords will be wrong. -->
             <!-- An outline is fine though. -->
