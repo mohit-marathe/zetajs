@@ -136,7 +136,7 @@ export function zetaHelperWrapThread() {
         }
         break;
       default:
-        throw Error('Unknown message command BBBBBBBB ' + e.data.cmd);
+        throw Error('Unknown message command: ' + e.data.cmd);
       };
     }
     port.postMessage({
