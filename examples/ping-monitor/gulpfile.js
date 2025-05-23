@@ -27,6 +27,7 @@ var custom_browser = argv.browser;  // else use default system browser
 var custom_listen = argv.listen || '127.0.0.1';
 var custom_port = argv.port || 3000;
 var clean_disabled = argv.clean_disabled;
+var no_browser = argv.nobrowser;
 
 
 // Clean up the dist folder before running any task
@@ -96,7 +97,8 @@ function initBrowserSync(done) {
     listen: custom_listen,  // host ip
     port: custom_port,
     notify: false,
-    browser: custom_browser
+    browser: custom_browser,
+    open: !no_browser
   });
   done();
 }
